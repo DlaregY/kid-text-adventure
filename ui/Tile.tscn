@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://ocpvqnch6fo2"]
+
+[ext_resource type="Script" uid="uid://blpprv060ha35" path="res://scripts/Tile.gd" id="1_j13wd"]
+
+[node name="Tile" type="Button" unique_id=278958113]
+offset_right = 8.0
+offset_bottom = 8.0
+text = "word"
+script = ExtResource("1_j13wd")

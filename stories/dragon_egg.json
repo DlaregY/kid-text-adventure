@@ -1,0 +1,230 @@
+{
+  "meta": { "title": "The Lost Dragon Egg", "version": 1 },
+  "vocab": {
+	"go": { "label": "go" },
+	"open": { "label": "open" },
+	"take": { "label": "take" },
+	"look": { "label": "look" },
+	"talk": { "label": "talk" },
+	"give": { "label": "give" },
+	"climb": { "label": "climb" },
+	"use": { "label": "use" },
+
+	"door": { "label": "door" },
+	"box": { "label": "box" },
+	"key": { "label": "key" },
+	"gate": { "label": "gate" },
+	"forest": { "label": "forest" },
+	"dog": { "label": "dog" },
+	"apple": { "label": "apple" },
+	"rope": { "label": "rope" },
+	"tree": { "label": "tree" },
+	"egg": { "label": "egg" },
+	"bridge": { "label": "bridge" },
+	"cave": { "label": "cave" },
+	"dragon": { "label": "dragon" },
+	"treasure": { "label": "treasure" }
+  },
+  "start_scene": "room",
+  "scenes": {
+	"room": {
+	  "image": "room.png",
+	  "text": ["You are in a room.", "You see a door."],
+	  "tiles": ["open", "take", "go", "look", "door", "key"],
+	  "commands": [
+		{
+		  "pattern": ["open", "door"],
+		  "response": "The door opens!",
+		  "next": "hall"
+		},
+		{
+		  "pattern": ["take", "door"],
+		  "response": "The door is too big!"
+		},
+		{
+		  "pattern": ["go", "door"],
+		  "response": "You bump the door. Try opening it."
+		}
+	  ],
+	  "default": ["Hmm... that does not work.", "Nope!", "Try something else."]
+	},
+
+	"hall": {
+	  "image": "hall.png",
+	  "text": ["You are in a hall.", "You see a box."],
+	  "tiles": ["open", "take", "look", "box", "key", "door"],
+	  "commands": [
+		{
+		  "pattern": ["open", "box"],
+		  "response": "Inside is a shiny key!",
+		  "effects": { "flags_set": { "box_open": true } }
+		},
+		{
+		  "pattern": ["take", "key"],
+		  "requirements": { "flags_true": ["box_open"] },
+		  "response": "You take the key.",
+		  "effects": { "inventory_add": ["key"] },
+		  "next": "gate"
+		},
+		{
+		  "pattern": ["take", "box"],
+		  "response": "It is heavy."
+		}
+	  ],
+	  "default": ["Nothing happens."]
+	},
+
+	"gate": {
+	  "image": "gate.png",
+	  "text": ["You see a gate.", "It is locked."],
+	  "tiles": ["use", "open", "look", "key", "gate", "go"],
+	  "commands": [
+		{
+		  "pattern": ["use", "key"],
+		  "requirements": { "inventory_has": ["key"] },
+		  "response": "Click! The gate opens.",
+		  "next": "forest"
+		},
+		{
+		  "pattern": ["open", "gate"],
+		  "response": "It will not open."
+		}
+	  ],
+	  "default": ["The gate does not move."]
+	},
+
+	"forest": {
+	  "image": "forest.png",
+	  "text": ["You are in a forest.", "You see a dog. The dog is sad."],
+	  "tiles": ["talk", "give", "look", "dog", "apple", "go"],
+	  "commands": [
+		{
+		  "pattern": ["talk", "dog"],
+		  "response": "Dog says: The dragon lost her egg!",
+		  "effects": { "flags_set": { "dog_talked": true } },
+		  "next": "tree"
+		},
+		{
+		  "pattern": ["give", "apple"],
+		  "response": "Dog smiles and gives you a rope!",
+		  "effects": { "inventory_add": ["rope"], "flags_set": { "dog_helped": true } }
+		},
+		{
+		  "pattern": ["open", "dog"],
+		  "response": "The dog wiggles away. Nice try."
+		}
+	  ],
+	  "default": ["The dog tilts its head.", "The forest is quiet."]
+	},
+
+	"tree": {
+	  "image": "tree.png",
+	  "text": ["You see a tall tree.", "You see something shiny."],
+	  "tiles": ["climb", "take", "look", "tree", "egg", "go"],
+	  "commands": [
+		{
+		  "pattern": ["climb", "tree"],
+		  "response": "You climb up the tree!",
+		  "effects": { "flags_set": { "in_tree": true } }
+		},
+		{
+		  "pattern": ["take", "egg"],
+		  "requirements": { "flags_true": ["in_tree"] },
+		  "response": "You take the dragon egg. It is warm.",
+		  "effects": { "inventory_add": ["egg"] },
+		  "next": "bridge"
+		}
+	  ],
+	  "default": ["You look up. It is very tall."]
+	},
+
+	"bridge": {
+	  "image": "bridge.png",
+	  "text": ["You see a broken bridge."],
+	  "tiles": ["use", "go", "look", "rope", "bridge", "cave"],
+	  "commands": [
+		{
+		  "pattern": ["use", "rope"],
+		  "requirements": { "inventory_has": ["rope"] },
+		  "response": "You tie the rope. The bridge is safe!",
+		  "effects": { "flags_set": { "bridge_fixed": true } }
+		},
+		{
+		  "pattern": ["go", "bridge"],
+		  "requirements": { "flags_true": ["bridge_fixed"] },
+		  "response": "You cross the bridge.",
+		  "next": "cave"
+		},
+		{
+		  "pattern": ["go", "bridge"],
+		  "response": "Too dangerous! You need help."
+		}
+	  ],
+	  "default": ["The bridge creaks."]
+	},
+
+	"cave": {
+	  "image": "cave.png",
+	  "text": ["You stand at a dark cave.", "You hear breathing..."],
+	  "tiles": ["go", "look", "talk", "cave", "dragon", "egg"],
+	  "commands": [
+		{
+		  "pattern": ["look", "cave"],
+		  "response": "You see a dragon inside!"
+		},
+		{
+		  "pattern": ["go", "cave"],
+		  "response": "You walk into the cave.",
+		  "next": "dragon"
+		}
+	  ],
+	  "default": ["It is spooky, but you are brave!"]
+	},
+
+	"dragon": {
+	  "image": "dragon.png",
+	  "text": ["A dragon looks sad.", "She is searching."],
+	  "tiles": ["give", "talk", "look", "dragon", "egg", "go"],
+	  "commands": [
+		{
+		  "pattern": ["give", "egg"],
+		  "requirements": { "inventory_has": ["egg"] },
+		  "response": "The dragon smiles! You returned her egg.",
+		  "effects": { "flags_set": { "egg_returned": true } },
+		  "next": "treasure"
+		},
+		{
+		  "pattern": ["give", "dragon"],
+		  "response": "The dragon blinks. Try giving something else."
+		}
+	  ],
+	  "default": ["The dragon watches you carefully."]
+	},
+
+	"treasure": {
+	  "image": "treasure.png",
+	  "text": ["A treasure chest appears!", "You did it!"],
+	  "tiles": ["take", "open", "look", "treasure", "go"],
+	  "commands": [
+		{
+		  "pattern": ["take", "treasure"],
+		  "response": "You take the treasure! You are a hero!",
+		  "next": "win"
+		},
+		{
+		  "pattern": ["open", "treasure"],
+		  "response": "It is already open. Shiny!"
+		}
+	  ],
+	  "default": ["Sparkles everywhere!"]
+	},
+
+	"win": {
+	  "image": "win.png",
+	  "text": ["You win!", "THE END"],
+	  "tiles": ["look"],
+	  "commands": [],
+	  "default": ["Hooray!"]
+	}
+  }
+}

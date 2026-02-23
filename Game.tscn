@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://da2g8wy6g4fky"]
+
+[ext_resource type="Script" uid="uid://c8su1qp12tm63" path="res://scripts/CommandSlot.gd" id="1_wbfu4"]
+[ext_resource type="Script" uid="uid://b6jbs8g6nrgnj" path="res://scripts/Game.gd" id="1_xkndl"]
+
+[node name="Game" type="Control" unique_id=1650470966]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xkndl")
+
+[node name="Layout" type="VBoxContainer" parent="." unique_id=2035657044]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="StoryText" type="Label" parent="Layout" unique_id=2087282049]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Story text…"
+autowrap_mode = 3
+
+[node name="FeedbackText" type="Label" parent="Layout" unique_id=342467871]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "...
+"
+autowrap_mode = 3
+
+[node name="CommandBar" type="HBoxContainer" parent="Layout" unique_id=963208710]
+layout_mode = 2
+
+[node name="Slot1" type="PanelContainer" parent="Layout/CommandBar" unique_id=1224793628]
+layout_mode = 2
+script = ExtResource("1_wbfu4")
+slot_index = 1
+
+[node name="Slot1Label" type="Label" parent="Layout/CommandBar/Slot1" unique_id=401115347]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+text = "(drop here)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Slot2" type="PanelContainer" parent="Layout/CommandBar" unique_id=1346960890]
+layout_mode = 2
+script = ExtResource("1_wbfu4")
+slot_index = 2
+
+[node name="Slot2Label" type="Label" parent="Layout/CommandBar/Slot2" unique_id=388333064]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+text = "(drop here)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InventoryText" type="Label" parent="Layout" unique_id=54929718]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+
+[node name="TileTray" type="FlowContainer" parent="Layout" unique_id=1910350022]
+layout_mode = 2
+theme_override_constants/v_separation = 10
+
+[node name="GoButton" type="Button" parent="Layout" unique_id=1845811699]
+layout_mode = 2
+text = "GO"
