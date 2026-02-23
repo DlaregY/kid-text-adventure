@@ -1,4 +1,6 @@
 # res://scripts/Game.gd
+# Commands now accept 2 or 3 tokens from Slot1/Slot2[/Slot3].
+# Rules match only when pattern length equals command length and all tokens align in order.
 extends Control
 
 const STORY_PATH := "res://stories/dragon_egg.json"
@@ -10,6 +12,7 @@ const TILE_SCENE := preload("res://ui/Tile.tscn")
 @onready var go_button: Button = $Layout/GoButton
 @onready var slot1: PanelContainer = $Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $Layout/CommandBar/Slot2
+@onready var slot3: PanelContainer = $Layout/CommandBar/Slot3
 @onready var inventory_text: Label = $Layout/InventoryText
 
 var story = {}
@@ -62,6 +65,7 @@ func _render_scene() -> void:
 	feedback_text.text = ""
 	slot1.clear()
 	slot2.clear()
+	slot3.clear()
 
 	# tiles
 	for child in tile_tray.get_children():
@@ -85,14 +89,24 @@ func _update_inventory_ui() -> void:
 		inventory_text.text = "Inventory: " + ", ".join(items)
 
 func _on_go_pressed() -> void:
-	var cmd = [slot1.token, slot2.token]
-	if cmd[0] == "" or cmd[1] == "":
-		feedback_text.text = "Drag two words first."
+	var first := slot1.token
+	var second := slot2.token
+	var third := slot3.token
+
+	if first == "" or second == "":
+		feedback_text.text = "Drag at least two words first."
 		return
 
-	_apply_command(cmd[0], cmd[1])
+	var cmd: Array[String] = [first, second]
+	if third != "":
+		cmd.append(third)
 
-func _apply_command(verb: String, noun: String) -> void:
+	var transitioned := _apply_command(cmd)
+	if not transitioned:
+		slot2.clear()
+		slot3.clear()
+
+func _apply_command(cmd: Array[String]) -> bool:
 	var scene = scenes.get(current_scene_id, null)
 	var rules: Array = scene.get("commands", [])
 	var default_responses: Array = scene.get("default", ["Nothing happens."])
@@ -100,9 +114,16 @@ func _apply_command(verb: String, noun: String) -> void:
 	# Find first matching rule whose requirements pass
 	for rule in rules:
 		var pattern: Array = rule.get("pattern", [])
-		if pattern.size() != 2:
+		if pattern.size() != cmd.size():
 			continue
-		if str(pattern[0]) != verb or str(pattern[1]) != noun:
+
+		var pattern_matches := true
+		for i in pattern.size():
+			if str(pattern[i]) != cmd[i]:
+				pattern_matches = false
+				break
+
+		if not pattern_matches:
 			continue
 
 		if not _requirements_pass(rule.get("requirements", {})):
@@ -119,13 +140,14 @@ func _apply_command(verb: String, noun: String) -> void:
 		if rule.has("next"):
 			current_scene_id = str(rule["next"])
 			_render_scene()
+			return true
 		else:
-			# stay in same scene, but rerender tiles if you want—v1 keeps it as-is
-			pass
-		return
+			# stay in same scene, keeping Slot1 (verb) for fast retries
+			return false
 
 	# No match
 	feedback_text.text = str(default_responses[randi() % default_responses.size()])
+	return false
 
 func _requirements_pass(req: Dictionary) -> bool:
 	# inventory_has: ["key"]
