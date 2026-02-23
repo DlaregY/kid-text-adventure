@@ -21,6 +21,25 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 12
 
+[node name="MenuBar" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StoryPicker" type="OptionButton" parent="Layout/MenuBar"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StartButton" type="Button" parent="Layout/MenuBar"]
+layout_mode = 2
+text = "START"
+
+[node name="StoryTitle" type="Label" parent="Layout/MenuBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+vertical_alignment = 1
+
 [node name="StoryText" type="Label" parent="Layout" unique_id=2087282049]
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
@@ -86,3 +105,15 @@ theme_override_constants/v_separation = 10
 [node name="GoButton" type="Button" parent="Layout" unique_id=1845811699]
 layout_mode = 2
 text = "GO"
+
+[node name="MenuButton" type="Button" parent="." unique_id=81561436]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -130.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 52.0
+grow_horizontal = 0
+text = "Change Story"
