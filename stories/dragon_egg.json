@@ -144,7 +144,7 @@
 	  "tiles": ["use", "go", "look", "rope", "bridge", "cave"],
 	  "commands": [
 		{
-		  "pattern": ["use", "rope"],
+		  "pattern": ["use", "rope", "bridge"],
 		  "requirements": { "inventory_has": ["rope"] },
 		  "response": "You tie the rope. The bridge is safe!",
 		  "effects": { "flags_set": { "bridge_fixed": true } }
