@@ -1,11 +1,18 @@
 # res://scripts/Game.gd
 # Commands now accept 2 or 3 tokens from Slot1/Slot2[/Slot3].
 # Rules match only when pattern length equals command length and all tokens align in order.
+# Story flow: discover JSON stories in res://stories/, let player choose from StoryPicker,
+# then load the selected path when START is pressed. MenuButton returns to picker.
 extends Control
 
-const STORY_PATH := "res://stories/dragon_egg.json"
+const STORIES_DIR := "res://stories"
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 
+@onready var menu_bar: HBoxContainer = $Layout/MenuBar
+@onready var story_picker: OptionButton = $Layout/MenuBar/StoryPicker
+@onready var start_button: Button = $Layout/MenuBar/StartButton
+@onready var story_title: Label = $Layout/MenuBar/StoryTitle
+@onready var menu_button: Button = $Layout/MenuButton
 @onready var story_text: Label = $Layout/StoryText
 @onready var feedback_text: Label = $Layout/FeedbackText
 @onready var tile_tray: FlowContainer = $Layout/TileTray
@@ -20,36 +27,158 @@ var scenes = {}
 var current_scene_id = ""
 var inventory = {} # token -> true
 var flags = {}     # flag -> true/false
+var discovered_stories: Array[Dictionary] = []
+var selected_story_path := ""
+var has_active_story := false
 
 func _ready() -> void:
+	story_picker.item_selected.connect(_on_story_selected)
+	start_button.pressed.connect(_on_start_pressed)
+	menu_button.pressed.connect(_on_menu_pressed)
 	go_button.pressed.connect(_on_go_pressed)
+	menu_button.visible = false
 
-	_load_story()
-	_start_story()
+	_discover_stories()
+	_show_menu()
 
-func _load_story() -> void:
-	var f = FileAccess.open(STORY_PATH, FileAccess.READ)
-	if f == null:
-		push_error("Could not open story file: " + STORY_PATH)
+func _discover_stories() -> void:
+	discovered_stories.clear()
+	story_picker.clear()
+
+	var dir := DirAccess.open(STORIES_DIR)
+	if dir == null:
+		feedback_text.text = "Story folder not found."
+		start_button.disabled = true
+		story_title.text = "No stories found"
 		return
+
+	dir.list_dir_begin()
+	while true:
+		var file_name := dir.get_next()
+		if file_name == "":
+			break
+		if dir.current_is_dir():
+			continue
+		if not file_name.ends_with(".json"):
+			continue
+		if file_name == "index.json":
+			continue
+
+		var path := "%s/%s" % [STORIES_DIR, file_name]
+		var display_name := _story_display_name(path, file_name)
+		discovered_stories.append({
+			"path": path,
+			"display_name": display_name,
+		})
+	dir.list_dir_end()
+
+	discovered_stories.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return str(a.get("display_name", "")).nocasecmp_to(str(b.get("display_name", ""))) < 0
+	)
+
+	for entry in discovered_stories:
+		story_picker.add_item(str(entry["display_name"]))
+
+	if discovered_stories.is_empty():
+		selected_story_path = ""
+		start_button.disabled = true
+		story_title.text = "No stories found"
+		feedback_text.text = "No story files found in res://stories/."
+		return
+
+	start_button.disabled = false
+	story_picker.select(0)
+	_set_selected_story(0)
+
+func _story_display_name(path: String, file_name: String) -> String:
+	var fallback := file_name.get_basename()
+	var f = FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return fallback
+
+	var parsed = JSON.parse_string(f.get_as_text())
+	if parsed == null or typeof(parsed) != TYPE_DICTIONARY:
+		return fallback
+
+	var meta = parsed.get("meta", {})
+	if typeof(meta) == TYPE_DICTIONARY:
+		var title = str(meta.get("title", "")).strip_edges()
+		if title != "":
+			return title
+
+	return fallback
+
+func _load_story(path: String) -> bool:
+	var f = FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		push_error("Could not open story file: " + path)
+		feedback_text.text = "Couldn't open selected story."
+		return false
 
 	var json_text = f.get_as_text()
 	var parsed = JSON.parse_string(json_text)
-	if parsed == null:
+	if parsed == null or typeof(parsed) != TYPE_DICTIONARY:
 		push_error("Invalid JSON in story file.")
-		return
+		feedback_text.text = "Selected story has invalid JSON."
+		return false
 
 	story = parsed
 	scenes = story.get("scenes", {})
 	current_scene_id = story.get("start_scene", "")
 	if current_scene_id == "":
 		push_error("No start_scene set in story JSON.")
-		return
+		feedback_text.text = "Selected story is missing start scene."
+		return false
+
+	return true
 
 func _start_story() -> void:
 	inventory.clear()
 	flags.clear()
+	has_active_story = true
 	_render_scene()
+	menu_bar.visible = false
+	menu_button.visible = true
+
+func _show_menu() -> void:
+	has_active_story = false
+	menu_bar.visible = true
+	menu_button.visible = false
+	story_text.text = "Choose a story, then press START."
+	for child in tile_tray.get_children():
+		child.queue_free()
+	slot1.clear()
+	slot2.clear()
+	slot3.clear()
+	inventory.clear()
+	flags.clear()
+	_update_inventory_ui()
+
+func _set_selected_story(index: int) -> void:
+	if index < 0 or index >= discovered_stories.size():
+		selected_story_path = ""
+		story_title.text = "No stories found"
+		return
+
+	var entry: Dictionary = discovered_stories[index]
+	selected_story_path = str(entry.get("path", ""))
+	story_title.text = str(entry.get("display_name", ""))
+
+func _on_story_selected(index: int) -> void:
+	_set_selected_story(index)
+
+func _on_start_pressed() -> void:
+	if selected_story_path == "":
+		feedback_text.text = "Please choose a story first."
+		return
+
+	if not _load_story(selected_story_path):
+		return
+
+	_start_story()
+
+func _on_menu_pressed() -> void:
+	_show_menu()
 
 func _render_scene() -> void:
 	var scene = scenes.get(current_scene_id, null)
@@ -89,6 +218,10 @@ func _update_inventory_ui() -> void:
 		inventory_text.text = "Inventory: " + ", ".join(items)
 
 func _on_go_pressed() -> void:
+	if not has_active_story:
+		feedback_text.text = "Pick a story and press START first."
+		return
+
 	var first := slot1.token
 	var second := slot2.token
 	var third := slot3.token
