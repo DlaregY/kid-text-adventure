@@ -10,7 +10,7 @@ const TILE_SCENE := preload("res://ui/Tile.tscn")
 @onready var go_button: Button = $Layout/GoButton
 @onready var slot1: PanelContainer = $Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $Layout/CommandBar/Slot2
-@onready var inventory_text: Label = %Layout/InventoryText
+@onready var inventory_text: Label = $Layout/InventoryText
 
 var story = {}
 var scenes = {}
