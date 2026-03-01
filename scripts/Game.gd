@@ -12,7 +12,7 @@ const TILE_SCENE := preload("res://ui/Tile.tscn")
 @onready var story_picker: OptionButton = $Layout/MenuBar/StoryPicker
 @onready var start_button: Button = $Layout/MenuBar/StartButton
 @onready var story_title: Label = $Layout/MenuBar/StoryTitle
-@onready var menu_button: Button = $Layout/MenuButton
+@onready var menu_button: Button = $MenuButton
 @onready var story_text: Label = $Layout/StoryText
 @onready var feedback_text: Label = $Layout/FeedbackText
 @onready var tile_tray: FlowContainer = $Layout/TileTray
@@ -145,6 +145,7 @@ func _show_menu() -> void:
 	menu_bar.visible = true
 	menu_button.visible = false
 	story_text.text = "Choose a story, then press START."
+	feedback_text.text = ""
 	for child in tile_tray.get_children():
 		child.queue_free()
 	slot1.clear()
@@ -222,9 +223,9 @@ func _on_go_pressed() -> void:
 		feedback_text.text = "Pick a story and press START first."
 		return
 
-	var first := slot1.token
-	var second := slot2.token
-	var third := slot3.token
+	var first: String = slot1.token
+	var second: String = slot2.token
+	var third: String = slot3.token
 
 	if first == "" or second == "":
 		feedback_text.text = "Drag at least two words first."
