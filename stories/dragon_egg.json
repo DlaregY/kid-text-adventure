@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Lost Dragon Egg", "version": 1 },
+  "meta": { "title": "The Lost Dragon Egg", "version": 2 },
   "vocab": {
 	"go": { "label": "go" },
 	"open": { "label": "open" },
@@ -9,7 +9,6 @@
 	"give": { "label": "give" },
 	"climb": { "label": "climb" },
 	"use": { "label": "use" },
-
 	"door": { "label": "door" },
 	"box": { "label": "box" },
 	"key": { "label": "key" },
@@ -28,203 +27,448 @@
   "start_scene": "room",
   "scenes": {
 	"room": {
-	  "image": "room.png",
-	  "text": ["You are in a room.", "You see a door."],
+	  "text": ["You wake up in a small stone room.", "A big wooden door stands in front of you."],
 	  "tiles": ["open", "take", "go", "look", "door", "key"],
 	  "commands": [
 		{
 		  "pattern": ["open", "door"],
-		  "response": "The door opens!",
+		  "response": "The door creaks open!",
 		  "next": "hall"
 		},
 		{
-		  "pattern": ["take", "door"],
-		  "response": "The door is too big!"
+		  "pattern": ["look", "door"],
+		  "response": "A big wooden door with a round handle. It is not locked."
 		},
 		{
 		  "pattern": ["go", "door"],
-		  "response": "You bump the door. Try opening it."
+		  "response": "You push the door but it won't budge. Try opening it!"
+		},
+		{
+		  "pattern": ["take", "door"],
+		  "response": "You pull and pull, but the door is stuck to the wall!"
+		},
+		{
+		  "pattern": ["look", "key"],
+		  "response": "You don't see a key anywhere in this room."
+		},
+		{
+		  "pattern": ["take", "key"],
+		  "response": "There is no key here. Maybe keep looking."
 		}
 	  ],
-	  "default": ["Hmm... that does not work.", "Nope!", "Try something else."]
+	  "default": ["Hmm, that doesn't do anything.", "Try looking around first!", "Maybe try the door?"]
 	},
 
 	"hall": {
-	  "image": "hall.png",
-	  "text": ["You are in a hall.", "You see a box."],
+	  "text": ["You step into a dusty hall.", "A wooden box sits on the floor."],
 	  "tiles": ["open", "take", "look", "box", "key", "door"],
 	  "commands": [
 		{
 		  "pattern": ["open", "box"],
-		  "response": "Inside is a shiny key!",
+		  "response": "The lid pops open. Inside is a shiny key!",
 		  "effects": { "flags_set": { "box_open": true } }
 		},
 		{
 		  "pattern": ["take", "key"],
 		  "requirements": { "flags_true": ["box_open"] },
-		  "response": "You take the key.",
+		  "response": "You grab the shiny key. It feels important!",
 		  "effects": { "inventory_add": ["key"] },
 		  "next": "gate"
 		},
 		{
+		  "pattern": ["take", "key"],
+		  "response": "You don't see a key. Maybe look in the box?"
+		},
+		{
+		  "pattern": ["look", "box"],
+		  "requirements": { "flags_true": ["box_open"] },
+		  "response": "The box is open. A shiny key is inside!"
+		},
+		{
+		  "pattern": ["look", "box"],
+		  "response": "A small wooden box. I wonder what is inside?"
+		},
+		{
 		  "pattern": ["take", "box"],
-		  "response": "It is heavy."
+		  "response": "You try to lift it, but it is way too heavy!"
+		},
+		{
+		  "pattern": ["look", "key"],
+		  "requirements": { "flags_true": ["box_open"] },
+		  "response": "A shiny golden key. You should take it!"
+		},
+		{
+		  "pattern": ["look", "key"],
+		  "response": "You don't see a key anywhere. Try the box?"
+		},
+		{
+		  "pattern": ["look", "door"],
+		  "response": "The door behind you is still open."
+		},
+		{
+		  "pattern": ["open", "door"],
+		  "response": "The door is already open!"
+		},
+		{
+		  "pattern": ["open", "key"],
+		  "response": "You can't open a key, silly!"
 		}
 	  ],
-	  "default": ["Nothing happens."]
+	  "default": ["Nothing happens.", "Try looking around!"]
 	},
 
 	"gate": {
-	  "image": "gate.png",
-	  "text": ["You see a gate.", "It is locked."],
+	  "text": ["You find a tall iron gate.", "A big lock holds it shut."],
 	  "tiles": ["use", "open", "look", "key", "gate", "go"],
 	  "commands": [
 		{
 		  "pattern": ["use", "key"],
 		  "requirements": { "inventory_has": ["key"] },
-		  "response": "Click! The gate opens.",
+		  "response": "Click! The key turns and the gate swings open!",
 		  "next": "forest"
 		},
 		{
 		  "pattern": ["open", "gate"],
-		  "response": "It will not open."
+		  "response": "You push and pull, but the lock holds tight. You need a key!"
+		},
+		{
+		  "pattern": ["go", "gate"],
+		  "response": "The gate is locked. You can't squeeze through the bars!"
+		},
+		{
+		  "pattern": ["look", "gate"],
+		  "response": "A tall iron gate with a big lock. You need a key to open it."
+		},
+		{
+		  "pattern": ["look", "key"],
+		  "response": "Your golden key. It looks like it fits the lock!"
+		},
+		{
+		  "pattern": ["use", "gate"],
+		  "response": "You rattle the gate. It won't budge. Try using your key!"
 		}
 	  ],
-	  "default": ["The gate does not move."]
+	  "default": ["The gate won't move. Maybe use something on it?"]
 	},
 
 	"forest": {
-	  "image": "forest.png",
-	  "text": ["You are in a forest.", "You see a dog. The dog is sad."],
-	  "tiles": ["talk", "give", "look", "dog", "apple", "go"],
+	  "text": ["You step into a sunny forest.", "A little dog sits by an apple tree.", "The dog looks sad and hungry."],
+	  "tiles": ["talk", "give", "look", "go", "dog", "apple", "tree"],
 	  "commands": [
 		{
 		  "pattern": ["talk", "dog"],
-		  "response": "Dog says: The dragon lost her egg!",
-		  "effects": { "flags_set": { "dog_talked": true } },
-		  "next": "tree"
+		  "response": "The dog barks: 'The dragon lost her egg! Please help!'",
+		  "effects": { "flags_set": { "dog_talked": true } }
 		},
 		{
 		  "pattern": ["give", "apple"],
-		  "response": "Dog smiles and gives you a rope!",
+		  "response": "The dog wags its tail and gives you a rope! Good trade!",
 		  "effects": { "inventory_add": ["rope"], "flags_set": { "dog_helped": true } }
 		},
 		{
-		  "pattern": ["open", "dog"],
-		  "response": "The dog wiggles away. Nice try."
+		  "pattern": ["go", "tree"],
+		  "requirements": { "flags_true": ["dog_talked", "dog_helped"] },
+		  "response": "The dog waves goodbye! You follow the path deeper.",
+		  "next": "tree"
+		},
+		{
+		  "pattern": ["go", "tree"],
+		  "requirements": { "flags_true": ["dog_talked"] },
+		  "response": "The dog looks hungry. Maybe give it something to eat?"
+		},
+		{
+		  "pattern": ["go", "tree"],
+		  "response": "The dog whimpers and blocks the path. Maybe talk to it?"
+		},
+		{
+		  "pattern": ["look", "dog"],
+		  "response": "A small brown dog. Its tummy is rumbling!"
+		},
+		{
+		  "pattern": ["look", "apple"],
+		  "response": "A bright red apple on the ground. The dog keeps looking at it."
+		},
+		{
+		  "pattern": ["look", "tree"],
+		  "response": "A tall apple tree. A path leads deeper into the forest."
+		},
+		{
+		  "pattern": ["give", "dog"],
+		  "response": "Give the dog what? Maybe it wants something yummy."
+		},
+		{
+		  "pattern": ["talk", "apple"],
+		  "response": "The apple says nothing. It is an apple!"
+		},
+		{
+		  "pattern": ["talk", "tree"],
+		  "response": "The tree rustles its leaves but does not answer."
+		},
+		{
+		  "pattern": ["go", "dog"],
+		  "response": "The dog is not a place you can go to!"
+		},
+		{
+		  "pattern": ["go", "apple"],
+		  "response": "You can't go to an apple!"
 		}
 	  ],
-	  "default": ["The dog tilts its head.", "The forest is quiet."]
+	  "default": ["The dog tilts its head at you.", "Leaves rustle in the breeze."]
 	},
 
 	"tree": {
-	  "image": "tree.png",
-	  "text": ["You see a tall tree.", "You see something shiny."],
+	  "text": ["You find a very tall tree.", "Something shiny glows way up at the top!"],
 	  "tiles": ["climb", "take", "look", "tree", "egg", "go"],
 	  "commands": [
 		{
 		  "pattern": ["climb", "tree"],
-		  "response": "You climb up the tree!",
+		  "response": "You climb up, up, up! You can see a glowing egg!",
 		  "effects": { "flags_set": { "in_tree": true } }
 		},
 		{
 		  "pattern": ["take", "egg"],
 		  "requirements": { "flags_true": ["in_tree"] },
-		  "response": "You take the dragon egg. It is warm.",
+		  "response": "You carefully grab the dragon egg. It is warm and glowing!",
 		  "effects": { "inventory_add": ["egg"] },
 		  "next": "bridge"
+		},
+		{
+		  "pattern": ["take", "egg"],
+		  "response": "The egg is way up at the top! You need to climb first."
+		},
+		{
+		  "pattern": ["look", "tree"],
+		  "response": "The tallest tree you have ever seen! Something glows at the top."
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "requirements": { "flags_true": ["in_tree"] },
+		  "response": "A beautiful dragon egg! It glows warm and golden."
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "response": "You squint up. Something shiny is at the very top!"
+		},
+		{
+		  "pattern": ["take", "tree"],
+		  "response": "The tree is way too big to carry!"
+		},
+		{
+		  "pattern": ["climb", "egg"],
+		  "response": "You can't climb an egg! Try climbing the tree."
+		},
+		{
+		  "pattern": ["go", "tree"],
+		  "response": "You are already at the tree!"
+		},
+		{
+		  "pattern": ["go", "egg"],
+		  "response": "You can't go to an egg!"
 		}
 	  ],
-	  "default": ["You look up. It is very tall."]
+	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above."]
 	},
 
 	"bridge": {
-	  "image": "bridge.png",
-	  "text": ["You see a broken bridge."],
+	  "text": ["A bridge stretches across a deep canyon.", "But the middle is broken!", "You can see a cave on the other side."],
 	  "tiles": ["use", "go", "look", "rope", "bridge", "cave"],
 	  "commands": [
 		{
 		  "pattern": ["use", "rope", "bridge"],
 		  "requirements": { "inventory_has": ["rope"] },
-		  "response": "You tie the rope. The bridge is safe!",
+		  "response": "You tie the rope tight. The bridge holds! It is safe now!",
 		  "effects": { "flags_set": { "bridge_fixed": true } }
 		},
 		{
 		  "pattern": ["go", "bridge"],
 		  "requirements": { "flags_true": ["bridge_fixed"] },
-		  "response": "You cross the bridge.",
+		  "response": "You walk across the bridge. It holds!",
 		  "next": "cave"
 		},
 		{
 		  "pattern": ["go", "bridge"],
-		  "response": "Too dangerous! You need help."
-		}
-	  ],
-	  "default": ["The bridge creaks."]
-	},
-
-	"cave": {
-	  "image": "cave.png",
-	  "text": ["You stand at a dark cave.", "You hear breathing..."],
-	  "tiles": ["go", "look", "talk", "cave", "dragon", "egg"],
-	  "commands": [
-		{
-		  "pattern": ["look", "cave"],
-		  "response": "You see a dragon inside!"
+		  "response": "The bridge is broken! You would fall. Fix it first!"
 		},
 		{
 		  "pattern": ["go", "cave"],
-		  "response": "You walk into the cave.",
-		  "next": "dragon"
+		  "requirements": { "flags_true": ["bridge_fixed"] },
+		  "response": "You cross the bridge and reach the cave!",
+		  "next": "cave"
+		},
+		{
+		  "pattern": ["go", "cave"],
+		  "response": "The cave is on the other side! The broken bridge is in the way."
+		},
+		{
+		  "pattern": ["use", "rope"],
+		  "requirements": { "inventory_has": ["rope"] },
+		  "response": "Use the rope on what? Maybe try the bridge!"
+		},
+		{
+		  "pattern": ["use", "rope"],
+		  "response": "You don't have any rope!"
+		},
+		{
+		  "pattern": ["look", "bridge"],
+		  "response": "The bridge is broken in the middle. You need something to fix it."
+		},
+		{
+		  "pattern": ["look", "rope"],
+		  "requirements": { "inventory_has": ["rope"] },
+		  "response": "A strong rope. It could hold the bridge together!"
+		},
+		{
+		  "pattern": ["look", "rope"],
+		  "response": "You don't have any rope."
+		},
+		{
+		  "pattern": ["look", "cave"],
+		  "response": "A dark cave across the canyon. You hear something inside..."
+		},
+		{
+		  "pattern": ["use", "bridge"],
+		  "response": "The bridge is broken! You need to fix it with something."
+		},
+		{
+		  "pattern": ["use", "cave"],
+		  "response": "You can't use a cave! Try to find a way across."
 		}
 	  ],
-	  "default": ["It is spooky, but you are brave!"]
+	  "default": ["The wind howls through the canyon.", "Don't look down!"]
+	},
+
+	"cave": {
+	  "text": ["You stand at the mouth of a dark cave.", "You hear deep breathing inside..."],
+	  "tiles": ["go", "look", "talk", "give", "cave", "dragon", "egg"],
+	  "commands": [
+		{
+		  "pattern": ["go", "cave"],
+		  "response": "You take a deep breath and walk inside.",
+		  "next": "dragon"
+		},
+		{
+		  "pattern": ["look", "cave"],
+		  "response": "It is very dark, but you see two big eyes glowing inside!"
+		},
+		{
+		  "pattern": ["talk", "dragon"],
+		  "response": "You call out. A low rumble answers from the dark..."
+		},
+		{
+		  "pattern": ["look", "dragon"],
+		  "response": "You can't see much from out here. Go inside to look!"
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "response": "The warm egg glows softly in your hands."
+		},
+		{
+		  "pattern": ["give", "egg"],
+		  "response": "You should go inside the cave first!"
+		},
+		{
+		  "pattern": ["go", "dragon"],
+		  "response": "You walk into the cave toward the sound.",
+		  "next": "dragon"
+		},
+		{
+		  "pattern": ["talk", "cave"],
+		  "response": "Hello, cave! ... Your voice echoes back."
+		},
+		{
+		  "pattern": ["go", "egg"],
+		  "response": "The egg can't take you anywhere!"
+		},
+		{
+		  "pattern": ["talk", "egg"],
+		  "response": "The egg hums softly but does not talk."
+		}
+	  ],
+	  "default": ["Something big is in there...", "You feel brave!"]
 	},
 
 	"dragon": {
-	  "image": "dragon.png",
-	  "text": ["A dragon looks sad.", "She is searching."],
+	  "text": ["A big dragon sits in the cave.", "She looks at you with sad eyes.", "She is searching for something."],
 	  "tiles": ["give", "talk", "look", "dragon", "egg", "go"],
 	  "commands": [
 		{
 		  "pattern": ["give", "egg"],
 		  "requirements": { "inventory_has": ["egg"] },
-		  "response": "The dragon smiles! You returned her egg.",
-		  "effects": { "flags_set": { "egg_returned": true } },
+		  "response": "The dragon's eyes light up! She nuzzles her egg happily!",
+		  "effects": { "inventory_remove": ["egg"], "flags_set": { "egg_returned": true } },
 		  "next": "treasure"
 		},
 		{
+		  "pattern": ["talk", "dragon"],
+		  "response": "The dragon sighs: 'I lost my egg. Have you seen it?'"
+		},
+		{
+		  "pattern": ["look", "dragon"],
+		  "response": "A big but gentle dragon. Her eyes look sad and tired."
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "requirements": { "inventory_has": ["egg"] },
+		  "response": "The warm dragon egg glows in your hands. The dragon stares at it!"
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "response": "You don't have an egg."
+		},
+		{
 		  "pattern": ["give", "dragon"],
-		  "response": "The dragon blinks. Try giving something else."
+		  "response": "Give the dragon what? She keeps looking at your hands..."
+		},
+		{
+		  "pattern": ["give", "egg"],
+		  "response": "You don't have an egg to give."
+		},
+		{
+		  "pattern": ["go", "dragon"],
+		  "response": "You step closer. The dragon watches you hopefully."
+		},
+		{
+		  "pattern": ["go", "egg"],
+		  "response": "You can't go to an egg!"
+		},
+		{
+		  "pattern": ["talk", "egg"],
+		  "response": "The egg hums quietly. The dragon leans closer."
 		}
 	  ],
-	  "default": ["The dragon watches you carefully."]
+	  "default": ["The dragon watches you with hopeful eyes.", "She sniffs the air sadly."]
 	},
 
 	"treasure": {
-	  "image": "treasure.png",
-	  "text": ["A treasure chest appears!", "You did it!"],
+	  "text": ["The dragon roars with joy!", "A treasure chest appears before you.", "Thank you, brave hero!"],
 	  "tiles": ["take", "open", "look", "treasure", "go"],
 	  "commands": [
 		{
 		  "pattern": ["take", "treasure"],
-		  "response": "You take the treasure! You are a hero!",
+		  "response": "You take the treasure! You are a true hero!",
 		  "next": "win"
 		},
 		{
 		  "pattern": ["open", "treasure"],
-		  "response": "It is already open. Shiny!"
+		  "response": "The chest is already open. Gold and gems sparkle inside!"
+		},
+		{
+		  "pattern": ["look", "treasure"],
+		  "response": "Gold coins, shiny gems, and a tiny crown! All for you!"
+		},
+		{
+		  "pattern": ["go", "treasure"],
+		  "response": "You walk up to the glowing treasure chest."
 		}
 	  ],
-	  "default": ["Sparkles everywhere!"]
+	  "default": ["Sparkles fill the air!", "The dragon hums a happy song."]
 	},
 
 	"win": {
-	  "image": "win.png",
-	  "text": ["You win!", "THE END"],
+	  "text": ["You saved the dragon egg!", "The dragon is your friend now!", "YOU WIN!"],
 	  "tiles": ["look"],
 	  "commands": [],
-	  "default": ["Hooray!"]
+	  "default": ["Hooray! What an adventure!", "The dragon waves goodbye!"]
 	}
   }
 }

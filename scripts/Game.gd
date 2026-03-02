@@ -7,20 +7,29 @@ extends Control
 
 const STORIES_DIR := "res://stories"
 const TILE_SCENE := preload("res://ui/Tile.tscn")
+const EMOJI := {
+	"key": "🗝️", "box": "📦", "door": "🚪", "rope": "🪢",
+	"apple": "🍎", "treasure": "💎", "egg": "🥚",
+	"forest": "🌲", "gate": "🏰", "tree": "🌳",
+	"bridge": "🌉", "cave": "🕳️",
+	"dog": "🐕", "dragon": "🐉",
+	"go": "👉", "open": "📖", "take": "✋", "look": "👀",
+	"talk": "💬", "give": "🎁", "climb": "🧗", "use": "🔧",
+}
 
-@onready var menu_bar: HBoxContainer = $Layout/MenuBar
-@onready var story_picker: OptionButton = $Layout/MenuBar/StoryPicker
-@onready var start_button: Button = $Layout/MenuBar/StartButton
-@onready var story_title: Label = $Layout/MenuBar/StoryTitle
+@onready var menu_bar: HBoxContainer = $ScrollContainer/Layout/MenuBar
+@onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuBar/StoryPicker
+@onready var start_button: Button = $ScrollContainer/Layout/MenuBar/StartButton
+@onready var story_title: Label = $ScrollContainer/Layout/MenuBar/StoryTitle
 @onready var menu_button: Button = $MenuButton
-@onready var story_text: Label = $Layout/StoryText
-@onready var feedback_text: Label = $Layout/FeedbackText
-@onready var tile_tray: FlowContainer = $Layout/TileTray
-@onready var go_button: Button = $Layout/GoButton
-@onready var slot1: PanelContainer = $Layout/CommandBar/Slot1
-@onready var slot2: PanelContainer = $Layout/CommandBar/Slot2
-@onready var slot3: PanelContainer = $Layout/CommandBar/Slot3
-@onready var inventory_text: Label = $Layout/InventoryText
+@onready var story_text: Label = $ScrollContainer/Layout/StoryText
+@onready var feedback_text: Label = $ScrollContainer/Layout/FeedbackText
+@onready var tile_tray: FlowContainer = $ScrollContainer/Layout/TileTray
+@onready var go_button: Button = $ScrollContainer/Layout/GoButton
+@onready var slot1: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot1
+@onready var slot2: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot2
+@onready var slot3: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot3
+@onready var inventory_text: Label = $ScrollContainer/Layout/InventoryText
 
 var story = {}
 var scenes = {}
@@ -205,7 +214,8 @@ func _render_scene() -> void:
 	for t in tiles:
 		var tile = TILE_SCENE.instantiate()
 		tile.token = str(t)
-		tile.text = str(t) # label for now; later we can map vocab labels
+		var icon: String = EMOJI.get(str(t), "")
+		tile.text = (icon + " " + str(t)) if icon != "" else str(t)
 		tile_tray.add_child(tile)
 		
 	_update_inventory_ui()
