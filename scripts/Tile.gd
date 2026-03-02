@@ -4,7 +4,9 @@ extends Button
 @export var token: String = ""
 
 func _ready() -> void:
-	text = token if token != "" else text
+	# Only set text from token if it wasn't already set by the caller
+	if text == "" and token != "":
+		text = token
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	# Show a styled preview matching tile appearance while dragging

@@ -43,9 +43,13 @@ var selected_story_path := ""
 var has_active_story := false
 
 func _ready() -> void:
-	var emoji_font = load("res://fonts/NotoColorEmoji.ttf")
-	if emoji_font:
-		ThemeDB.fallback_font.fallbacks.append(emoji_font)
+	var emoji_font := SystemFont.new()
+	emoji_font.font_names = PackedStringArray(["Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji"])
+	var fb: Font = ThemeDB.fallback_font
+	if fb:
+		var arr = fb.fallbacks.duplicate()
+		arr.append(emoji_font)
+		fb.fallbacks = arr
 
 	story_picker.item_selected.connect(_on_story_selected)
 	start_button.pressed.connect(_on_start_pressed)
