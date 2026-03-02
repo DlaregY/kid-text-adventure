@@ -7,6 +7,7 @@ extends Control
 
 const STORIES_DIR := "res://stories"
 const TILE_SCENE := preload("res://ui/Tile.tscn")
+const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb", "use"]
 const EMOJI := {
 	"key": "🗝️", "box": "📦", "door": "🚪", "rope": "🪢",
 	"apple": "🍎", "treasure": "💎", "egg": "🥚",
@@ -24,7 +25,8 @@ const EMOJI := {
 @onready var menu_button: Button = $MenuButton
 @onready var story_text: Label = $ScrollContainer/Layout/StoryText
 @onready var feedback_text: Label = $ScrollContainer/Layout/FeedbackText
-@onready var tile_tray: FlowContainer = $ScrollContainer/Layout/TileTray
+@onready var action_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ActionTray
+@onready var thing_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ThingTray
 @onready var go_button: Button = $ScrollContainer/Layout/GoButton
 @onready var slot1: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot2
@@ -41,6 +43,10 @@ var selected_story_path := ""
 var has_active_story := false
 
 func _ready() -> void:
+	var emoji_font = load("res://fonts/NotoColorEmoji.ttf")
+	if emoji_font:
+		ThemeDB.fallback_font.fallbacks.append(emoji_font)
+
 	story_picker.item_selected.connect(_on_story_selected)
 	start_button.pressed.connect(_on_start_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
@@ -155,11 +161,14 @@ func _show_menu() -> void:
 	menu_button.visible = false
 	story_text.text = "Choose a story, then press START."
 	feedback_text.text = ""
-	for child in tile_tray.get_children():
+	for child in action_tray.get_children():
+		child.queue_free()
+	for child in thing_tray.get_children():
 		child.queue_free()
 	slot1.clear()
 	slot2.clear()
 	slot3.clear()
+	slot3.visible = false
 	inventory.clear()
 	flags.clear()
 	_update_inventory_ui()
@@ -205,9 +214,12 @@ func _render_scene() -> void:
 	slot1.clear()
 	slot2.clear()
 	slot3.clear()
+	slot3.visible = _scene_has_3word_commands(scene)
 
-	# tiles
-	for child in tile_tray.get_children():
+	# tiles — split into actions vs things
+	for child in action_tray.get_children():
+		child.queue_free()
+	for child in thing_tray.get_children():
 		child.queue_free()
 
 	var tiles: Array = scene.get("tiles", [])
@@ -216,8 +228,11 @@ func _render_scene() -> void:
 		tile.token = str(t)
 		var icon: String = EMOJI.get(str(t), "")
 		tile.text = (icon + " " + str(t)) if icon != "" else str(t)
-		tile_tray.add_child(tile)
-		
+		if str(t) in ACTION_TOKENS:
+			action_tray.add_child(tile)
+		else:
+			thing_tray.add_child(tile)
+
 	_update_inventory_ui()
 
 func _update_inventory_ui() -> void:
@@ -307,6 +322,14 @@ func _requirements_pass(req: Dictionary) -> bool:
 			return false
 
 	return true
+
+func _scene_has_3word_commands(scene: Dictionary) -> bool:
+	var commands: Array = scene.get("commands", [])
+	for rule in commands:
+		var pattern: Array = rule.get("pattern", [])
+		if pattern.size() >= 3:
+			return true
+	return false
 
 func _apply_effects(eff: Dictionary) -> void:
 	var inv_add: Array = eff.get("inventory_add", [])

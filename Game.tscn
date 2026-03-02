@@ -110,44 +110,54 @@ autowrap_mode = 3
 layout_mode = 2
 
 [node name="Slot1" type="PanelContainer" parent="ScrollContainer/Layout/CommandBar" unique_id=1224793628]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("slot_panel")
 script = ExtResource("1_wbfu4")
 slot_index = 1
+placeholder_text = "Action"
 
 [node name="Slot1Label" type="Label" parent="ScrollContainer/Layout/CommandBar/Slot1" unique_id=401115347]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-text = "(drop here)"
+text = "Action"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot2" type="PanelContainer" parent="ScrollContainer/Layout/CommandBar" unique_id=1346960890]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("slot_panel")
 script = ExtResource("1_wbfu4")
 slot_index = 2
+placeholder_text = "Thing"
 
 [node name="Slot2Label" type="Label" parent="ScrollContainer/Layout/CommandBar/Slot2" unique_id=388333064]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-text = "(drop here)"
+text = "Thing"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Slot3" type="PanelContainer" parent="ScrollContainer/Layout/CommandBar" unique_id=711238904]
+visible = false
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("slot_panel")
 script = ExtResource("1_wbfu4")
 slot_index = 3
+placeholder_text = "Where"
 
 [node name="Slot3Label" type="Label" parent="ScrollContainer/Layout/CommandBar/Slot3" unique_id=1683902445]
 custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-text = "(drop here)"
+text = "Where"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -155,7 +165,25 @@ vertical_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 
-[node name="TileTray" type="FlowContainer" parent="ScrollContainer/Layout" unique_id=1910350022]
+[node name="TileSection" type="VBoxContainer" parent="ScrollContainer/Layout"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ActionsLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Actions:"
+
+[node name="ActionTray" type="FlowContainer" parent="ScrollContainer/Layout/TileSection"]
+layout_mode = 2
+theme_override_constants/v_separation = 10
+
+[node name="ThingsLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Things:"
+
+[node name="ThingTray" type="FlowContainer" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2
 theme_override_constants/v_separation = 10
 

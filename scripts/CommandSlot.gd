@@ -2,6 +2,7 @@
 extends PanelContainer
 
 @export var slot_index: int = 0
+@export var placeholder_text: String = "(drop here)"
 @onready var label: Label = get_child(0)
 
 var token: String = ""
@@ -15,4 +16,4 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 
 func clear() -> void:
 	token = ""
-	label.text = "(drop here)"
+	label.text = placeholder_text
