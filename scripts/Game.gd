@@ -158,7 +158,7 @@ func _start_story() -> void:
 	has_active_story = true
 	_render_scene()
 	menu_bar.visible = false
-	menu_button.visible = true
+	menu_button.visible = false
 
 func _show_menu() -> void:
 	has_active_story = false
@@ -242,6 +242,14 @@ func _render_scene() -> void:
 			inventory_tray.add_child(_make_tile(item_str, Color(0.85, 0.65, 0.13)))
 
 	_update_inventory_ui()
+
+	# Show "Change Story" button only on terminal scenes (no outgoing transitions)
+	var has_next := false
+	for rule in scene.get("commands", []):
+		if rule.has("next"):
+			has_next = true
+			break
+	menu_button.visible = not has_next
 
 func _update_inventory_ui() -> void:
 	var has_items: bool = inventory_tray.get_child_count() > 0
