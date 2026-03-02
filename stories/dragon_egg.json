@@ -153,7 +153,7 @@
 
 	"forest": {
 	  "text": ["You step into a sunny forest.", "A little dog sits by an apple tree.", "The dog looks sad and hungry."],
-	  "tiles": ["talk", "give", "look", "go", "dog", "apple", "tree"],
+	  "tiles": ["talk", "give", "look", "go", "dog", "apple", "forest"],
 	  "commands": [
 		{
 		  "pattern": ["talk", "dog"],
@@ -166,18 +166,18 @@
 		  "effects": { "inventory_add": ["rope"], "flags_set": { "dog_helped": true } }
 		},
 		{
-		  "pattern": ["go", "tree"],
+		  "pattern": ["go", "forest"],
 		  "requirements": { "flags_true": ["dog_talked", "dog_helped"] },
-		  "response": "The dog waves goodbye! You follow the path deeper.",
+		  "response": "The dog waves goodbye! You follow the path deeper into the forest.",
 		  "next": "tree"
 		},
 		{
-		  "pattern": ["go", "tree"],
+		  "pattern": ["go", "forest"],
 		  "requirements": { "flags_true": ["dog_talked"] },
 		  "response": "The dog looks hungry. Maybe give it something to eat?"
 		},
 		{
-		  "pattern": ["go", "tree"],
+		  "pattern": ["go", "forest"],
 		  "response": "The dog whimpers and blocks the path. Maybe talk to it?"
 		},
 		{
@@ -189,8 +189,8 @@
 		  "response": "A bright red apple on the ground. The dog keeps looking at it."
 		},
 		{
-		  "pattern": ["look", "tree"],
-		  "response": "A tall apple tree. A path leads deeper into the forest."
+		  "pattern": ["look", "forest"],
+		  "response": "A winding path leads deeper into the forest. Who knows what is out there?"
 		},
 		{
 		  "pattern": ["give", "dog"],
@@ -201,8 +201,8 @@
 		  "response": "The apple says nothing. It is an apple!"
 		},
 		{
-		  "pattern": ["talk", "tree"],
-		  "response": "The tree rustles its leaves but does not answer."
+		  "pattern": ["talk", "forest"],
+		  "response": "You shout into the forest. Only your echo answers."
 		},
 		{
 		  "pattern": ["go", "dog"],
@@ -307,6 +307,11 @@
 		{
 		  "pattern": ["use", "rope"],
 		  "response": "You don't have any rope!"
+		},
+		{
+		  "pattern": ["look", "bridge"],
+		  "requirements": { "flags_true": ["bridge_fixed"] },
+		  "response": "The rope holds the bridge together. It looks safe to cross!"
 		},
 		{
 		  "pattern": ["look", "bridge"],
@@ -465,10 +470,23 @@
 	},
 
 	"win": {
-	  "text": ["You saved the dragon egg!", "The dragon is your friend now!", "YOU WIN!"],
-	  "tiles": ["look"],
-	  "commands": [],
-	  "default": ["Hooray! What an adventure!", "The dragon waves goodbye!"]
+	  "text": ["YOU DID IT!", "The dragon roars so loud the whole mountain shakes!", "Gold and gems rain down from the ceiling!", "The dragon puts the tiny crown on your head.", "You are the HERO of the land!"],
+	  "tiles": ["look", "talk", "dragon", "treasure"],
+	  "commands": [
+		{
+		  "pattern": ["look", "dragon"],
+		  "response": "The dragon is smiling so big! She nuzzles her glowing egg."
+		},
+		{
+		  "pattern": ["look", "treasure"],
+		  "response": "Gold coins, rubies, emeralds, and a magical crown! All yours!"
+		},
+		{
+		  "pattern": ["talk", "dragon"],
+		  "response": "The dragon says: 'You are the bravest hero ever! Come back and visit!'"
+		}
+	  ],
+	  "default": ["The dragon does a happy dance!", "Gems sparkle everywhere!", "The dragon breathes rainbow fire into the sky!", "You are the greatest hero of all time!"]
 	}
   }
 }

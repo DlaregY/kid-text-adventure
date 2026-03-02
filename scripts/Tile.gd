@@ -2,6 +2,7 @@
 extends Button
 
 @export var token: String = ""
+var tile_color: Color = Color(0.357, 0.608, 0.835)
 
 func _ready() -> void:
 	# Only set text from token if it wasn't already set by the caller
@@ -12,7 +13,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	# Show a styled preview matching tile appearance while dragging
 	var panel := PanelContainer.new()
 	var stylebox := StyleBoxFlat.new()
-	stylebox.bg_color = Color(0.357, 0.608, 0.835, 1)
+	stylebox.bg_color = tile_color
 	stylebox.set_corner_radius_all(8)
 	stylebox.content_margin_left = 12
 	stylebox.content_margin_right = 12

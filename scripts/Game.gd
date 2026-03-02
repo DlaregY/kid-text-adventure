@@ -31,7 +31,8 @@ const EMOJI := {
 @onready var slot1: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot2
 @onready var slot3: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot3
-@onready var inventory_text: Label = $ScrollContainer/Layout/InventoryText
+@onready var inventory_label: Label = $ScrollContainer/Layout/TileSection/InventoryLabel
+@onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
 
 var story = {}
 var scenes = {}
@@ -165,10 +166,9 @@ func _show_menu() -> void:
 	menu_button.visible = false
 	story_text.text = "Choose a story, then press START."
 	feedback_text.text = ""
-	for child in action_tray.get_children():
-		child.queue_free()
-	for child in thing_tray.get_children():
-		child.queue_free()
+	for tray in [action_tray, thing_tray, inventory_tray]:
+		for child in tray.get_children():
+			child.queue_free()
 	slot1.clear()
 	slot2.clear()
 	slot3.clear()
@@ -220,32 +220,56 @@ func _render_scene() -> void:
 	slot3.clear()
 	slot3.visible = _scene_has_3word_commands(scene)
 
-	# tiles — split into actions vs things
-	for child in action_tray.get_children():
-		child.queue_free()
-	for child in thing_tray.get_children():
-		child.queue_free()
+	# tiles — split into actions, things, and inventory
+	for tray in [action_tray, thing_tray, inventory_tray]:
+		for child in tray.get_children():
+			child.queue_free()
 
 	var tiles: Array = scene.get("tiles", [])
 	for t in tiles:
-		var tile = TILE_SCENE.instantiate()
-		tile.token = str(t)
-		var icon: String = EMOJI.get(str(t), "")
-		tile.text = (icon + " " + str(t)) if icon != "" else str(t)
-		if str(t) in ACTION_TOKENS:
-			action_tray.add_child(tile)
+		var token_str: String = str(t)
+		if token_str in ACTION_TOKENS:
+			action_tray.add_child(_make_tile(token_str))
+		elif inventory.has(token_str):
+			inventory_tray.add_child(_make_tile(token_str, Color(0.85, 0.65, 0.13)))
 		else:
-			thing_tray.add_child(tile)
+			thing_tray.add_child(_make_tile(token_str))
+
+	# Add inventory items not in this scene's tile list
+	for item in inventory.keys():
+		var item_str: String = str(item)
+		if item_str not in tiles:
+			inventory_tray.add_child(_make_tile(item_str, Color(0.85, 0.65, 0.13)))
 
 	_update_inventory_ui()
 
 func _update_inventory_ui() -> void:
-	var items := inventory.keys()
-	items.sort()
-	if items.size() == 0:
-		inventory_text.text = "Inventory: (empty)"
-	else:
-		inventory_text.text = "Inventory: " + ", ".join(items)
+	var has_items: bool = inventory_tray.get_child_count() > 0
+	inventory_label.visible = has_items
+	inventory_tray.visible = has_items
+
+func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835)) -> Button:
+	var tile = TILE_SCENE.instantiate()
+	tile.token = token_str
+	var icon: String = EMOJI.get(token_str, "")
+	tile.text = (icon + " " + token_str) if icon != "" else token_str
+	if color != Color(0.357, 0.608, 0.835):
+		tile.tile_color = color
+		var normal := StyleBoxFlat.new()
+		normal.bg_color = color
+		normal.set_corner_radius_all(8)
+		normal.content_margin_left = 12
+		normal.content_margin_right = 12
+		normal.content_margin_top = 8
+		normal.content_margin_bottom = 8
+		var hover := normal.duplicate()
+		hover.bg_color = Color(0.92, 0.75, 0.25)
+		var pressed := normal.duplicate()
+		pressed.bg_color = Color(0.70, 0.53, 0.10)
+		tile.add_theme_stylebox_override("normal", normal)
+		tile.add_theme_stylebox_override("hover", hover)
+		tile.add_theme_stylebox_override("pressed", pressed)
+	return tile
 
 func _on_go_pressed() -> void:
 	if not has_active_story:
@@ -298,14 +322,15 @@ func _apply_command(cmd: Array[String]) -> bool:
 		feedback_text.text = response
 
 		_apply_effects(rule.get("effects", {}))
-		_update_inventory_ui()
 
 		if rule.has("next"):
 			current_scene_id = str(rule["next"])
 			_render_scene()
 			return true
 		else:
-			# stay in same scene, keeping Slot1 (verb) for fast retries
+			# stay in same scene — re-render tiles so inventory moves between trays
+			_render_scene()
+			feedback_text.text = response
 			return false
 
 	# No match

@@ -161,13 +161,20 @@ text = "Where"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="InventoryText" type="Label" parent="ScrollContainer/Layout" unique_id=54929718]
-layout_mode = 2
-theme_override_font_sizes/font_size = 20
-
 [node name="TileSection" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="InventoryLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Inventory:"
+
+[node name="InventoryTray" type="FlowContainer" parent="ScrollContainer/Layout/TileSection"]
+visible = false
+layout_mode = 2
+theme_override_constants/v_separation = 10
 
 [node name="ActionsLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2

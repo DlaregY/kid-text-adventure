@@ -2,31 +2,33 @@
 
 A small **Godot 4** drag-and-drop text adventure aimed at early readers.
 
-Players are shown short story text and a tray of word tiles. They drag **two words** (a verb + noun) into command slots, press **GO**, and the game evaluates the command against rules defined in JSON.
+Players are shown short story text and categorized trays of word tiles. They drag **two or three words** (a verb + noun, optionally a location) into command slots, press **GO**, and the game evaluates the command against rules defined in JSON. Tiles show emoji icons and are split into Actions, Things, and Inventory sections. Inventory items appear as gold draggable tiles that persist across scenes.
 
 ---
 
 ## What this repository contains
 
 - `project.godot`: Godot project configuration and the main scene entry point.
-- `Game.tscn`: Main UI scene (story text, feedback, two command slots, inventory text, tile tray, GO button).
-- `scripts/Game.gd`: Core game controller (loads story JSON, renders scenes, evaluates commands, applies effects, tracks inventory/flags, transitions scenes).
-- `scripts/Tile.gd`: Draggable tile behavior.
-- `scripts/CommandSlot.gd`: Drop target behavior for command slots.
-- `stories/dragon_egg.json`: Story content and logic (scenes, available tiles, command patterns, requirements, effects, scene transitions).
+- `Game.tscn`: Main UI scene (story text, feedback, three labeled command slots, categorized tile trays, GO button, story picker).
+- `scripts/Game.gd`: Core game controller (story discovery, scene rendering, drag-drop input, 2–3 token command evaluation, inventory/flag state, emoji rendering, tile categorization).
+- `scripts/Tile.gd`: Draggable tile behavior with `tile_color` property for styled drag previews.
+- `scripts/CommandSlot.gd`: Drop target behavior for labeled command slots (Action, Thing, Where).
+- `ui/Tile.tscn`: Reusable tile button component instantiated at runtime.
+- `stories/*.json`: Story content files auto-discovered at startup.
 
 ---
 
 ## How the game works
 
-### 1) Story loading
+### 1) Story discovery and loading
 
-At startup, `Game.gd` loads `res://stories/dragon_egg.json`, parses it, and reads:
+At startup, `Game.gd` scans `res://stories/` for all `.json` files and presents them in a story picker dropdown. The player selects a story and presses START. Each story file is parsed for:
 
+- `meta.title` (used as display name in the picker)
 - `start_scene`
 - `scenes`
 
-If the file cannot be read, JSON is invalid, or `start_scene` is missing, it reports errors.
+If a file cannot be read, JSON is invalid, or `start_scene` is missing, it reports errors.
 
 ### 2) Scene rendering
 
@@ -34,31 +36,37 @@ For the active scene, the controller:
 
 - Displays scene text (`text` array joined by newlines)
 - Clears the previous feedback and command slots
-- Rebuilds the tile tray from scene `tiles`
-- Updates inventory UI
+- Sorts scene tiles into three categorized trays:
+  - **Actions** (blue): verb tiles like "go", "take", "open"
+  - **Things** (blue): noun tiles not in inventory
+  - **Inventory** (gold/amber): items the player is carrying — includes scene tiles that are in inventory plus items carried from other scenes
+- Shows/hides the third command slot ("Where") based on whether the scene has 3-token rules
+- Shows/hides the Inventory section based on whether the player has items
 
 ### 3) Input model
 
-- Each tile is a `Button` (`Tile.gd`) that supports drag-and-drop.
+- Each tile is a `Button` (`Tile.gd`) that supports drag-and-drop with a styled preview matching its tray color.
+- Tiles display emoji icons from the `EMOJI` dict (e.g. "🗝️ key", "👉 go").
 - Drag payload is a dictionary containing:
   - `token` (internal command word)
   - `label` (display text)
-- Each command slot (`CommandSlot.gd`) accepts that payload, stores the token, and updates its label.
+- Three labeled command slots (Action, Thing, Where) accept tile drops. Slot3 ("Where") is only visible when the scene has 3-token command rules.
 
 ### 4) Command resolution
 
-When GO is pressed, the game checks that both slots are filled and calls `_apply_command(verb, noun)`.
+When GO is pressed, the game checks that at least two slots are filled and builds a 2–3 token command array.
 
 Rule evaluation is deterministic and simple:
 
 1. Read current scene `commands` in order.
-2. Find first command whose `pattern` matches `[verb, noun]`.
+2. Find first command whose `pattern` length and tokens match the player's command.
 3. If the rule has `requirements`, verify them:
    - `inventory_has`
    - `flags_true`
 4. On success:
    - show `response`
-   - apply `effects`
+   - apply `effects` (inventory/flag changes)
+   - re-render tiles so inventory items move between trays immediately
    - optionally move to `next` scene
 5. If no rule matches, show a random scene `default` message.
 
@@ -95,7 +103,7 @@ Scene object keys used by the runtime:
 
 Command rule keys:
 
-- `pattern`: two-token array (verb, noun)
+- `pattern`: 2–3 token array (e.g. `["go", "forest"]` or `["give", "egg", "dragon"]`)
 - `response`: text shown on match
 - `requirements` (optional):
   - `inventory_has`: required inventory tokens
@@ -146,10 +154,10 @@ godot4 --path .
 
 ## Notes and limitations
 
-- Command input is currently fixed to exactly **two tokens**.
-- `vocab` labels exist in JSON, but tile rendering currently uses token text directly.
+- `vocab` labels exist in JSON, but tile rendering uses emoji + raw token text via the `EMOJI` dict instead.
 - Scene `image` fields exist in story data but are not yet rendered by UI.
-- Some story branches imply inventory items (e.g., giving apple) that are not fully sourced by earlier gameplay; this is fine for prototype content but can be tightened during story pass.
+- No restart/checkpoint UI, no sound/animation feedback, no JSON validation.
+- Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS, Noto Color Emoji on Linux). Bundled CBDT-format emoji fonts do not render in Godot.
 
 ---
 
@@ -160,7 +168,6 @@ godot4 --path .
 - Add restart/checkpoint UI.
 - Add sound and simple animation feedback for correct/incorrect commands.
 - Add lightweight JSON validation for authoring errors.
-- Expand command system to support single-word and 3-word patterns.
 
 ---
 
