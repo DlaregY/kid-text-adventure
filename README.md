@@ -1,18 +1,18 @@
-# Kid Text Adventure
+# Ike Quest
 
-A small **Godot 4** drag-and-drop text adventure aimed at early readers.
+A **Godot 4** tap-and-play text adventure aimed at early readers.
 
-Players are shown short story text and categorized trays of word tiles. They drag **two or three words** (a verb + noun, optionally a location) into command slots, press **GO**, and the game evaluates the command against rules defined in JSON. Tiles show emoji icons and are split into Actions, Things, and Inventory sections. Inventory items appear as gold draggable tiles that persist across scenes.
+Players are shown short story text and categorized trays of word tiles. They tap tiles to fill **two command slots** (action + thing); when both slots are filled, the command auto-executes after a brief delay. The engine evaluates commands against rules defined in JSON. Tiles show emoji icons and are split into Actions, Things, and Inventory sections. Inventory items appear as gold tiles that persist across scenes and can be placed in either slot.
 
 ---
 
 ## What this repository contains
 
 - `project.godot`: Godot project configuration and the main scene entry point.
-- `Game.tscn`: Main UI scene (story text, feedback, three labeled command slots, categorized tile trays, GO button, story picker).
-- `scripts/Game.gd`: Core game controller (story discovery, scene rendering, drag-drop input, 2–3 token command evaluation, inventory/flag state, emoji rendering, tile categorization).
-- `scripts/Tile.gd`: Draggable tile behavior with `tile_color` property for styled drag previews.
-- `scripts/CommandSlot.gd`: Drop target behavior for labeled command slots (Action, Thing, Where).
+- `Game.tscn`: Main UI scene (MenuScreen with logo/title/story picker, story text, feedback label, two command slots, categorized tile trays, continue button, new game button, transition overlay).
+- `scripts/Game.gd`: Core game controller (story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, 2-token command evaluation, inventory/flag state, scene transitions with fade, emoji rendering, tile categorization).
+- `scripts/Tile.gd`: Draggable/clickable tile with `token`, `tile_color`, and `category` properties.
+- `scripts/CommandSlot.gd`: Drop target for command slots (Action, Thing).
 - `ui/Tile.tscn`: Reusable tile button component instantiated at runtime.
 - `stories/*.json`: Story content files auto-discovered at startup.
 
@@ -20,15 +20,9 @@ Players are shown short story text and categorized trays of word tiles. They dra
 
 ## How the game works
 
-### 1) Story discovery and loading
+### 1) Menu and story discovery
 
-At startup, `Game.gd` scans `res://stories/` for all `.json` files and presents them in a story picker dropdown. The player selects a story and presses START. Each story file is parsed for:
-
-- `meta.title` (used as display name in the picker)
-- `start_scene`
-- `scenes`
-
-If a file cannot be read, JSON is invalid, or `start_scene` is missing, it reports errors.
+At startup, `Game.gd` scans `res://stories/` for all `.json` files and presents them in a story picker dropdown sorted by scene count. Each story shows its title, scene count, and teaser description. The player selects a story and taps PLAY.
 
 ### 2) Scene rendering
 
@@ -40,26 +34,23 @@ For the active scene, the controller:
   - **Actions** (blue): verb tiles like "go", "take", "open"
   - **Things** (blue): noun tiles not in inventory
   - **Inventory** (gold/amber): items the player is carrying — includes scene tiles that are in inventory plus items carried from other scenes
-- Shows/hides the third command slot ("Where") based on whether the scene has 3-token rules
 - Shows/hides the Inventory section based on whether the player has items
 
 ### 3) Input model
 
-- Each tile is a `Button` (`Tile.gd`) that supports drag-and-drop with a styled preview matching its tray color.
+- **Click-to-place**: Tapping a tile auto-routes it: action tiles go to Slot 1, thing tiles go to Slot 2, inventory tiles go to the first empty slot (allowing them to act as verbs or objects).
+- **Drag-and-drop**: Tiles can also be dragged into slots manually as a fallback.
 - Tiles display emoji icons from the `EMOJI` dict (e.g. "🗝️ key", "👉 go").
-- Drag payload is a dictionary containing:
-  - `token` (internal command word)
-  - `label` (display text)
-- Three labeled command slots (Action, Thing, Where) accept tile drops. Slot3 ("Where") is only visible when the scene has 3-token command rules.
+- Two command slots (Action, Thing) accept tile placement.
 
 ### 4) Command resolution
 
-When GO is pressed, the game checks that at least two slots are filled and builds a 2–3 token command array.
+When both slots are filled, the game waits 0.5s (so the kid sees the tile land) then auto-executes.
 
 Rule evaluation is deterministic and simple:
 
 1. Read current scene `commands` in order.
-2. Find first command whose `pattern` length and tokens match the player's command.
+2. Find first command whose `pattern` (2 tokens) matches the player's command.
 3. If the rule has `requirements`, verify them:
    - `inventory_has`
    - `flags_true`
@@ -67,10 +58,14 @@ Rule evaluation is deterministic and simple:
    - show `response`
    - apply `effects` (inventory/flag changes)
    - re-render tiles so inventory items move between trays immediately
-   - optionally move to `next` scene
+   - optionally transition to `next` scene with fade effect
 5. If no rule matches, show a random scene `default` message.
 
-### 5) State tracking
+### 5) Scene transitions
+
+When a rule has `next`, the game shows the response text, pauses briefly, then displays a continue button (▶). When tapped, it fades to black, swaps scene content, and fades back in.
+
+### 6) State tracking
 
 - `inventory`: dictionary acting like a set (`item -> true`)
 - `flags`: dictionary for boolean state (`flag -> true/false`)
@@ -85,25 +80,23 @@ Supported effects:
 
 ## Story format (`stories/*.json`)
 
-The current story file (`dragon_egg.json`) demonstrates the content schema used by the game.
-
 Top-level keys:
 
-- `meta`: metadata such as title/version
-- `vocab`: token-to-label mapping (currently tiles use token text directly)
+- `meta`: metadata (`title`, `version`, `teaser`)
 - `start_scene`: ID of first scene
 - `scenes`: map of scene ID to scene object
+- `vocab`: token-to-label mapping (not currently used for rendering)
 
-Scene object keys used by the runtime:
+Scene object keys:
 
 - `text`: array of lines shown to player
-- `tiles`: list of tokens available as drag tiles in that scene
+- `tiles`: list of tokens available as tiles in that scene
 - `commands`: list of rules
-- `default`: list of fallback responses
+- `default`: list of fallback responses (one picked at random)
 
 Command rule keys:
 
-- `pattern`: 2–3 token array (e.g. `["go", "forest"]` or `["give", "egg", "dragon"]`)
+- `pattern`: 2-token array (e.g. `["go", "forest"]`, `["key", "gate"]`)
 - `response`: text shown on match
 - `requirements` (optional):
   - `inventory_has`: required inventory tokens
@@ -116,21 +109,15 @@ Command rule keys:
 
 ---
 
-## Current adventure flow
+## Included stories
 
-The built-in adventure is **“The Lost Dragon Egg”**, a linear-ish progression with light state gating:
+### The Lost Dragon Egg (`dragon_egg.json`)
 
-1. Open room door → hall
-2. Open box, then take key → gate
-3. Use key → forest
-4. Talk to dog (path hint) and optionally gain rope by giving apple
-5. Climb tree, take egg → bridge
-6. Use rope, then cross bridge → cave
-7. Enter cave → dragon
-8. Give egg → treasure
-9. Take treasure → win
+10 scenes. Find a dragon egg in a tree and return it to the mother dragon. Features inventory gating (key, rope, egg), multi-step puzzles, and item consumption.
 
-The game also includes non-progress commands and fallback responses for experimentation.
+### Spider-Man and the Ghost Chain (`spider_hero.json`)
+
+13 scenes. Help Spider-Man defeat Ghost Rider by finding his chain's weakness. Features flag-based progression, multiple inventory items (web, potion, hammer, book), and a boss battle.
 
 ---
 
@@ -142,42 +129,36 @@ The game also includes non-progress commands and fallback responses for experime
 2. Import/open this folder.
 3. Run project (main scene is already configured).
 
-### From CLI (if Godot is installed)
+### From CLI
 
 ```bash
 godot4 --path .
 ```
 
-(Executable name may be `godot`, `godot4`, or platform-specific.)
-
 ---
 
 ## Notes and limitations
 
-- `vocab` labels exist in JSON, but tile rendering uses emoji + raw token text via the `EMOJI` dict instead.
-- Scene `image` fields exist in story data but are not yet rendered by UI.
-- No restart/checkpoint UI, no sound/animation feedback, no JSON validation.
-- Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS, Noto Color Emoji on Linux). Bundled CBDT-format emoji fonts do not render in Godot.
-
----
-
-## Ideas for next improvements
-
-- Render scene art (`image`) with optional transitions.
-- Use `vocab` labels for kid-friendly display text while keeping stable internal tokens.
-- Add restart/checkpoint UI.
-- Add sound and simple animation feedback for correct/incorrect commands.
-- Add lightweight JSON validation for authoring errors.
+- `vocab` labels exist in JSON but tile rendering uses emoji + raw token text via the `EMOJI` dict instead.
+- Scene `image` fields exist in story data but are not yet rendered.
+- No sound/animation feedback, no JSON validation.
+- Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS, Noto Color Emoji on Linux).
 
 ---
 
 ## Quick contributor guide
 
-If you want to add a new story scene quickly:
+If you want to add a new story:
 
-1. Add scene object under `scenes`.
-2. Add `text`, `tiles`, at least one `commands` rule, and `default`.
-3. Point an existing rule’s `next` to your new scene.
-4. Run and verify drag/drop command paths.
+1. Create a new `.json` file in `stories/` following the schema above. Include `meta.teaser` for the menu description.
+2. The game auto-discovers all JSON files in that directory and sorts by scene count.
+
+If you want to add a new scene to an existing story:
+
+1. Add scene object under `scenes` with `text`, `tiles`, `commands`, and `default`.
+2. Point an existing rule's `next` to your new scene.
+3. Run and verify tap/drag command paths.
 
 For code changes, start in `scripts/Game.gd` (runtime logic) and `Game.tscn` (layout).
+
+See `docs/creating-stories.md` for a detailed story authoring guide.

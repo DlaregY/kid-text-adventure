@@ -1,6 +1,6 @@
 # Creating Stories
 
-This guide explains how to create new stories for the drag-and-drop text adventure game. No programming required — stories are written as JSON files.
+This guide explains how to create new stories for the tap-and-play text adventure game. No programming required — stories are written as JSON files.
 
 ## Quick Start
 
@@ -12,7 +12,7 @@ This guide explains how to create new stories for the drag-and-drop text adventu
 
 ```json
 {
-  "meta": { "title": "My First Story", "version": 1 },
+  "meta": { "title": "My First Story", "version": 1, "teaser": "A short adventure!" },
   "start_scene": "start",
   "scenes": {
     "start": {
@@ -52,7 +52,7 @@ Every story JSON has these top-level fields:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `meta` | Yes | Story metadata (`title` and `version`) |
+| `meta` | Yes | Story metadata (`title`, `version`, and `teaser`) |
 | `start_scene` | Yes | ID of the first scene to show |
 | `scenes` | Yes | Object containing all scenes, keyed by scene ID |
 | `vocab` | No | Token-to-label mapping (not currently used for rendering) |
@@ -73,21 +73,28 @@ Each scene is an object inside `scenes` with a unique ID as its key.
 | Field | Required | Description |
 |-------|----------|-------------|
 | `text` | Yes | Array of strings displayed as the scene description |
-| `tiles` | Yes | Array of token strings available as draggable tiles |
+| `tiles` | Yes | Array of token strings available as tappable/draggable tiles |
 | `commands` | Yes | Array of command rules (evaluated in order) |
 | `default` | Yes | Array of fallback responses (one picked at random when no rule matches) |
 
 ## Tiles
 
-Tiles are the words players drag into command slots. Each tile is identified by a **token** — a short lowercase string.
+Tiles are the words players tap to fill command slots. Each tile is identified by a **token** — a short lowercase string.
 
 ### Tile Categories
 
 Tiles are automatically sorted into three trays:
 
-- **Action tray** — Verb tiles. A token goes here if it is one of: `go`, `open`, `take`, `look`, `talk`, `give`, `climb`, `use`
+- **Action tray** — Verb tiles. A token goes here if it is one of: `go`, `open`, `take`, `look`, `talk`, `give`, `climb`
 - **Inventory tray** — Items the player is carrying (gold colored). Shown automatically when the player has items in inventory, even if the token isn't in the scene's `tiles` list.
 - **Thing tray** — Everything else (nouns, objects, places)
+
+### Click-to-Place Routing
+
+When a player taps a tile:
+- **Action tiles** go to Slot 1 (Action)
+- **Thing tiles** go to Slot 2 (Thing)
+- **Inventory tiles** go to the first empty slot — this lets them act as verbs (e.g. "hammer chain", "key gate") or objects (e.g. "look hammer")
 
 ### Emoji
 
@@ -102,16 +109,19 @@ Many tokens automatically display with an emoji icon. These are the built-in map
 | `talk` | 💬 | `apple` | 🍎 |
 | `give` | 🎁 | `treasure` | 💎 |
 | `climb` | 🧗 | `egg` | 🥚 |
-| `use` | 🔧 | `forest` | 🌲 |
-| `dog` | 🐕 | `gate` | 🏰 |
-| `dragon` | 🐉 | `tree` | 🌳 |
-| `bridge` | 🌉 | `cave` | 🕳️ |
+| `dog` | 🐕 | `forest` | 🌲 |
+| `dragon` | 🐉 | `gate` | 🏰 |
+| `tree` | 🌳 | `bridge` | 🌉 |
+| `cave` | 🕳️ | `web` | 🕸️ |
+| `spiderman` | 🕷️ | `ghost` | 👻 |
+| `hammer` | 🔨 | `potion` | 🧪 |
+| `chain` | ⛓️ | `torch` | 🔦 |
 
-Tokens not in this list display without an emoji. To add new emoji, the `EMOJI` dictionary in `scripts/Game.gd` must be edited.
+Tokens not in this list display without an emoji. To add new emoji, edit the `EMOJI` dictionary in `scripts/Game.gd`.
 
 ## Command Rules
 
-Commands are what happens when the player drags tiles into slots and presses GO. Rules are evaluated **in order** — the first matching rule wins.
+Commands define what happens when the player fills both slots. When both slots are filled, the game auto-executes after a 0.5s delay. Rules are evaluated **in order** — the first matching rule wins.
 
 ```json
 {
@@ -125,7 +135,7 @@ Commands are what happens when the player drags tiles into slots and presses GO.
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `pattern` | Yes | Array of 2 or 3 tokens to match against the player's input |
+| `pattern` | Yes | Array of 2 tokens to match against the player's command slots |
 | `response` | Yes | Text shown to the player when this rule matches |
 | `requirements` | No | Conditions that must be true for the rule to match |
 | `effects` | No | State changes applied when the rule matches |
@@ -133,15 +143,16 @@ Commands are what happens when the player drags tiles into slots and presses GO.
 
 ### Pattern Matching
 
-Patterns are 2 or 3 tokens that must exactly match what the player dragged into the slots, in order.
+Patterns are exactly 2 tokens that must match what the player placed in the slots, in order.
 
 ```json
-"pattern": ["open", "door"]          // 2-word command
-"pattern": ["use", "rope", "bridge"] // 3-word command
+"pattern": ["open", "door"]
+"pattern": ["key", "gate"]
+"pattern": ["hammer", "chain"]
 ```
 
 - Matching is **case-sensitive** — always use lowercase
-- The third command slot ("Where") only appears if at least one rule in the scene has a 3-token pattern
+- Inventory items can appear in either position (e.g. `["key", "gate"]` or `["look", "key"]`)
 
 ### Requirements
 
@@ -179,7 +190,7 @@ State changes applied when a rule matches.
 
 ### Scene Transitions
 
-If a rule has a `next` field, the game transitions to that scene after showing the response and applying effects.
+If a rule has a `next` field, the game transitions to that scene after showing the response and applying effects. The transition includes a continue button (▶) and a fade-to-black effect.
 
 ```json
 "next": "forest"
@@ -199,6 +210,7 @@ A set of items the player is carrying. Items are token strings.
 - Removed via `effects.inventory_remove`
 - Checked via `requirements.inventory_has`
 - Inventory items appear as gold tiles in the Inventory tray automatically
+- Inventory items can be placed in either command slot
 - Resets when a new story is started
 
 ### Flags
@@ -235,14 +247,29 @@ If `box_open` is false, the first rule is skipped and the second one matches ins
 
 ```json
 {
-  "pattern": ["use", "key"],
+  "pattern": ["key", "gate"],
   "requirements": { "inventory_has": ["key"] },
   "response": "The key turns and the gate opens!",
+  "effects": { "inventory_remove": ["key"] },
   "next": "garden"
+}
+```
+
+### Inventory Items as Verbs
+
+Since inventory items route to the first empty slot, players can use them as the "action" (Slot 1). Design commands that put inventory items first:
+
+```json
+{
+  "pattern": ["hammer", "chain"],
+  "requirements": { "inventory_has": ["hammer"] },
+  "response": "You smash the chain! CRASH!"
 },
 {
-  "pattern": ["use", "key"],
-  "response": "You don't have a key!"
+  "pattern": ["potion", "door"],
+  "requirements": { "inventory_has": ["potion"] },
+  "response": "You pour the ice potion on the door! It freezes!",
+  "effects": { "inventory_remove": ["potion"] }
 }
 ```
 
@@ -286,12 +313,12 @@ Items persist in inventory across all scenes. A key taken in scene 1 can be used
 { "pattern": ["take", "key"], "response": "Got it!", "effects": { "inventory_add": ["key"] } }
 
 // Scene: gate (later)
-{ "pattern": ["use", "key"], "requirements": { "inventory_has": ["key"] }, "response": "It works!", "next": "garden" }
+{ "pattern": ["key", "gate"], "requirements": { "inventory_has": ["key"] }, "response": "It works!", "next": "garden" }
 ```
 
 ### Consuming Items
 
-Remove items from inventory after use:
+Remove items from inventory after use to keep the inventory tray clean:
 
 ```json
 {
@@ -302,24 +329,37 @@ Remove items from inventory after use:
 }
 ```
 
-### 3-Word Commands
+### Acknowledging Inventory Items
 
-For scenes where direction matters (e.g. "use rope bridge"):
+Always add `["look", <item>]` handlers in scenes where the player carries inventory items. Otherwise the player sees a gold tile but gets a useless default response when examining it:
 
 ```json
 {
-  "pattern": ["use", "rope", "bridge"],
-  "requirements": { "inventory_has": ["rope"] },
-  "response": "You tie the rope to the bridge!",
-  "effects": { "flags_set": { "bridge_fixed": true } }
+  "pattern": ["look", "rope"],
+  "response": "A strong rope. It might come in handy!"
 }
 ```
 
-The third slot ("Where") automatically appears when any rule in the scene has a 3-token pattern.
+### Preventing Repeated Actions
+
+When a command changes state (opens a box, climbs a tree), add a guarded rule before it to handle re-execution:
+
+```json
+{
+  "pattern": ["open", "box"],
+  "requirements": { "flags_true": ["box_open"] },
+  "response": "The box is already open!"
+},
+{
+  "pattern": ["open", "box"],
+  "response": "The lid pops open! Inside is a shiny key!",
+  "effects": { "flags_set": { "box_open": true } }
+}
+```
 
 ### Terminal / Ending Scenes
 
-The last scene in a story typically has no `next` transitions. The "Change Story" button appears automatically in scenes where no rule has a `next` field.
+The last scene in a story typically has no `next` transitions. A "NEW GAME" button appears automatically in scenes where no rule has a `next` field.
 
 ```json
 "win": {
@@ -336,22 +376,29 @@ The last scene in a story typically has no `next` transitions. The "Change Story
 
 1. **Keep text short.** This game is for early readers. Use simple words and short sentences.
 2. **Cover common attempts.** Think about what a child might try and add rules for it, even if the answer is "that doesn't work."
-3. **Give helpful hints.** When a command doesn't work, the response should nudge the player toward the solution.
-4. **Use funny fallbacks.** The `default` responses are shown when nothing matches — make them entertaining.
-5. **Test all paths.** Play through your story and try every tile combination to make sure responses make sense.
-6. **Rule order matters.** Put rules with requirements **before** their fallback versions (same pattern, no requirements).
-7. **Use existing tokens when possible.** Tokens in the emoji table and action list (`go`, `open`, `take`, `look`, `talk`, `give`, `climb`, `use`) will look best in the UI.
+3. **Acknowledge inventory.** Add `["look", <item>]` for every inventory item the player carries into a scene. Add handlers for obvious item+target combinations too.
+4. **Consume spent items.** Use `inventory_remove` when an item has served its purpose to avoid dead tiles cluttering the inventory.
+5. **Prevent re-execution.** Add flag-guarded versions of state-changing commands so repeating them gives sensible responses.
+6. **Give helpful hints.** When a command doesn't work, the response should nudge the player toward the solution.
+7. **Use funny fallbacks.** The `default` responses are shown when nothing matches — make them entertaining. Aim for 5-8 per scene.
+8. **Test all paths.** Play through your story and try every tile combination to make sure responses make sense.
+9. **Rule order matters.** Put rules with requirements **before** their fallback versions (same pattern, no requirements).
+10. **Use existing tokens when possible.** Tokens in the emoji table and action list (`go`, `open`, `take`, `look`, `talk`, `give`, `climb`) will look best in the UI.
 
-## Complete Reference: dragon_egg.json
+## Complete Reference
 
-The included story `stories/dragon_egg.json` demonstrates all features:
+The included stories demonstrate all features:
 
-- 9 scenes with a linear progression
-- Inventory items: `key`, `rope`, `egg`
+### `dragon_egg.json` (10 scenes)
+- Inventory items: `key`, `rope`, `egg` (all consumed after use)
 - Flags: `box_open`, `dog_talked`, `dog_helped`, `in_tree`, `bridge_fixed`, `egg_returned`
-- 3-word command: `use rope bridge`
+- Inventory-as-verb: `["key", "gate"]`, `["rope", "bridge"]`, `["egg", "dragon"]`
 - Multi-step gating: must talk to dog AND feed dog before proceeding
-- Item consumption: egg is removed from inventory when given to dragon
-- Terminal scene: "win" has no transitions, shows Change Story button
 
-Read through it as a complete example of story structure and patterns.
+### `spider_hero.json` (13 scenes)
+- Inventory items: `note`, `web`, `key`, `book`, `potion`, `hammer` (key/note/potion/hammer consumed after use)
+- Inventory-as-verb: `["potion", "door"]`, `["hammer", "chain"]`, `["web", "torch"]`, `["web", "stairs"]`
+- Boss battle with multi-flag gating: must find weakness AND coordinate with Spider-Man
+- Extensive inventory acknowledgment: `["look", <item>]` in every scene
+
+Read through them as complete examples of story structure and patterns.
