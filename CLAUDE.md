@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Godot 4.6 drag-and-drop text adventure for early readers. Players drag 2–3 word tiles into command slots and press GO; the engine evaluates commands against JSON-defined rules.
+Godot 4.6 text adventure for early readers. Players tap word tiles to fill command slots (action, thing, optional where); commands auto-execute when all slots are filled. The engine evaluates commands against JSON-defined rules.
 
 ## Running
 
@@ -19,27 +19,33 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Three scripts, one scene, JSON-driven stories.**
 
-- `scripts/Game.gd` — The entire game controller (~389 lines). Handles story discovery, scene rendering, drag-drop input, rule evaluation, inventory/flag state, scene transitions, emoji font loading, and tile categorization. This is where nearly all logic lives.
-- `scripts/Tile.gd` — Draggable button: sets drag data (`token` + `label`) and creates a drag preview. Has `tile_color` property (default blue) used for drag preview background. Note: `_ready()` only sets text from `token` if `text` is empty — callers that set `text` before `add_child()` won't be overwritten.
-- `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `@export placeholder_text` for labeled slots ("Action", "Thing", "Where"); `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), GO button, story picker overlay.
-- `ui/Tile.tscn` — Reusable tile button component instantiated at runtime.
-- `stories/*.json` — Story content files auto-discovered at startup. Currently two stories: `dragon_egg.json` and `spider_hero.json`.
+- `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. This is where nearly all logic lives.
+- `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
+- `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
+- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), TransitionOverlay (full-screen ColorRect for fade transitions), story picker overlay.
+- `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
+- `stories/*.json` — Story content files auto-discovered at startup.
 
-**Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player drags tiles into slots → GO → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene.
+**Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player taps tiles (auto-placed into correct slot by category) → when all visible slots filled, 0.5s delay then auto-execute → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene with fade.
 
-**State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String).
+**Click-to-place:** Tapping a tile auto-routes it: action tiles → Slot1, thing/inventory tiles → Slot2 (overflow to Slot3 if visible and Slot2 occupied). Drag-and-drop still works as fallback.
 
-**Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters (~48 entries); tiles display "emoji + token" text. Note: bundled .ttf emoji fonts (CBDT format) don't render in Godot — SystemFont is required.
+**Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). When all visible slots are filled, waits 0.5s (so kid sees the tile land), then calls `_try_execute_command()`. Guards against stale execution with scene ID check across the await.
 
-**Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_render_scene()` sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with optional color styling.
+**Scene transitions:** `_transition_to_scene()` shows response text for 1.5s (so kid reads it), then fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions.
+
+**State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String), `is_transitioning` (bool).
+
+**Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
+
+**Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_render_scene()` sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
 
 **Slot3 visibility:** `_scene_has_3word_commands()` checks if any scene rule has a 3+ token pattern. `_render_scene()` shows/hides Slot3 ("Where") accordingly.
 
 ## Stories
 
-- **`dragon_egg.json`** — The original story. Uses 2–3 word commands. A fantasy adventure involving a dragon egg.
-- **`spider_hero.json`** — "Spider-Man and the Ghost Chain." 13 scenes, uses only 2-word commands. A superhero story where the player helps Spider-Man chase a ghost through the city.
+- **`dragon_egg.json`** — Fantasy adventure with 2-3 word commands. Player finds a dragon egg and returns it.
+- **`spider_hero.json`** — "Spider-Man and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spider-Man defeat Ghost Rider.
 
 ## Story JSON Format
 
@@ -50,10 +56,10 @@ start_scene: scene_id
 scenes.{id}.text: [lines]        # displayed to player
 scenes.{id}.tiles: [tokens]      # available drag tiles
 scenes.{id}.commands: [rules]    # evaluated in order, first match wins
-scenes.{id}.default: [strings]   # random fallback if no rule matches
+scenes.{id}.default: [strings]   # random fallback if no rule matches (5-8 funny responses per scene)
 ```
 
-Command rules: `pattern` (2–3 token array), `response`, optional `requirements` (inventory_has, flags_true), optional `effects` (inventory_add, inventory_remove, flags_set), optional `next` (scene transition).
+Command rules: `pattern` (2-3 token array), `response`, optional `requirements` (inventory_has, flags_true), optional `effects` (inventory_add, inventory_remove, flags_set), optional `next` (scene transition).
 
 ## Key Patterns
 
@@ -61,6 +67,7 @@ Command rules: `pattern` (2–3 token array), `response`, optional `requirements
 - **Adding a story:** Create a new `.json` file in `stories/` following the schema above. The game auto-discovers all JSON files in that directory.
 - **Adding a scene:** Add scene object under `scenes` in the story JSON with `text`, `tiles`, `commands`, and `default`. Point an existing rule's `next` to it.
 - **Code changes:** Almost everything is in `Game.gd`. UI layout changes go in `Game.tscn`.
+- **Consumable items:** Use `inventory_remove` in effects when items should be used up (e.g., rope after tying bridge, potion after pouring).
 
 ## Known Limitations
 
@@ -68,3 +75,7 @@ Command rules: `pattern` (2–3 token array), `response`, optional `requirements
 - Scene `image` fields in JSON are parsed but not rendered.
 - No restart/checkpoint UI, no sound/animation feedback, no JSON validation.
 - Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS). Bundled CBDT-format emoji fonts (e.g. NotoColorEmoji.ttf) do not render in Godot.
+
+## Deferred Features
+
+See `tasks/todo.md` for planned features: scene images, story creation tool, sound/animation, restart UI, JSON validation.

@@ -56,7 +56,7 @@
 		  "response": "There is no key here. Maybe keep looking."
 		}
 	  ],
-	  "default": ["Hmm, that doesn't do anything.", "Try looking around first!", "Maybe try the door?"]
+	  "default": ["Hmm, that doesn't do anything.", "Try looking around first!", "Maybe try the door?", "You wave your arms around. Nothing happens, but you look funny!", "Nope! That's sillier than putting socks on a chicken!", "The walls stare at you. They are not impressed."]
 	},
 
 	"hall": {
@@ -114,7 +114,7 @@
 		  "response": "You can't open a key, silly!"
 		}
 	  ],
-	  "default": ["Nothing happens.", "Try looking around!"]
+	  "default": ["Nothing happens.", "Try looking around!", "You spin in a circle. Wheee! But nothing happens.", "That's about as useful as a chocolate teapot!", "The dust bunnies giggle at you from under the box."]
 	},
 
 	"gate": {
@@ -148,7 +148,7 @@
 		  "response": "You rattle the gate. It won't budge. Try using your key!"
 		}
 	  ],
-	  "default": ["The gate won't move. Maybe use something on it?"]
+	  "default": ["The gate won't move. Maybe use something on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try using something shiny on the lock!"]
 	},
 
 	"forest": {
@@ -213,7 +213,7 @@
 		  "response": "You can't go to an apple!"
 		}
 	  ],
-	  "default": ["The dog tilts its head at you.", "Leaves rustle in the breeze."]
+	  "default": ["The dog tilts its head at you.", "Leaves rustle in the breeze.", "A squirrel throws an acorn at your head. Bonk!", "You trip over a root. The dog giggles. Wait, dogs can't giggle!", "A butterfly lands on your nose. Achoo!"]
 	},
 
 	"tree": {
@@ -266,7 +266,7 @@
 		  "response": "You can't go to an egg!"
 		}
 	  ],
-	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above."]
+	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above.", "A bird poops near you. That was close!", "You try really hard but your arms are too short!", "The tree says nothing. Trees are terrible at conversation."]
 	},
 
 	"bridge": {
@@ -277,7 +277,7 @@
 		  "pattern": ["use", "rope", "bridge"],
 		  "requirements": { "inventory_has": ["rope"] },
 		  "response": "You tie the rope tight. The bridge holds! It is safe now!",
-		  "effects": { "flags_set": { "bridge_fixed": true } }
+		  "effects": { "flags_set": { "bridge_fixed": true }, "inventory_remove": ["rope"] }
 		},
 		{
 		  "pattern": ["go", "bridge"],
@@ -339,7 +339,7 @@
 		  "response": "You can't use a cave! Try to find a way across."
 		}
 	  ],
-	  "default": ["The wind howls through the canyon.", "Don't look down!"]
+	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."]
 	},
 
 	"cave": {
@@ -389,7 +389,7 @@
 		  "response": "The egg hums softly but does not talk."
 		}
 	  ],
-	  "default": ["Something big is in there...", "You feel brave!"]
+	  "default": ["Something big is in there...", "You feel brave!", "You hear a big BURP from inside the cave. Ewww!", "Echo! Echo! Echo! ... That was just you talking to yourself.", "A bat flies out and bonks into your forehead. Ow!"]
 	},
 
 	"dragon": {
@@ -441,7 +441,7 @@
 		  "response": "The egg hums quietly. The dragon leans closer."
 		}
 	  ],
-	  "default": ["The dragon watches you with hopeful eyes.", "She sniffs the air sadly."]
+	  "default": ["The dragon watches you with hopeful eyes.", "She sniffs the air sadly.", "The dragon does a tiny sad sneeze. A little flame comes out!", "She taps her claws on the ground. Tappity tap tap.", "The dragon's tummy rumbles. Even dragons get hungry!"]
 	},
 
 	"treasure": {
@@ -466,7 +466,7 @@
 		  "response": "You walk up to the glowing treasure chest."
 		}
 	  ],
-	  "default": ["Sparkles fill the air!", "The dragon hums a happy song."]
+	  "default": ["Sparkles fill the air!", "The dragon hums a happy song.", "Gold coins bounce around like popcorn!", "The dragon tries to wear the tiny crown. It falls off her big head!", "Gems sparkle so bright you have to squint!"]
 	},
 
 	"win": {

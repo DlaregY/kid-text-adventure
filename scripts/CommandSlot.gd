@@ -1,6 +1,8 @@
 # res://scripts/CommandSlot.gd
 extends PanelContainer
 
+signal tile_dropped
+
 @export var slot_index: int = 0
 @export var placeholder_text: String = "(drop here)"
 @onready var label: Label = get_child(0)
@@ -13,6 +15,11 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	token = str(data["token"])
 	label.text = str(data.get("label", token))
+	tile_dropped.emit()
+
+func set_tile(new_token: String, display_text: String) -> void:
+	token = new_token
+	label.text = display_text
 
 func clear() -> void:
 	token = ""

@@ -34,12 +34,12 @@ const EMOJI := {
 @onready var feedback_text: Label = $ScrollContainer/Layout/FeedbackText
 @onready var action_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ActionTray
 @onready var thing_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ThingTray
-@onready var go_button: Button = $ScrollContainer/Layout/GoButton
 @onready var slot1: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot2
 @onready var slot3: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot3
 @onready var inventory_label: Label = $ScrollContainer/Layout/TileSection/InventoryLabel
 @onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
+@onready var transition_overlay: ColorRect = $TransitionOverlay
 
 var story = {}
 var scenes = {}
@@ -49,6 +49,7 @@ var flags = {}     # flag -> true/false
 var discovered_stories: Array[Dictionary] = []
 var selected_story_path := ""
 var has_active_story := false
+var is_transitioning := false
 
 func _ready() -> void:
 	var emoji_font := SystemFont.new()
@@ -62,7 +63,9 @@ func _ready() -> void:
 	story_picker.item_selected.connect(_on_story_selected)
 	start_button.pressed.connect(_on_start_pressed)
 	menu_button.pressed.connect(_on_menu_pressed)
-	go_button.pressed.connect(_on_go_pressed)
+	slot1.tile_dropped.connect(_check_slots_and_execute)
+	slot2.tile_dropped.connect(_check_slots_and_execute)
+	slot3.tile_dropped.connect(_check_slots_and_execute)
 	menu_button.visible = false
 
 	_discover_stories()
@@ -236,17 +239,17 @@ func _render_scene() -> void:
 	for t in tiles:
 		var token_str: String = str(t)
 		if token_str in ACTION_TOKENS:
-			action_tray.add_child(_make_tile(token_str))
+			action_tray.add_child(_make_tile(token_str, Color(0.357, 0.608, 0.835), "action"))
 		elif inventory.has(token_str):
-			inventory_tray.add_child(_make_tile(token_str, Color(0.85, 0.65, 0.13)))
+			inventory_tray.add_child(_make_tile(token_str, Color(0.85, 0.65, 0.13), "inventory"))
 		else:
-			thing_tray.add_child(_make_tile(token_str))
+			thing_tray.add_child(_make_tile(token_str, Color(0.357, 0.608, 0.835), "thing"))
 
 	# Add inventory items not in this scene's tile list
 	for item in inventory.keys():
 		var item_str: String = str(item)
 		if item_str not in tiles:
-			inventory_tray.add_child(_make_tile(item_str, Color(0.85, 0.65, 0.13)))
+			inventory_tray.add_child(_make_tile(item_str, Color(0.85, 0.65, 0.13), "inventory"))
 
 	_update_inventory_ui()
 
@@ -263,9 +266,10 @@ func _update_inventory_ui() -> void:
 	inventory_label.visible = has_items
 	inventory_tray.visible = has_items
 
-func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835)) -> Button:
+func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835), cat: String = "thing") -> Button:
 	var tile = TILE_SCENE.instantiate()
 	tile.token = token_str
+	tile.category = cat
 	var icon: String = EMOJI.get(token_str, "")
 	tile.text = (icon + " " + token_str) if icon != "" else token_str
 	if color != Color(0.357, 0.608, 0.835):
@@ -273,10 +277,10 @@ func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835)) ->
 		var normal := StyleBoxFlat.new()
 		normal.bg_color = color
 		normal.set_corner_radius_all(8)
-		normal.content_margin_left = 12
-		normal.content_margin_right = 12
-		normal.content_margin_top = 8
-		normal.content_margin_bottom = 8
+		normal.content_margin_left = 16
+		normal.content_margin_right = 16
+		normal.content_margin_top = 12
+		normal.content_margin_bottom = 12
 		var hover := normal.duplicate()
 		hover.bg_color = Color(0.92, 0.75, 0.25)
 		var pressed := normal.duplicate()
@@ -284,19 +288,49 @@ func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835)) ->
 		tile.add_theme_stylebox_override("normal", normal)
 		tile.add_theme_stylebox_override("hover", hover)
 		tile.add_theme_stylebox_override("pressed", pressed)
+	tile.pressed.connect(_on_tile_pressed.bind(tile))
 	return tile
 
-func _on_go_pressed() -> void:
-	if not has_active_story:
-		feedback_text.text = "Pick a story and press START first."
+func _on_tile_pressed(tile: Button) -> void:
+	if not has_active_story or is_transitioning:
 		return
 
+	var cat: String = tile.category
+	if cat == "action":
+		slot1.set_tile(tile.token, tile.text)
+	elif cat == "thing" or cat == "inventory":
+		if slot2.token == "":
+			slot2.set_tile(tile.token, tile.text)
+		elif slot3.visible and slot3.token == "":
+			slot3.set_tile(tile.token, tile.text)
+		else:
+			slot2.set_tile(tile.token, tile.text)
+
+	_check_slots_and_execute()
+
+func _check_slots_and_execute() -> void:
+	if not has_active_story or is_transitioning:
+		return
+	# Check if all visible required slots are filled
+	if slot1.token == "" or slot2.token == "":
+		return
+	if slot3.visible and slot3.token == "":
+		return
+	# All slots filled — brief delay then execute
+	var scene_before := current_scene_id
+	await get_tree().create_timer(0.5).timeout
+	if current_scene_id != scene_before:
+		return
+	if not has_active_story or is_transitioning:
+		return
+	_try_execute_command()
+
+func _try_execute_command() -> void:
 	var first: String = slot1.token
 	var second: String = slot2.token
 	var third: String = slot3.token
 
 	if first == "" or second == "":
-		feedback_text.text = "Drag at least two words first."
 		return
 
 	var cmd: Array[String] = [first, second]
@@ -305,6 +339,7 @@ func _on_go_pressed() -> void:
 
 	var transitioned := _apply_command(cmd)
 	if not transitioned:
+		slot1.clear()
 		slot2.clear()
 		slot3.clear()
 
@@ -339,8 +374,7 @@ func _apply_command(cmd: Array[String]) -> bool:
 		_apply_effects(rule.get("effects", {}))
 
 		if rule.has("next"):
-			current_scene_id = str(rule["next"])
-			_render_scene()
+			_transition_to_scene(str(rule["next"]))
 			return true
 		else:
 			# stay in same scene — re-render tiles so inventory moves between trays
@@ -351,6 +385,30 @@ func _apply_command(cmd: Array[String]) -> bool:
 	# No match
 	feedback_text.text = str(default_responses[randi() % default_responses.size()])
 	return false
+
+func _transition_to_scene(scene_id: String) -> void:
+	if is_transitioning:
+		return
+	is_transitioning = true
+
+	# Response text is already visible — wait for kid to read it
+	await get_tree().create_timer(2.5).timeout
+
+	# Fade to black
+	var tween := create_tween()
+	tween.tween_property(transition_overlay, "color:a", 1.0, 0.3)
+	await tween.finished
+
+	# Change scene content
+	current_scene_id = scene_id
+	_render_scene()
+
+	# Fade back in
+	var tween2 := create_tween()
+	tween2.tween_property(transition_overlay, "color:a", 0.0, 0.3)
+	await tween2.finished
+
+	is_transitioning = false
 
 func _requirements_pass(req: Dictionary) -> bool:
 	# inventory_has: ["key"]

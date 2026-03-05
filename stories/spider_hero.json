@@ -106,7 +106,9 @@
         "Hmm, try looking around your room!",
         "Maybe look out the window?",
         "That's a creative idea! But maybe try the window first.",
-        "Your bedroom is messy, but the window is more interesting right now!"
+        "Your bedroom is messy, but the window is more interesting right now!",
+        "You check under your bed. Just dust bunnies and an old sock.",
+        "Your teddy bear stares at you. He wants adventure too!"
       ]
     },
 
@@ -164,7 +166,9 @@
         "The fire trails are scary! Maybe head up to the rooftop?",
         "Spider-Man is waiting for you on the rooftop!",
         "Nope! That didn't work. Try going to the rooftop!",
-        "The street is too hot to hang out here. Head up!"
+        "The street is too hot to hang out here. Head up!",
+        "A pigeon walks by. Even the pigeon looks confused.",
+        "A car alarm goes BEEP BEEP BEEP! Oops, that wasn't you."
       ]
     },
 
@@ -224,7 +228,9 @@
         "Try talking to Spider-Man! He needs your help!",
         "Spider-Man looks like he has something to tell you.",
         "Don't just stand there! A superhero needs your help!",
-        "Spider-Man is tapping his foot. He's waiting for you to talk to him!"
+        "Spider-Man is tapping his foot. He's waiting for you to talk to him!",
+        "The wind blows your hair into your face. Pthhh!",
+        "Spider-Man does a backflip while he waits. Show off!"
       ]
     },
 
@@ -326,7 +332,9 @@
         "Maybe talk to the lady? She looks like she saw something.",
         "Look around the park for clues!",
         "The park is a mess! Ghost Rider has no manners.",
-        "Hmm, that didn't work. Try talking to someone!"
+        "Hmm, that didn't work. Try talking to someone!",
+        "A duck waddles past. It quacks at you. QUACK!",
+        "You step on a crunchy leaf. Crunch! Satisfying."
       ]
     },
 
@@ -397,7 +405,9 @@
         "Look around the library! There is something glowing.",
         "Check out that glowing shelf!",
         "Shhh! It's a library! But also look at that glowing thing!",
-        "The librarian isn't here. Good thing, because you're about to do some very non-library stuff."
+        "The librarian isn't here. Good thing, because you're about to do some very non-library stuff.",
+        "A book falls off a shelf. It was NOT a ghost. Probably.",
+        "You sneeze from all the dust. ACHOO! Books fly everywhere!"
       ]
     },
 
@@ -474,7 +484,9 @@
         "Look around! There are useful tools and potions here.",
         "Take what you need before heading into the tunnel!",
         "A secret basement! How cool is this? Grab some stuff!",
-        "This place smells funny. Like old socks mixed with magic. Take what you need and let's go!"
+        "This place smells funny. Like old socks mixed with magic. Take what you need and let's go!",
+        "Something bubbles in a jar. Blub blub blub.",
+        "Old cobwebs tickle your face. Bleh!"
       ]
     },
 
@@ -539,7 +551,9 @@
         "It is so dark! You need to find some light.",
         "Maybe there is something on the wall that can help?",
         "You bump into a wall. OOF! It's really dark in here!",
-        "Was that a bat? No wait, it was just a drip. Find some light!"
+        "Was that a bat? No wait, it was just a drip. Find some light!",
+        "Drip. Drip. Drip. Water falls on your head.",
+        "Was that a bat? Nah, probably just your imagination. Probably."
       ]
     },
 
@@ -592,7 +606,9 @@
         "Try crossing the bridge!",
         "The bridge looks safe enough. Be brave!",
         "The underground river below sounds loud! Just don't look down!",
-        "You're so close! Walk across the bridge!"
+        "You're so close! Walk across the bridge!",
+        "Water rushes below. WHOOOOSH!",
+        "The bridge creaks. It's just saying hello!"
       ]
     },
 
@@ -656,7 +672,9 @@
         "That door is too hot! Maybe you have something to cool it down?",
         "Think about what's in your bag!",
         "OUCH! Everything here is hot! If only you had something cold...",
-        "Ghost Rider really needs to learn about fire safety."
+        "Ghost Rider really needs to learn about fire safety.",
+        "The motorcycle revs by itself. VROOM! Creepy!",
+        "You touch the door. OW! Hot hot hot!"
       ]
     },
 
@@ -709,7 +727,9 @@
         "Those stairs look broken! Can you fix them somehow?",
         "You need to make the stairs safe before climbing.",
         "Step, step, HOLE, step... yeah those stairs need work.",
-        "Ghost Rider really messed up these stairs. Rude!"
+        "Ghost Rider really messed up these stairs. Rude!",
+        "You hear chains rattling above. Hurry up!",
+        "The walls are warm. Ghost Rider's fire was here!"
       ]
     },
 
@@ -801,7 +821,9 @@
         "Look carefully at the chain! Remember what the book said?",
         "Talk to Spider-Man to make a plan!",
         "Ghost Rider is right there! Focus! Check the chain for a weak spot!",
-        "This is the big moment! Look at the chain, talk to Spider-Man, and SMASH!"
+        "This is the big moment! Look at the chain, talk to Spider-Man, and SMASH!",
+        "Ghost Rider spins his chain. WHOOSH! Duck!",
+        "Fire shoots past your head. Whoa, that was close!"
       ]
     },
 
@@ -855,7 +877,9 @@
         "What an amazing victory! Talk to everyone before heading home.",
         "You did it! You really did it!",
         "You saved the city! Take a moment to enjoy this!",
-        "Spider-Man keeps looking at you like you're the coolest kid ever. Because you ARE!"
+        "Spider-Man keeps looking at you like you're the coolest kid ever. Because you ARE!",
+        "Spider-Man shoots confetti webs! Party time!",
+        "You flex your muscles. You ARE a hero!"
       ]
     },
 
@@ -870,7 +894,7 @@
       ],
       "tiles": [],
       "commands": [],
-      "default": ["What an amazing adventure!"]
+      "default": ["What an amazing adventure!", "The city is safe thanks to you!", "Spider-Man swings by and gives you a thumbs up!", "Best. Day. Ever!"]
     }
   }
 }
