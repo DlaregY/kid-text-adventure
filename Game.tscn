@@ -16,6 +16,39 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="StyleBoxFlat" id="play_normal"]
+bg_color = Color(0.2, 0.7, 0.3, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="play_hover"]
+bg_color = Color(0.25, 0.8, 0.35, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="play_pressed"]
+bg_color = Color(0.15, 0.55, 0.22, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
 [node name="Game" type="Control" unique_id=1650470966]
 layout_mode = 3
 anchors_preset = 15
@@ -44,15 +77,15 @@ theme_override_constants/separation = 12
 [node name="MenuScreen" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 16
+theme_override_constants/separation = 20
 alignment = 1
 
 [node name="Spacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(180, 180)
+custom_minimum_size = Vector2(220, 220)
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("icon_tex")
@@ -61,11 +94,18 @@ stretch_mode = 5
 [node name="Title" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Ike's Adventure"
+text = "Ike Quest"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+text = "A Text Adventure"
 horizontal_alignment = 1
 
 [node name="Spacer2" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 
 [node name="StoryPicker" type="OptionButton" parent="ScrollContainer/Layout/MenuScreen"]
@@ -82,19 +122,31 @@ horizontal_alignment = 1
 autowrap_mode = 3
 text = ""
 
+[node name="Spacer3" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
 [node name="PlayButton" type="Button" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
 text = "PLAY"
+
+[node name="FlexSpacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
+layout_mode = 2
+size_flags_vertical = 3
 
 [node name="VersionLabel" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 horizontal_alignment = 1
-text = "v0.2.0"
+text = "v0.2.1"
 
 [node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
 custom_minimum_size = Vector2(0, 160)
