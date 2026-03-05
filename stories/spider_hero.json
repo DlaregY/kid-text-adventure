@@ -91,7 +91,17 @@
         },
         {
           "pattern": ["open", "note"],
+          "requirements": { "flags_true": ["window_open"] },
+          "response": "You unfold the little note. It says: HELP ME! Meet on the rooftop! -Spider-Man"
+        },
+        {
+          "pattern": ["open", "note"],
           "response": "What note? You don't have a note yet! Check the window!"
+        },
+        {
+          "pattern": ["look", "note"],
+          "requirements": { "flags_true": ["window_open"] },
+          "response": "A tiny note from the spider! It says: HELP ME! Meet on the rooftop! -Spider-Man. Take it!"
         },
         {
           "pattern": ["look", "note"],
@@ -135,6 +145,10 @@
         {
           "pattern": ["look", "rooftop"],
           "response": "You can see the rooftop of your building. There is a fire escape!"
+        },
+        {
+          "pattern": ["look", "note"],
+          "response": "Spider-Man's note says: HELP ME! Meet on the rooftop! You need to get up there!"
         },
         {
           "pattern": ["go", "rooftop"],
@@ -195,6 +209,15 @@
         {
           "pattern": ["look", "web"],
           "response": "Spider-Man's web shooters! They are so cool!"
+        },
+        {
+          "pattern": ["look", "note"],
+          "response": "The note says: Meet on the rooftop! You made it! Talk to Spider-Man."
+        },
+        {
+          "pattern": ["note", "spiderman"],
+          "response": "You show Spider-Man his note. He nods: Thanks for coming, kid! Now let me tell you what happened.",
+          "effects": { "inventory_remove": ["note"] }
         },
         {
           "pattern": ["take", "web"],
@@ -354,6 +377,22 @@
           "response": "You can see the library building down the road. It looks old and dusty!"
         },
         {
+          "pattern": ["look", "note"],
+          "response": "Spider-Man's note. You already found him! Now you're on a mission!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter from Spider-Man! It goes THWIP!"
+        },
+        {
+          "pattern": ["web", "lady"],
+          "response": "THWIP! No no no! Don't web the nice old lady! She'd be so mad!"
+        },
+        {
+          "pattern": ["web", "bench"],
+          "response": "THWIP! You web the bench. Now it's extra sticky. Why though?"
+        },
+        {
           "pattern": ["take", "key"],
           "response": "What key? Talk to the lady first. She might know about a key!"
         }
@@ -418,6 +457,7 @@
           "pattern": ["open", "door"],
           "requirements": { "inventory_has": ["key"] },
           "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
+          "effects": { "inventory_remove": ["key"] },
           "next": "basement"
         },
         {
@@ -444,6 +484,37 @@
         {
           "pattern": ["look", "book"],
           "response": "So many books! There's one about dragons, one about cooking, and one about... socks? Libraries are weird."
+        },
+        {
+          "pattern": ["key", "door"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
+          "effects": { "inventory_remove": ["key"] },
+          "next": "basement"
+        },
+        {
+          "pattern": ["look", "key"],
+          "response": "The glowing purple key hums in your hand. Maybe it opens something here?"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter from Spider-Man. Save it for later!"
+        },
+        {
+          "pattern": ["look", "note"],
+          "response": "Spider-Man's note. It got you into this adventure!"
+        },
+        {
+          "pattern": ["key", "shelf"],
+          "response": "The key doesn't fit anywhere on the shelf."
+        },
+        {
+          "pattern": ["web", "door"],
+          "response": "THWIP! The web sticks to the door but can't pull it open. You need a key!"
+        },
+        {
+          "pattern": ["key", "book"],
+          "response": "You poke the key at a book. Nothing happens. Keys open locks, not books!"
         }
       ],
       "default": [
@@ -543,6 +614,31 @@
         {
           "pattern": ["look", "look"],
           "response": "You look around in a circle really fast. WHEEE! Okay you're dizzy now."
+        },
+        {
+          "pattern": ["web", "chain"],
+          "response": "THWIP! The web sticks to the glass case but can't break it."
+        },
+        {
+          "pattern": ["hammer", "chain"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "You smash the glass case! CRASH! But the ghost chain just phases through your hand. Spooky! At least you know what it looks like."
+        },
+        {
+          "pattern": ["key", "chain"],
+          "response": "The key doesn't fit anywhere on the glass case."
+        },
+        {
+          "pattern": ["look", "key"],
+          "response": "The glowing purple key. You used it to open the library door."
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter! THWIP! Don't waste it. Save it for something important."
+        },
+        {
+          "pattern": ["look", "note"],
+          "response": "Spider-Man's note. It feels like forever ago you read it in your room!"
         }
       ],
       "default": [
@@ -604,6 +700,18 @@
         {
           "pattern": ["look", "web"],
           "response": "Your trusty web shooter! Ready to go. THWIP THWIP!"
+        },
+        {
+          "pattern": ["look", "potion"],
+          "response": "The ice potion. The label says: FREEZES GHOST FIRE. Save it for Ghost Rider!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "The heavy hammer. You'll need it later!"
+        },
+        {
+          "pattern": ["hammer", "torch"],
+          "response": "You throw the hammer at the torch! CLANG! It bounces off the wall and almost hits you! Try the web shooter instead."
         }
       ],
       "default": [
@@ -659,6 +767,26 @@
         {
           "pattern": ["go", "tower"],
           "response": "You need to cross the bridge first to get to the tower!"
+        },
+        {
+          "pattern": ["web", "bridge"],
+          "response": "THWIP! You web the bridge for extra support. Smart thinking! It feels stronger now."
+        },
+        {
+          "pattern": ["hammer", "wall"],
+          "response": "You smash the wall with the hammer! BOOM! Some rocks fall but nothing useful happens."
+        },
+        {
+          "pattern": ["look", "potion"],
+          "response": "The ice potion. Save it for Ghost Rider's fire!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "The heavy hammer. You'll need it at the tower!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your trusty web shooter. Ready for action!"
         }
       ],
       "default": [
@@ -709,6 +837,31 @@
         {
           "pattern": ["go", "bike"],
           "response": "You don't know how to drive a motorcycle! Plus that one is literally on fire!"
+        },
+        {
+          "pattern": ["hammer", "door"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "CLANG! The hammer bounces off the hot door! Owww your hands sting! You need something COLD!"
+        },
+        {
+          "pattern": ["web", "door"],
+          "response": "THWIP! The web melts on the hot door instantly! SIZZLE! You need something cold."
+        },
+        {
+          "pattern": ["key", "door"],
+          "response": "This door has no keyhole. It's sealed by fire!"
+        },
+        {
+          "pattern": ["look", "potion"],
+          "response": "The ice potion! The label says: FREEZES GHOST FIRE. This could work on the hot door!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "The heavy hammer. Save it for something important!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter. The door is too hot for webs though."
         }
       ],
       "default": [
@@ -766,6 +919,15 @@
         {
           "pattern": ["look", "web"],
           "response": "Your trusty web shooter! THWIP! ...Don't waste it! Try it on something useful!"
+        },
+        {
+          "pattern": ["hammer", "stairs"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "You whack the broken stairs with the hammer! CRACK! Pieces crumble into the darkness. That made it WORSE! You need something stretchy!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "The heavy hammer. The stairs need fixing, not smashing!"
         }
       ],
       "default": [
@@ -848,6 +1010,37 @@
         {
           "pattern": ["talk", "hammer"],
           "response": "You whisper to the hammer: We can do this, hammer. I believe in us. The hammer says nothing. But you feel braver!"
+        },
+        {
+          "pattern": ["web", "ghost"],
+          "response": "THWIP! Your web hits Ghost Rider but burns up instantly! His fire is too strong for webs alone!"
+        },
+        {
+          "pattern": ["web", "chain"],
+          "response": "THWIP! The web wraps around the chain but melts right off! The fire is too hot! You need something stronger."
+        },
+        {
+          "pattern": ["book", "chain"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "You check the book: Break the chain at its weak spot! Look carefully at the chain to find it!"
+        },
+        {
+          "pattern": ["book", "ghost"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "The book says: A Ghost Rider's power lives in its chain. Destroy the chain to free the spirit!"
+        },
+        {
+          "pattern": ["key", "chain"],
+          "response": "You try the key on the chain. It doesn't work! The chain isn't locked, it's magical!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter. Ghost Rider is too hot for webs! But Spider-Man can use his own."
+        },
+        {
+          "pattern": ["look", "book"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "Spirits and Chains - A Guide. It says to break the chain at the weak spot!"
         }
       ],
       "default": [
@@ -904,6 +1097,18 @@
         {
           "pattern": ["look", "home"],
           "response": "You look toward home. Your warm cozy bed is waiting. And probably a snack!"
+        },
+        {
+          "pattern": ["web", "spiderman"],
+          "response": "THWIP! You web Spider-Man! He laughs and webs you back! Web fight!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your web shooter! Spider-Man says you can keep it. Best. Gift. EVER!"
+        },
+        {
+          "pattern": ["look", "book"],
+          "response": "The ghost chain book. You used its knowledge to save the city!"
         }
       ],
       "default": [

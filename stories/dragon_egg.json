@@ -64,6 +64,11 @@
 	  "commands": [
 		{
 		  "pattern": ["open", "box"],
+		  "requirements": { "flags_true": ["box_open"] },
+		  "response": "The box is already open!"
+		},
+		{
+		  "pattern": ["open", "box"],
 		  "response": "The lid pops open. Inside is a shiny key!",
 		  "effects": { "flags_set": { "box_open": true } }
 		},
@@ -124,6 +129,7 @@
 		  "pattern": ["key", "gate"],
 		  "requirements": { "inventory_has": ["key"] },
 		  "response": "Click! The key turns and the gate swings open!",
+		  "effects": { "inventory_remove": ["key"] },
 		  "next": "forest"
 		},
 		{
@@ -141,6 +147,10 @@
 		{
 		  "pattern": ["look", "key"],
 		  "response": "Your golden key. It looks like it fits the lock!"
+		},
+		{
+		  "pattern": ["open", "key"],
+		  "response": "You can't open a key, silly! Try using it on the gate."
 		}
 	  ],
 	  "default": ["The gate won't move. Maybe try your key on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try something shiny on the lock!"]
@@ -242,6 +252,11 @@
 	  "commands": [
 		{
 		  "pattern": ["climb", "tree"],
+		  "requirements": { "flags_true": ["in_tree"] },
+		  "response": "You are already up in the tree! You can see the glowing egg!"
+		},
+		{
+		  "pattern": ["climb", "tree"],
 		  "response": "You climb up, up, up! You can see a glowing egg!",
 		  "effects": { "flags_set": { "in_tree": true } }
 		},
@@ -284,6 +299,14 @@
 		{
 		  "pattern": ["go", "egg"],
 		  "response": "You can't go to an egg!"
+		},
+		{
+		  "pattern": ["look", "rope"],
+		  "response": "A strong rope the dog gave you. You might need it later!"
+		},
+		{
+		  "pattern": ["rope", "tree"],
+		  "response": "The tree has plenty of branches to grab. You can just climb it!"
 		}
 	  ],
 	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above.", "A bird poops near you. That was close!", "You try really hard but your arms are too short!", "The tree says nothing. Trees are terrible at conversation."]
@@ -340,6 +363,22 @@
 		{
 		  "pattern": ["look", "cave"],
 		  "response": "A dark cave across the canyon. You hear something inside..."
+		},
+		{
+		  "pattern": ["look", "egg"],
+		  "response": "The dragon egg glows warmly in your arms. You need to find its mother!"
+		},
+		{
+		  "pattern": ["egg", "bridge"],
+		  "response": "Don't drop the egg off the bridge! Just fix the bridge and cross carefully."
+		},
+		{
+		  "pattern": ["egg", "cave"],
+		  "response": "The egg glows brighter when you look at the cave! Its mother must be inside!"
+		},
+		{
+		  "pattern": ["rope", "cave"],
+		  "response": "The cave is too far away! Fix the bridge first."
 		}
 	  ],
 	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."]
@@ -390,6 +429,10 @@
 		{
 		  "pattern": ["talk", "egg"],
 		  "response": "The egg hums softly but does not talk."
+		},
+		{
+		  "pattern": ["give", "dragon"],
+		  "response": "Give what to the dragon? Go inside the cave first!"
 		}
 	  ],
 	  "default": ["Something big is in there...", "You feel brave!", "You hear a big BURP from inside the cave. Ewww!", "Echo! Echo! Echo! ... That was just you talking to yourself.", "A bat flies out and bonks into your forehead. Ow!"]
@@ -401,6 +444,13 @@
 	  "commands": [
 		{
 		  "pattern": ["give", "egg"],
+		  "requirements": { "inventory_has": ["egg"] },
+		  "response": "The dragon's eyes light up! She nuzzles her egg happily!",
+		  "effects": { "inventory_remove": ["egg"], "flags_set": { "egg_returned": true } },
+		  "next": "treasure"
+		},
+		{
+		  "pattern": ["egg", "dragon"],
 		  "requirements": { "inventory_has": ["egg"] },
 		  "response": "The dragon's eyes light up! She nuzzles her egg happily!",
 		  "effects": { "inventory_remove": ["egg"], "flags_set": { "egg_returned": true } },
@@ -487,6 +537,10 @@
 		{
 		  "pattern": ["talk", "dragon"],
 		  "response": "The dragon says: 'You are the bravest hero ever! Come back and visit!'"
+		},
+		{
+		  "pattern": ["talk", "treasure"],
+		  "response": "The treasure sparkles but says nothing. Gold is a terrible listener!"
 		}
 	  ],
 	  "default": ["The dragon does a happy dance!", "Gems sparkle everywhere!", "The dragon breathes rainbow fire into the sky!", "You are the greatest hero of all time!"]
