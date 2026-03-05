@@ -9,7 +9,6 @@
     "take": { "label": "take" },
     "talk": { "label": "talk" },
     "go": { "label": "go" },
-    "use": { "label": "use" },
     "climb": { "label": "climb" },
     "give": { "label": "give" },
     "window": { "label": "window" },
@@ -561,7 +560,7 @@
         "You hear water dripping somewhere.",
         "It is very dark in here."
       ],
-      "tiles": ["go", "look", "use", "web", "torch", "bridge"],
+      "tiles": ["go", "look", "web", "torch", "bridge"],
       "commands": [
         {
           "pattern": ["look", "torch"],
@@ -577,23 +576,15 @@
           "response": "You can barely see a bridge ahead in the darkness."
         },
         {
-          "pattern": ["use", "web"],
+          "pattern": ["web", "torch"],
           "requirements": { "flags_true": ["has_light"] },
           "response": "The torch is already burning bright! No need for more webs."
         },
         {
-          "pattern": ["use", "web"],
+          "pattern": ["web", "torch"],
           "requirements": { "inventory_has": ["web"] },
           "response": "You aim the web shooter at the torch! THWIP! You pull it down and light it. Now you can see!",
           "effects": { "flags_set": { "has_light": true } }
-        },
-        {
-          "pattern": ["use", "web"],
-          "response": "You don't have a web shooter!"
-        },
-        {
-          "pattern": ["use", "torch"],
-          "response": "The torch is too high up on the wall! You need something to reach it."
         },
         {
           "pattern": ["go", "bridge"],
@@ -608,14 +599,6 @@
         {
           "pattern": ["go", "torch"],
           "response": "The torch is on the wall! You can't walk to a wall decoration!"
-        },
-        {
-          "pattern": ["go", "web"],
-          "response": "Go... to a web? Where does a web live? You can USE it though!"
-        },
-        {
-          "pattern": ["use", "bridge"],
-          "response": "You try to use the bridge as a tool. Bridges are for walking on, not swinging around!"
         },
         {
           "pattern": ["look", "web"],
@@ -693,7 +676,7 @@
         "Ghost Rider's bike is parked by the door.",
         "Flames flicker at the very top."
       ],
-      "tiles": ["look", "use", "go", "bike", "door", "tower"],
+      "tiles": ["look", "go", "bike", "door", "tower"],
       "commands": [
         {
           "pattern": ["look", "bike"],
@@ -708,15 +691,11 @@
           "response": "The tower is tall and dark. Fire glows at the top. Ghost Rider is up there!"
         },
         {
-          "pattern": ["use", "potion"],
+          "pattern": ["potion", "door"],
           "requirements": { "inventory_has": ["potion"] },
           "response": "You pour the ice potion on the hot door! CRACK! It freezes solid and breaks apart! The way is open!",
           "effects": { "inventory_remove": ["potion"] },
           "next": "stairs"
-        },
-        {
-          "pattern": ["use", "potion"],
-          "response": "You don't have a potion!"
         },
         {
           "pattern": ["go", "door"],
@@ -725,18 +704,6 @@
         {
           "pattern": ["go", "tower"],
           "response": "You need to get through the door first!"
-        },
-        {
-          "pattern": ["use", "bike"],
-          "response": "You hop on Ghost Rider's motorcycle. VROOM! The seat is ON FIRE! OW OW OW! You jump off and pat your butt. Bad idea!"
-        },
-        {
-          "pattern": ["use", "door"],
-          "response": "You try to touch the door. SSSSS! HOT HOT HOT! You blow on your fingers. Ow!"
-        },
-        {
-          "pattern": ["use", "tower"],
-          "response": "How do you use a whole tower? It's a building, not a tool!"
         },
         {
           "pattern": ["go", "bike"],
@@ -759,7 +726,7 @@
         "You hear chains rattling above!",
         "Scorch marks cover every step."
       ],
-      "tiles": ["look", "climb", "use", "stairs", "web"],
+      "tiles": ["look", "climb", "stairs", "web"],
       "commands": [
         {
           "pattern": ["look", "stairs"],
@@ -771,19 +738,15 @@
           "response": "The stairs are broken in places. Some steps are missing! It's too dangerous to climb."
         },
         {
-          "pattern": ["use", "web"],
+          "pattern": ["web", "stairs"],
           "requirements": { "flags_true": ["stairs_fixed"] },
           "response": "The stairs are already fixed with webs! Time to climb!"
         },
         {
-          "pattern": ["use", "web"],
+          "pattern": ["web", "stairs"],
           "requirements": { "inventory_has": ["web"] },
           "response": "THWIP! THWIP! You shoot webs across the broken stairs. Now they are strong and safe!",
           "effects": { "flags_set": { "stairs_fixed": true } }
-        },
-        {
-          "pattern": ["use", "web"],
-          "response": "You don't have a web shooter!"
         },
         {
           "pattern": ["climb", "stairs"],
@@ -796,16 +759,12 @@
           "response": "The stairs are too broken! Some steps are missing. You need to fix them first."
         },
         {
-          "pattern": ["use", "stairs"],
-          "response": "The stairs need to be fixed first! Some steps are missing."
-        },
-        {
           "pattern": ["climb", "web"],
           "response": "You try to climb a web like Spider-Man. Nope! You're not a spider, silly! Your shoes get all sticky."
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your trusty web shooter! THWIP! ...Don't waste it! Use it on something useful!"
+          "response": "Your trusty web shooter! THWIP! ...Don't waste it! Try it on something useful!"
         }
       ],
       "default": [
@@ -825,7 +784,7 @@
         "Spider-Man swings in behind you!",
         "This is it!"
       ],
-      "tiles": ["look", "talk", "use", "give", "ghost", "chain", "spiderman", "hammer"],
+      "tiles": ["look", "talk", "give", "ghost", "chain", "spiderman", "hammer"],
       "commands": [
         {
           "pattern": ["look", "ghost"],
@@ -854,14 +813,14 @@
           "response": "The hammer feels heavy in your hands. You can do this!"
         },
         {
-          "pattern": ["use", "hammer"],
+          "pattern": ["hammer", "chain"],
           "requirements": { "inventory_has": ["hammer"], "flags_true": ["saw_weakness", "spidey_ready"] },
           "response": "Spider-Man webs Ghost Rider's arms! NOW! You run in and SMASH the weak link with the hammer! CRASH! The chain SHATTERS into a thousand pieces!",
           "effects": { "inventory_remove": ["hammer"] },
           "next": "victory"
         },
         {
-          "pattern": ["use", "hammer"],
+          "pattern": ["hammer", "chain"],
           "requirements": { "inventory_has": ["hammer"] },
           "response": "Not yet! You need to find the chain's weak spot and make sure Spider-Man is ready!"
         },
@@ -880,18 +839,6 @@
         {
           "pattern": ["give", "spiderman"],
           "response": "Give Spider-Man to someone? He's a person, not a gift! Although he IS pretty amazing."
-        },
-        {
-          "pattern": ["use", "ghost"],
-          "response": "Use Ghost Rider as a... what exactly? A nightlight? A space heater? He's a person, not a tool!"
-        },
-        {
-          "pattern": ["use", "chain"],
-          "response": "You reach for the chain. YOWCH! It's on fire! Do NOT touch the fire chain!"
-        },
-        {
-          "pattern": ["use", "spiderman"],
-          "response": "Spider-Man is a friend, not a tool! He gives you a funny look. Don't use your friends!"
         },
         {
           "pattern": ["talk", "chain"],

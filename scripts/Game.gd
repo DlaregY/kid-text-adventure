@@ -1,13 +1,13 @@
 # res://scripts/Game.gd
-# Commands now accept 2 or 3 tokens from Slot1/Slot2[/Slot3].
-# Rules match only when pattern length equals command length and all tokens align in order.
+# Commands accept 2 tokens from Slot1/Slot2 (action/item + thing).
+# Rules match when pattern length equals command length and all tokens align in order.
 # Story flow: discover JSON stories in res://stories/, let player choose from StoryPicker,
 # then load the selected path when START is pressed. NewGameButton returns to picker.
 extends Control
 
 const STORIES_DIR := "res://stories"
 const TILE_SCENE := preload("res://ui/Tile.tscn")
-const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb", "use"]
+const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const EMOJI := {
 	"key": "🗝️", "box": "📦", "door": "🚪", "rope": "🪢",
 	"apple": "🍎", "treasure": "💎", "egg": "🥚",
@@ -15,7 +15,7 @@ const EMOJI := {
 	"bridge": "🌉", "cave": "🕳️",
 	"dog": "🐕", "dragon": "🐉",
 	"go": "👉", "open": "📖", "take": "✋", "look": "👀",
-	"talk": "💬", "give": "🎁", "climb": "🧗", "use": "🔧",
+	"talk": "💬", "give": "🎁", "climb": "🧗",
 	"window": "🪟", "comic": "📕", "note": "📝", "fire": "🔥",
 	"cat": "🐱", "rooftop": "🏢", "spiderman": "🕷️", "web": "🕸️",
 	"city": "🏙️", "lady": "👵", "bench": "🪑", "sign": "🪧",
@@ -38,7 +38,6 @@ const EMOJI := {
 @onready var thing_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ThingTray
 @onready var slot1: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot1
 @onready var slot2: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot2
-@onready var slot3: PanelContainer = $ScrollContainer/Layout/CommandBar/Slot3
 @onready var inventory_label: Label = $ScrollContainer/Layout/TileSection/InventoryLabel
 @onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
 @onready var transition_overlay: ColorRect = $TransitionOverlay
@@ -68,7 +67,6 @@ func _ready() -> void:
 	new_game_button.pressed.connect(_on_menu_pressed)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
-	slot3.tile_dropped.connect(_check_slots_and_execute)
 	_discover_stories()
 	_show_menu()
 
@@ -188,8 +186,6 @@ func _show_menu() -> void:
 			child.queue_free()
 	slot1.clear()
 	slot2.clear()
-	slot3.clear()
-	slot3.visible = false
 	inventory.clear()
 	flags.clear()
 
@@ -233,8 +229,6 @@ func _render_scene() -> void:
 	feedback_text.text = ""
 	slot1.clear()
 	slot2.clear()
-	slot3.clear()
-	slot3.visible = _scene_has_3word_commands(scene)
 
 	# tiles — split into actions, things, and inventory
 	for tray in [action_tray, thing_tray, inventory_tray]:
@@ -304,11 +298,11 @@ func _on_tile_pressed(tile: Button) -> void:
 	var cat: String = tile.category
 	if cat == "action":
 		slot1.set_tile(tile.token, tile.text)
-	elif cat == "thing" or cat == "inventory":
-		if slot2.token == "":
-			slot2.set_tile(tile.token, tile.text)
-		elif slot3.visible and slot3.token == "":
-			slot3.set_tile(tile.token, tile.text)
+	elif cat == "thing":
+		slot2.set_tile(tile.token, tile.text)
+	elif cat == "inventory":
+		if slot1.token == "":
+			slot1.set_tile(tile.token, tile.text)
 		else:
 			slot2.set_tile(tile.token, tile.text)
 
@@ -319,8 +313,6 @@ func _check_slots_and_execute() -> void:
 		return
 	# Check if all visible required slots are filled
 	if slot1.token == "" or slot2.token == "":
-		return
-	if slot3.visible and slot3.token == "":
 		return
 	# All slots filled — brief delay then execute
 	var scene_before: String = current_scene_id
@@ -334,20 +326,16 @@ func _check_slots_and_execute() -> void:
 func _try_execute_command() -> void:
 	var first: String = slot1.token
 	var second: String = slot2.token
-	var third: String = slot3.token
 
 	if first == "" or second == "":
 		return
 
 	var cmd: Array[String] = [first, second]
-	if third != "":
-		cmd.append(third)
 
 	var transitioned := _apply_command(cmd)
 	if not transitioned:
 		slot1.clear()
 		slot2.clear()
-		slot3.clear()
 
 func _apply_command(cmd: Array[String]) -> bool:
 	var scene = scenes.get(current_scene_id, null)
@@ -435,14 +423,6 @@ func _requirements_pass(req: Dictionary) -> bool:
 			return false
 
 	return true
-
-func _scene_has_3word_commands(scene: Dictionary) -> bool:
-	var commands: Array = scene.get("commands", [])
-	for rule in commands:
-		var pattern: Array = rule.get("pattern", [])
-		if pattern.size() >= 3:
-			return true
-	return false
 
 func _apply_effects(eff: Dictionary) -> void:
 	var inv_add: Array = eff.get("inventory_add", [])

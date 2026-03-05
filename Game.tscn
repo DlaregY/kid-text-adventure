@@ -114,24 +114,6 @@ text = "Thing"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Slot3" type="PanelContainer" parent="ScrollContainer/Layout/CommandBar" unique_id=711238904]
-visible = false
-custom_minimum_size = Vector2(120, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("slot_panel")
-script = ExtResource("1_wbfu4")
-slot_index = 3
-placeholder_text = "Where"
-
-[node name="Slot3Label" type="Label" parent="ScrollContainer/Layout/CommandBar/Slot3" unique_id=1683902445]
-custom_minimum_size = Vector2(0, 90)
-layout_mode = 2
-theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-theme_override_font_sizes/font_size = 24
-text = "Where"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="TileSection" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2

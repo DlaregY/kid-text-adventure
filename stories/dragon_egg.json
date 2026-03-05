@@ -8,7 +8,6 @@
 	"talk": { "label": "talk" },
 	"give": { "label": "give" },
 	"climb": { "label": "climb" },
-	"use": { "label": "use" },
 	"door": { "label": "door" },
 	"box": { "label": "box" },
 	"key": { "label": "key" },
@@ -119,10 +118,10 @@
 
 	"gate": {
 	  "text": ["You find a tall iron gate.", "A big lock holds it shut."],
-	  "tiles": ["use", "open", "look", "key", "gate", "go"],
+	  "tiles": ["open", "look", "go", "key", "gate"],
 	  "commands": [
 		{
-		  "pattern": ["use", "key"],
+		  "pattern": ["key", "gate"],
 		  "requirements": { "inventory_has": ["key"] },
 		  "response": "Click! The key turns and the gate swings open!",
 		  "next": "forest"
@@ -142,13 +141,9 @@
 		{
 		  "pattern": ["look", "key"],
 		  "response": "Your golden key. It looks like it fits the lock!"
-		},
-		{
-		  "pattern": ["use", "gate"],
-		  "response": "You rattle the gate. It won't budge. Try using your key!"
 		}
 	  ],
-	  "default": ["The gate won't move. Maybe use something on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try using something shiny on the lock!"]
+	  "default": ["The gate won't move. Maybe try your key on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try something shiny on the lock!"]
 	},
 
 	"forest": {
@@ -296,10 +291,10 @@
 
 	"bridge": {
 	  "text": ["A bridge stretches across a deep canyon.", "But the middle is broken!", "You can see a cave on the other side."],
-	  "tiles": ["use", "go", "look", "rope", "bridge", "cave"],
+	  "tiles": ["go", "look", "rope", "bridge", "cave"],
 	  "commands": [
 		{
-		  "pattern": ["use", "rope", "bridge"],
+		  "pattern": ["rope", "bridge"],
 		  "requirements": { "inventory_has": ["rope"] },
 		  "response": "You tie the rope tight. The bridge holds! It is safe now!",
 		  "effects": { "flags_set": { "bridge_fixed": true }, "inventory_remove": ["rope"] }
@@ -325,15 +320,6 @@
 		  "response": "The cave is on the other side! The broken bridge is in the way."
 		},
 		{
-		  "pattern": ["use", "rope"],
-		  "requirements": { "inventory_has": ["rope"] },
-		  "response": "Use the rope on what? Maybe try the bridge!"
-		},
-		{
-		  "pattern": ["use", "rope"],
-		  "response": "You don't have any rope!"
-		},
-		{
 		  "pattern": ["look", "bridge"],
 		  "requirements": { "flags_true": ["bridge_fixed"] },
 		  "response": "The rope holds the bridge together. It looks safe to cross!"
@@ -354,14 +340,6 @@
 		{
 		  "pattern": ["look", "cave"],
 		  "response": "A dark cave across the canyon. You hear something inside..."
-		},
-		{
-		  "pattern": ["use", "bridge"],
-		  "response": "The bridge is broken! You need to fix it with something."
-		},
-		{
-		  "pattern": ["use", "cave"],
-		  "response": "You can't use a cave! Try to find a way across."
 		}
 	  ],
 	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."]

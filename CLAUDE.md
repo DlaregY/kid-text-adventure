@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Godot 4.6 text adventure for early readers. Players tap word tiles to fill command slots (action, thing, optional where); commands auto-execute when all slots are filled. The engine evaluates commands against JSON-defined rules.
+Godot 4.6 text adventure for early readers. Players tap word tiles to fill 2 command slots (action + thing); commands auto-execute when both slots are filled. The engine evaluates commands against JSON-defined rules.
 
 ## Running
 
@@ -19,10 +19,10 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Three scripts, one scene, JSON-driven stories.**
 
-- `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. This is where nearly all logic lives.
+- `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. Inventory items can be placed in either slot (first-empty routing). This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions), story picker in MenuBar.
+- `Game.tscn` — Main UI scene: story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions), story picker in MenuBar.
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
@@ -30,7 +30,7 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player taps tiles (auto-placed into correct slot by category) → when all visible slots filled, 0.5s delay then auto-execute → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene with fade.
 
-**Click-to-place:** Tapping a tile auto-routes it: action tiles → Slot1, thing/inventory tiles → Slot2 (overflow to Slot3 if visible and Slot2 occupied). Drag-and-drop still works as fallback.
+**Click-to-place:** Tapping a tile auto-routes it: action tiles → Slot1, thing tiles → Slot2, inventory tiles → first empty slot (Slot1 if empty, else Slot2). This lets inventory items act as verbs (e.g., "hammer chain", "key gate") or objects (e.g., "look hammer"). Drag-and-drop still works as fallback.
 
 **Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). When all visible slots are filled, waits 0.5s (so kid sees the tile land), then calls `_try_execute_command()`. Guards against stale execution with scene ID check across the await.
 
@@ -42,11 +42,9 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_render_scene()` sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
 
-**Slot3 visibility:** `_scene_has_3word_commands()` checks if any scene rule has a 3+ token pattern. `_render_scene()` shows/hides Slot3 ("Where") accordingly.
-
 ## Stories
 
-- **`dragon_egg.json`** — Fantasy adventure with 2-3 word commands. Player finds a dragon egg and returns it.
+- **`dragon_egg.json`** — Fantasy adventure with 2-word commands. Player finds a dragon egg and returns it.
 - **`spider_hero.json`** — "Spider-Man and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spider-Man defeat Ghost Rider.
 
 ## Story JSON Format
@@ -61,7 +59,7 @@ scenes.{id}.commands: [rules]    # evaluated in order, first match wins
 scenes.{id}.default: [strings]   # random fallback if no rule matches (5-8 funny responses per scene)
 ```
 
-Command rules: `pattern` (2-3 token array), `response`, optional `requirements` (inventory_has, flags_true), optional `effects` (inventory_add, inventory_remove, flags_set), optional `next` (scene transition).
+Command rules: `pattern` (2 token array), `response`, optional `requirements` (inventory_has, flags_true), optional `effects` (inventory_add, inventory_remove, flags_set), optional `next` (scene transition).
 
 ## Key Patterns
 
