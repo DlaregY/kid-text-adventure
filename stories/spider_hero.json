@@ -243,8 +243,23 @@
       "commands": [
         {
           "pattern": ["talk", "lady"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "The lady says: You found the key! Now hurry to the library!"
+        },
+        {
+          "pattern": ["talk", "lady"],
+          "requirements": { "flags_true": ["lady_talked"] },
+          "response": "The lady says: I saw Ghost Rider drop a glowing key near the bench!"
+        },
+        {
+          "pattern": ["talk", "lady"],
           "response": "The lady says: Ghost Rider rode right through here! He dropped a glowing key near the bench!",
           "effects": { "flags_set": { "lady_talked": true } }
+        },
+        {
+          "pattern": ["look", "bench"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "Just an old park bench. Nothing under it now."
         },
         {
           "pattern": ["look", "bench"],
@@ -254,6 +269,11 @@
         {
           "pattern": ["look", "bench"],
           "response": "Just a park bench. The lady sitting on it looks like she saw something."
+        },
+        {
+          "pattern": ["take", "key"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "You already have the glowing key!"
         },
         {
           "pattern": ["take", "key"],
@@ -317,7 +337,17 @@
         },
         {
           "pattern": ["look", "key"],
-          "response": "The key sparkles with a purple glow! Ooooh shiny!"
+          "requirements": { "inventory_has": ["key"] },
+          "response": "The glowing purple key in your hand feels cold!"
+        },
+        {
+          "pattern": ["look", "key"],
+          "requirements": { "flags_true": ["lady_talked"] },
+          "response": "The key sparkles with a purple glow under the bench! Ooooh shiny!"
+        },
+        {
+          "pattern": ["look", "key"],
+          "response": "You don't see any key. Maybe someone here knows something?"
         },
         {
           "pattern": ["look", "library"],
@@ -347,8 +377,18 @@
       "commands": [
         {
           "pattern": ["look", "shelf"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "The shelf is dark now. You already took the glowing book!"
+        },
+        {
+          "pattern": ["look", "shelf"],
           "response": "One book on the shelf glows! The title says: Spirits and Chains - A Guide.",
           "effects": { "flags_set": { "saw_book": true } }
+        },
+        {
+          "pattern": ["take", "book"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "You already have the book!"
         },
         {
           "pattern": ["take", "book"],
@@ -398,6 +438,11 @@
         },
         {
           "pattern": ["look", "book"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "Your glowing book: Spirits and Chains - A Guide. Try opening it!"
+        },
+        {
+          "pattern": ["look", "book"],
           "response": "So many books! There's one about dragons, one about cooking, and one about... socks? Libraries are weird."
         }
       ],
@@ -421,7 +466,17 @@
       "commands": [
         {
           "pattern": ["look", "potion"],
+          "requirements": { "inventory_has": ["potion"] },
+          "response": "You have the ice potion safe in your bag!"
+        },
+        {
+          "pattern": ["look", "potion"],
           "response": "A blue bottle with a label: ICE POTION - Freezes Ghost Fire. That could be useful!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "You have the heavy hammer. It is ready to smash!"
         },
         {
           "pattern": ["look", "hammer"],
@@ -437,8 +492,18 @@
         },
         {
           "pattern": ["take", "potion"],
+          "requirements": { "inventory_has": ["potion"] },
+          "response": "You already have the ice potion!"
+        },
+        {
+          "pattern": ["take", "potion"],
           "response": "You carefully take the ice potion. Don't drop it!",
           "effects": { "inventory_add": ["potion"] }
+        },
+        {
+          "pattern": ["take", "hammer"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "You already picked up the hammer!"
         },
         {
           "pattern": ["take", "hammer"],
@@ -500,11 +565,21 @@
       "commands": [
         {
           "pattern": ["look", "torch"],
+          "requirements": { "flags_true": ["has_light"] },
+          "response": "The torch burns bright! You can see everything now!"
+        },
+        {
+          "pattern": ["look", "torch"],
           "response": "An old torch sits on the wall. But it is too high to reach!"
         },
         {
           "pattern": ["look", "bridge"],
           "response": "You can barely see a bridge ahead in the darkness."
+        },
+        {
+          "pattern": ["use", "web"],
+          "requirements": { "flags_true": ["has_light"] },
+          "response": "The torch is already burning bright! No need for more webs."
         },
         {
           "pattern": ["use", "web"],
@@ -688,7 +763,17 @@
       "commands": [
         {
           "pattern": ["look", "stairs"],
+          "requirements": { "flags_true": ["stairs_fixed"] },
+          "response": "The stairs are covered in strong webs! Safe to climb!"
+        },
+        {
+          "pattern": ["look", "stairs"],
           "response": "The stairs are broken in places. Some steps are missing! It's too dangerous to climb."
+        },
+        {
+          "pattern": ["use", "web"],
+          "requirements": { "flags_true": ["stairs_fixed"] },
+          "response": "The stairs are already fixed with webs! Time to climb!"
         },
         {
           "pattern": ["use", "web"],

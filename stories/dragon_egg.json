@@ -157,8 +157,23 @@
 	  "commands": [
 		{
 		  "pattern": ["talk", "dog"],
+		  "requirements": { "flags_true": ["dog_talked", "dog_helped"] },
+		  "response": "The dog barks happily and wags its tail! It loved the apple!"
+		},
+		{
+		  "pattern": ["talk", "dog"],
+		  "requirements": { "flags_true": ["dog_talked"] },
+		  "response": "The dog barks again: 'Please help the dragon! And... I am still hungry.'"
+		},
+		{
+		  "pattern": ["talk", "dog"],
 		  "response": "The dog barks: 'The dragon lost her egg! Please help!'",
 		  "effects": { "flags_set": { "dog_talked": true } }
+		},
+		{
+		  "pattern": ["give", "apple"],
+		  "requirements": { "flags_true": ["dog_helped"] },
+		  "response": "You already gave the apple to the dog! It ate it all up!"
 		},
 		{
 		  "pattern": ["give", "apple"],
@@ -182,7 +197,17 @@
 		},
 		{
 		  "pattern": ["look", "dog"],
+		  "requirements": { "flags_true": ["dog_helped"] },
+		  "response": "The little dog is wagging its tail! Its tummy is full and happy!"
+		},
+		{
+		  "pattern": ["look", "dog"],
 		  "response": "A small brown dog. Its tummy is rumbling!"
+		},
+		{
+		  "pattern": ["look", "apple"],
+		  "requirements": { "flags_true": ["dog_helped"] },
+		  "response": "The apple is gone! The dog gobbled it right up!"
 		},
 		{
 		  "pattern": ["look", "apple"],
