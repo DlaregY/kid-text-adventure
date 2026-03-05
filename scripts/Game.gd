@@ -25,10 +25,9 @@ const EMOJI := {
 	"home": "🏠", "library": "🏛️",
 }
 
-@onready var menu_bar: HBoxContainer = $ScrollContainer/Layout/MenuBar
-@onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuBar/StoryPicker
-@onready var start_button: Button = $ScrollContainer/Layout/MenuBar/StartButton
-@onready var story_title: Label = $ScrollContainer/Layout/MenuBar/StoryTitle
+@onready var menu_screen: VBoxContainer = $ScrollContainer/Layout/MenuScreen
+@onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuScreen/StoryPicker
+@onready var play_button: Button = $ScrollContainer/Layout/MenuScreen/PlayButton
 @onready var new_game_button: Button = $ScrollContainer/Layout/NewGameButton
 @onready var command_bar: HBoxContainer = $ScrollContainer/Layout/CommandBar
 @onready var tile_section: VBoxContainer = $ScrollContainer/Layout/TileSection
@@ -63,7 +62,7 @@ func _ready() -> void:
 		fb.fallbacks = arr
 
 	story_picker.item_selected.connect(_on_story_selected)
-	start_button.pressed.connect(_on_start_pressed)
+	play_button.pressed.connect(_on_start_pressed)
 	new_game_button.pressed.connect(_on_menu_pressed)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
@@ -77,8 +76,7 @@ func _discover_stories() -> void:
 	var dir := DirAccess.open(STORIES_DIR)
 	if dir == null:
 		feedback_text.text = "Story folder not found."
-		start_button.disabled = true
-		story_title.text = "No stories found"
+		play_button.disabled = true
 		return
 
 	dir.list_dir_begin()
@@ -110,12 +108,11 @@ func _discover_stories() -> void:
 
 	if discovered_stories.is_empty():
 		selected_story_path = ""
-		start_button.disabled = true
-		story_title.text = "No stories found"
+		play_button.disabled = true
 		feedback_text.text = "No story files found in res://stories/."
 		return
 
-	start_button.disabled = false
+	play_button.disabled = false
 	story_picker.select(0)
 	_set_selected_story(0)
 
@@ -165,7 +162,7 @@ func _start_story() -> void:
 	inventory.clear()
 	flags.clear()
 	has_active_story = true
-	menu_bar.visible = false
+	menu_screen.visible = false
 	command_bar.visible = true
 	tile_section.visible = true
 	feedback_text.visible = true
@@ -174,13 +171,13 @@ func _start_story() -> void:
 
 func _show_menu() -> void:
 	has_active_story = false
-	menu_bar.visible = true
+	menu_screen.visible = true
 	command_bar.visible = false
 	tile_section.visible = false
 	feedback_text.visible = false
 	new_game_button.visible = false
 	continue_button.visible = false
-	story_text.text = "Choose a story, then press START."
+	story_text.text = ""
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
 			child.queue_free()
@@ -192,12 +189,10 @@ func _show_menu() -> void:
 func _set_selected_story(index: int) -> void:
 	if index < 0 or index >= discovered_stories.size():
 		selected_story_path = ""
-		story_title.text = "No stories found"
 		return
 
 	var entry: Dictionary = discovered_stories[index]
 	selected_story_path = str(entry.get("path", ""))
-	story_title.text = str(entry.get("display_name", ""))
 
 func _on_story_selected(index: int) -> void:
 	_set_selected_story(index)

@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8su1qp12tm63" path="res://scripts/CommandSlot.gd" id="1_wbfu4"]
 [ext_resource type="Script" uid="uid://b6jbs8g6nrgnj" path="res://scripts/Game.gd" id="1_xkndl"]
+[ext_resource type="Texture2D" path="res://icon.png" id="icon_tex"]
 
 [sub_resource type="StyleBoxFlat" id="slot_panel"]
 bg_color = Color(1.0, 0.953, 0.878, 1)
@@ -40,25 +41,45 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 12
 
-[node name="MenuBar" type="HBoxContainer" parent="ScrollContainer/Layout"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="StoryPicker" type="OptionButton" parent="ScrollContainer/Layout/MenuBar"]
-custom_minimum_size = Vector2(160, 0)
+[node name="MenuScreen" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 16
+alignment = 1
 
-[node name="StartButton" type="Button" parent="ScrollContainer/Layout/MenuBar"]
-custom_minimum_size = Vector2(0, 48)
+[node name="Spacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "START"
 
-[node name="StoryTitle" type="Label" parent="ScrollContainer/Layout/MenuBar"]
+[node name="Logo" type="TextureRect" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(180, 180)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("icon_tex")
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Ike's Adventure"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="StoryPicker" type="OptionButton" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 18
-vertical_alignment = 1
+theme_override_font_sizes/font_size = 24
+
+[node name="PlayButton" type="Button" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+text = "PLAY"
 
 [node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
 custom_minimum_size = Vector2(0, 160)
