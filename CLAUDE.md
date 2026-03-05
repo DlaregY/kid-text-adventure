@@ -26,7 +26,7 @@ There is no build step, test suite, or linter — verification is manual playtes
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
-**Story selection:** MenuScreen is a centered VBoxContainer with Ike's logo (180x180 icon.png), "Ike's Adventure" title (40px), story picker dropdown (24px), and PLAY button (64px tall, 28px font). It hides game UI (CommandBar, TileSection, FeedbackText, StoryText). On start, game UI is shown and MenuScreen is hidden. On terminal scenes (no outgoing transitions), a "NEW GAME" button appears inline at the bottom, returning to the menu.
+**Story selection:** MenuScreen is a centered VBoxContainer with Ike's logo (180x180 icon.png), "Ike's Adventure" title (40px), story picker dropdown (24px), teaser label (18px gray), PLAY button (64px tall, 28px font), and version label (14px gray). The picker shows `"Title (N scenes)"` and stories are sorted by ascending scene count. Selecting a story displays its `meta.teaser` from the JSON. Version is read from `version.txt` at startup. It hides game UI (CommandBar, TileSection, FeedbackText, StoryText). On start, game UI is shown and MenuScreen is hidden. On terminal scenes (no outgoing transitions), a "NEW GAME" button appears inline at the bottom, returning to the menu.
 
 **Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player taps tiles (auto-placed into correct slot by category) → when all visible slots filled, 0.5s delay then auto-execute → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene with fade.
 
@@ -50,7 +50,7 @@ There is no build step, test suite, or linter — verification is manual playtes
 ## Story JSON Format
 
 ```
-meta.title / meta.version
+meta.title / meta.version / meta.teaser
 vocab: { token: label }          # label mapping exists but tiles use EMOJI dict + raw token instead
 start_scene: scene_id
 scenes.{id}.text: [lines]        # displayed to player
@@ -64,7 +64,7 @@ Command rules: `pattern` (2 token array), `response`, optional `requirements` (i
 ## Key Patterns
 
 - **GDScript style:** snake_case for functions/variables, PascalCase for classes. Godot 4 typed syntax (`var x: Type`). Use explicit types over `:=` inference when the source property lacks a type annotation.
-- **Adding a story:** Create a new `.json` file in `stories/` following the schema above. The game auto-discovers all JSON files in that directory.
+- **Adding a story:** Create a new `.json` file in `stories/` following the schema above. Include `meta.teaser` for the menu description. The game auto-discovers all JSON files in that directory and sorts by scene count.
 - **Adding a scene:** Add scene object under `scenes` in the story JSON with `text`, `tiles`, `commands`, and `default`. Point an existing rule's `next` to it.
 - **Code changes:** Almost everything is in `Game.gd`. UI layout changes go in `Game.tscn`.
 - **Consumable items:** Use `inventory_remove` in effects when items should be used up (e.g., rope after tying bridge, potion after pouring).

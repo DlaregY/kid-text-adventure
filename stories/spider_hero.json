@@ -1,7 +1,8 @@
 {
   "meta": {
     "title": "Spider-Man and the Ghost Chain",
-    "version": 2
+    "version": 2,
+    "teaser": "Help Spider-Man stop Ghost Rider and save the city!"
   },
   "vocab": {
     "look": { "label": "look" },

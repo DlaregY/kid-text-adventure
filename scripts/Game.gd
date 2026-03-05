@@ -41,6 +41,8 @@ const EMOJI := {
 @onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
 @onready var transition_overlay: ColorRect = $TransitionOverlay
 @onready var continue_button: Button = $ScrollContainer/Layout/ContinueButton
+@onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
+@onready var teaser_label: Label = $ScrollContainer/Layout/MenuScreen/TeaserLabel
 
 var story = {}
 var scenes = {}
@@ -60,6 +62,10 @@ func _ready() -> void:
 		var arr = fb.fallbacks.duplicate()
 		arr.append(emoji_font)
 		fb.fallbacks = arr
+
+	var vf := FileAccess.open("res://version.txt", FileAccess.READ)
+	if vf:
+		version_label.text = "v" + vf.get_as_text().strip_edges()
 
 	story_picker.item_selected.connect(_on_story_selected)
 	play_button.pressed.connect(_on_start_pressed)
@@ -92,19 +98,17 @@ func _discover_stories() -> void:
 			continue
 
 		var path := "%s/%s" % [STORIES_DIR, file_name]
-		var display_name := _story_display_name(path, file_name)
-		discovered_stories.append({
-			"path": path,
-			"display_name": display_name,
-		})
+		var info := _story_info(path, file_name)
+		discovered_stories.append(info)
 	dir.list_dir_end()
 
 	discovered_stories.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return str(a.get("display_name", "")).nocasecmp_to(str(b.get("display_name", ""))) < 0
+		return int(a.get("scene_count", 0)) < int(b.get("scene_count", 0))
 	)
 
 	for entry in discovered_stories:
-		story_picker.add_item(str(entry["display_name"]))
+		var label := "%s (%d scenes)" % [entry["display_name"], entry["scene_count"]]
+		story_picker.add_item(label)
 
 	if discovered_stories.is_empty():
 		selected_story_path = ""
@@ -116,23 +120,30 @@ func _discover_stories() -> void:
 	story_picker.select(0)
 	_set_selected_story(0)
 
-func _story_display_name(path: String, file_name: String) -> String:
+func _story_info(path: String, file_name: String) -> Dictionary:
 	var fallback := file_name.get_basename()
+	var info := {"path": path, "display_name": fallback, "teaser": "", "scene_count": 0}
+
 	var f = FileAccess.open(path, FileAccess.READ)
 	if f == null:
-		return fallback
+		return info
 
 	var parsed = JSON.parse_string(f.get_as_text())
 	if parsed == null or typeof(parsed) != TYPE_DICTIONARY:
-		return fallback
+		return info
 
 	var meta = parsed.get("meta", {})
 	if typeof(meta) == TYPE_DICTIONARY:
 		var title = str(meta.get("title", "")).strip_edges()
 		if title != "":
-			return title
+			info["display_name"] = title
+		info["teaser"] = str(meta.get("teaser", ""))
 
-	return fallback
+	var story_scenes = parsed.get("scenes", {})
+	if typeof(story_scenes) == TYPE_DICTIONARY:
+		info["scene_count"] = story_scenes.size()
+
+	return info
 
 func _load_story(path: String) -> bool:
 	var f = FileAccess.open(path, FileAccess.READ)
@@ -189,10 +200,12 @@ func _show_menu() -> void:
 func _set_selected_story(index: int) -> void:
 	if index < 0 or index >= discovered_stories.size():
 		selected_story_path = ""
+		teaser_label.text = ""
 		return
 
 	var entry: Dictionary = discovered_stories[index]
 	selected_story_path = str(entry.get("path", ""))
+	teaser_label.text = str(entry.get("teaser", ""))
 
 func _on_story_selected(index: int) -> void:
 	_set_selected_story(index)
