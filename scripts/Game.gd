@@ -317,7 +317,7 @@ func _check_slots_and_execute() -> void:
 	if slot3.visible and slot3.token == "":
 		return
 	# All slots filled — brief delay then execute
-	var scene_before := current_scene_id
+	var scene_before: String = current_scene_id
 	await get_tree().create_timer(0.5).timeout
 	if current_scene_id != scene_before:
 		return
