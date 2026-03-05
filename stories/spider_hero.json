@@ -1,0 +1,876 @@
+{
+  "meta": {
+    "title": "Spider-Man and the Ghost Chain",
+    "version": 2
+  },
+  "vocab": {
+    "look": { "label": "look" },
+    "open": { "label": "open" },
+    "take": { "label": "take" },
+    "talk": { "label": "talk" },
+    "go": { "label": "go" },
+    "use": { "label": "use" },
+    "climb": { "label": "climb" },
+    "give": { "label": "give" },
+    "window": { "label": "window" },
+    "comic": { "label": "comic" },
+    "note": { "label": "note" },
+    "fire": { "label": "fire" },
+    "cat": { "label": "cat" },
+    "rooftop": { "label": "rooftop" },
+    "spiderman": { "label": "Spider-Man" },
+    "web": { "label": "web" },
+    "city": { "label": "city" },
+    "lady": { "label": "lady" },
+    "bench": { "label": "bench" },
+    "sign": { "label": "sign" },
+    "book": { "label": "book" },
+    "shelf": { "label": "shelf" },
+    "door": { "label": "door" },
+    "potion": { "label": "potion" },
+    "hammer": { "label": "hammer" },
+    "chain": { "label": "chain" },
+    "tunnel": { "label": "tunnel" },
+    "torch": { "label": "torch" },
+    "bridge": { "label": "bridge" },
+    "wall": { "label": "wall" },
+    "tower": { "label": "tower" },
+    "bike": { "label": "bike" },
+    "stairs": { "label": "stairs" },
+    "ghost": { "label": "Ghost Rider" },
+    "home": { "label": "home" },
+    "library": { "label": "library" }
+  },
+  "start_scene": "bedroom",
+  "scenes": {
+    "bedroom": {
+      "text": [
+        "You are in your bedroom reading a comic book.",
+        "CRASH! Something hits your window!",
+        "What do you do?"
+      ],
+      "tiles": ["look", "open", "take", "window", "comic", "note"],
+      "commands": [
+        {
+          "pattern": ["look", "comic"],
+          "response": "Your favorite Spider-Man comic! So cool!"
+        },
+        {
+          "pattern": ["look", "window"],
+          "response": "You see bright flames lighting up the night sky! Something is happening out there!",
+          "effects": { "flags_set": { "saw_flames": true } }
+        },
+        {
+          "pattern": ["open", "window"],
+          "requirements": { "flags_true": ["saw_flames"] },
+          "response": "You open the window. A tiny spider crawls in carrying a small note!",
+          "effects": { "flags_set": { "window_open": true } }
+        },
+        {
+          "pattern": ["open", "window"],
+          "response": "Maybe look outside first to see what's going on!"
+        },
+        {
+          "pattern": ["take", "note"],
+          "requirements": { "flags_true": ["window_open"] },
+          "response": "You read the note: HELP ME! Meet on the rooftop! -Spider-Man. Wow! Spider-Man needs YOUR help!",
+          "effects": { "inventory_add": ["note"] },
+          "next": "street"
+        },
+        {
+          "pattern": ["take", "comic"],
+          "response": "You already have lots of comics! Time for a REAL adventure!"
+        },
+        {
+          "pattern": ["take", "window"],
+          "response": "You try to pick up the window. Nope! It's stuck to the wall! That's how windows work!"
+        },
+        {
+          "pattern": ["open", "comic"],
+          "response": "You open the comic and start reading. Spider-Man punches a bad guy. POW! Cool, but you have real stuff to do!"
+        },
+        {
+          "pattern": ["open", "note"],
+          "response": "What note? You don't have a note yet! Check the window!"
+        },
+        {
+          "pattern": ["look", "note"],
+          "response": "You don't see any note. Something crashed into the window though!"
+        },
+        {
+          "pattern": ["take", "note"],
+          "response": "What note? You don't see any note yet!"
+        }
+      ],
+      "default": [
+        "Hmm, try looking around your room!",
+        "Maybe look out the window?",
+        "That's a creative idea! But maybe try the window first.",
+        "Your bedroom is messy, but the window is more interesting right now!"
+      ]
+    },
+
+    "street": {
+      "text": [
+        "You run outside into the street!",
+        "Fire trails cover the ground. The air smells like smoke.",
+        "Ghost Rider was here!"
+      ],
+      "tiles": ["go", "look", "talk", "fire", "cat", "rooftop"],
+      "commands": [
+        {
+          "pattern": ["look", "fire"],
+          "response": "The flames glow blue and green. Spooky! They lead down the street."
+        },
+        {
+          "pattern": ["look", "cat"],
+          "response": "A scared orange cat hides under a car. Poor kitty!"
+        },
+        {
+          "pattern": ["talk", "cat"],
+          "response": "The cat meows at you sadly. It does not like the fire!"
+        },
+        {
+          "pattern": ["look", "rooftop"],
+          "response": "You can see the rooftop of your building. There is a fire escape!"
+        },
+        {
+          "pattern": ["go", "rooftop"],
+          "response": "You climb the fire escape. Up, up, up you go!",
+          "next": "rooftop"
+        },
+        {
+          "pattern": ["talk", "fire"],
+          "response": "You yell at the fire: STOP BURNING! The fire does not listen. Typical fire."
+        },
+        {
+          "pattern": ["talk", "rooftop"],
+          "response": "HEY ROOFTOP! ...Nothing. Buildings can't talk, silly!"
+        },
+        {
+          "pattern": ["go", "fire"],
+          "response": "Walk INTO the fire?! No way! You're brave, not crispy!"
+        },
+        {
+          "pattern": ["go", "cat"],
+          "response": "The cat is not a place! But it IS very fluffy. Meow!"
+        },
+        {
+          "pattern": ["look", "look"],
+          "response": "You look at yourself. Looking good! Now look at something useful!"
+        }
+      ],
+      "default": [
+        "The fire trails are scary! Maybe head up to the rooftop?",
+        "Spider-Man is waiting for you on the rooftop!",
+        "Nope! That didn't work. Try going to the rooftop!",
+        "The street is too hot to hang out here. Head up!"
+      ]
+    },
+
+    "rooftop": {
+      "text": [
+        "Spider-Man is on the rooftop! He looks worried.",
+        "The city glows orange with Ghost Rider's fire below."
+      ],
+      "tiles": ["look", "talk", "take", "spiderman", "web", "city"],
+      "commands": [
+        {
+          "pattern": ["talk", "spiderman"],
+          "response": "Spider-Man says: Ghost Rider's fire chain melts my webs! I can't stop him alone. Can you help me find his weakness?",
+          "effects": { "flags_set": { "talked_spidey": true } }
+        },
+        {
+          "pattern": ["look", "city"],
+          "response": "You can see Ghost Rider's flames near the park. That's where he went!"
+        },
+        {
+          "pattern": ["look", "spiderman"],
+          "response": "Spider-Man's suit has burn marks from the fight. It was tough!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Spider-Man's web shooters! They are so cool!"
+        },
+        {
+          "pattern": ["take", "web"],
+          "requirements": { "flags_true": ["talked_spidey"] },
+          "response": "Spider-Man gives you a web shooter! He says: Take this, just in case! Now go check the park!",
+          "effects": { "inventory_add": ["web"] },
+          "next": "park"
+        },
+        {
+          "pattern": ["take", "web"],
+          "response": "Maybe talk to Spider-Man first!"
+        },
+        {
+          "pattern": ["take", "spiderman"],
+          "response": "You try to pick up Spider-Man. He's a whole person! And very confused! Put him down!"
+        },
+        {
+          "pattern": ["take", "city"],
+          "response": "You try to pick up the entire city. It's... it's too big. Way too big. Nice try though!"
+        },
+        {
+          "pattern": ["talk", "web"],
+          "response": "You talk to the web shooter. Hello web! It says nothing. Webs are not great at conversation."
+        },
+        {
+          "pattern": ["talk", "city"],
+          "response": "You shout HELLO at the city! Someone far away shouts HELLO back! Cool!"
+        }
+      ],
+      "default": [
+        "Try talking to Spider-Man! He needs your help!",
+        "Spider-Man looks like he has something to tell you.",
+        "Don't just stand there! A superhero needs your help!",
+        "Spider-Man is tapping his foot. He's waiting for you to talk to him!"
+      ]
+    },
+
+    "park": {
+      "text": [
+        "The park is smoky. Burnt grass everywhere.",
+        "An old lady sits on a bench looking scared."
+      ],
+      "tiles": ["look", "talk", "take", "go", "lady", "bench", "sign", "key", "library"],
+      "commands": [
+        {
+          "pattern": ["talk", "lady"],
+          "response": "The lady says: Ghost Rider rode right through here! He dropped a glowing key near the bench!",
+          "effects": { "flags_set": { "lady_talked": true } }
+        },
+        {
+          "pattern": ["look", "bench"],
+          "requirements": { "flags_true": ["lady_talked"] },
+          "response": "You look under the bench. A glowing purple key! Ghost Rider must have dropped it!"
+        },
+        {
+          "pattern": ["look", "bench"],
+          "response": "Just a park bench. The lady sitting on it looks like she saw something."
+        },
+        {
+          "pattern": ["take", "key"],
+          "requirements": { "flags_true": ["lady_talked"] },
+          "response": "You grab the strange glowing key! It feels cold in your hand.",
+          "effects": { "inventory_add": ["key"] }
+        },
+        {
+          "pattern": ["look", "sign"],
+          "response": "The sign says: CITY LIBRARY this way!"
+        },
+        {
+          "pattern": ["look", "lady"],
+          "response": "The old lady looks scared but okay. Maybe talk to her?"
+        },
+        {
+          "pattern": ["go", "library"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "You follow the signs to the library. The key glows brighter as you walk!",
+          "next": "library"
+        },
+        {
+          "pattern": ["go", "library"],
+          "response": "You should find that key first! The lady said Ghost Rider dropped one."
+        },
+        {
+          "pattern": ["take", "lady"],
+          "response": "You can't take the lady! That would be VERY rude! She'd bonk you with her purse!"
+        },
+        {
+          "pattern": ["take", "bench"],
+          "response": "You pull on the bench. HNNNNG! Nope! It's bolted to the ground! And super heavy!"
+        },
+        {
+          "pattern": ["take", "sign"],
+          "response": "You try to pull the sign out of the ground. It won't budge! It's meant to stay there!"
+        },
+        {
+          "pattern": ["talk", "bench"],
+          "response": "You whisper to the bench. Hey bench. It says nothing. Benches are quiet like that."
+        },
+        {
+          "pattern": ["talk", "sign"],
+          "response": "You talk to the sign. It says: CITY LIBRARY. That's all it knows how to say!"
+        },
+        {
+          "pattern": ["talk", "key"],
+          "response": "You talk to the key. It glows a tiny bit. Was that a response? ...Probably not."
+        },
+        {
+          "pattern": ["go", "bench"],
+          "response": "You sit on the bench for a second. Comfy! But you have a mission, hero!"
+        },
+        {
+          "pattern": ["go", "sign"],
+          "response": "You walk to the sign and read it again. CITY LIBRARY. Yep, still says the same thing!"
+        },
+        {
+          "pattern": ["go", "key"],
+          "response": "You can't go TO a key! You can take it though!"
+        },
+        {
+          "pattern": ["look", "key"],
+          "response": "The key sparkles with a purple glow! Ooooh shiny!"
+        },
+        {
+          "pattern": ["look", "library"],
+          "response": "You can see the library building down the road. It looks old and dusty!"
+        },
+        {
+          "pattern": ["take", "key"],
+          "response": "What key? Talk to the lady first. She might know about a key!"
+        }
+      ],
+      "default": [
+        "Maybe talk to the lady? She looks like she saw something.",
+        "Look around the park for clues!",
+        "The park is a mess! Ghost Rider has no manners.",
+        "Hmm, that didn't work. Try talking to someone!"
+      ]
+    },
+
+    "library": {
+      "text": [
+        "The old library is quiet and dusty.",
+        "One shelf in the back glows with a strange light!"
+      ],
+      "tiles": ["look", "open", "take", "book", "shelf", "door"],
+      "commands": [
+        {
+          "pattern": ["look", "shelf"],
+          "response": "One book on the shelf glows! The title says: Spirits and Chains - A Guide.",
+          "effects": { "flags_set": { "saw_book": true } }
+        },
+        {
+          "pattern": ["take", "book"],
+          "requirements": { "flags_true": ["saw_book"] },
+          "response": "You grab the glowing book. It feels warm!",
+          "effects": { "inventory_add": ["book"] }
+        },
+        {
+          "pattern": ["take", "book"],
+          "response": "Which book? There are a million books here! Look at the shelf to find the right one!"
+        },
+        {
+          "pattern": ["open", "book"],
+          "requirements": { "inventory_has": ["book"] },
+          "response": "The book says: A Ghost Rider's power lives in its chain. Break the chain, free the spirit! That's the secret!",
+          "effects": { "flags_set": { "read_book": true } }
+        },
+        {
+          "pattern": ["open", "book"],
+          "response": "You need to take the book first!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A locked door in the back of the library. It has a strange keyhole."
+        },
+        {
+          "pattern": ["open", "door"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
+          "next": "basement"
+        },
+        {
+          "pattern": ["open", "door"],
+          "response": "The door is locked. You need some kind of key."
+        },
+        {
+          "pattern": ["take", "shelf"],
+          "response": "You try to pick up the entire shelf. CRASH! Books fall everywhere! Okay bad idea. You put it back. The librarian would be SO mad."
+        },
+        {
+          "pattern": ["take", "door"],
+          "response": "You pull on the door. It's attached to the wall! Doors don't go in your pocket!"
+        },
+        {
+          "pattern": ["open", "shelf"],
+          "response": "Shelves are already open! That's the whole point of shelves! They hold stuff where you can SEE it!"
+        },
+        {
+          "pattern": ["look", "book"],
+          "response": "So many books! There's one about dragons, one about cooking, and one about... socks? Libraries are weird."
+        }
+      ],
+      "default": [
+        "Look around the library! There is something glowing.",
+        "Check out that glowing shelf!",
+        "Shhh! It's a library! But also look at that glowing thing!",
+        "The librarian isn't here. Good thing, because you're about to do some very non-library stuff."
+      ]
+    },
+
+    "basement": {
+      "text": [
+        "A secret basement under the library!",
+        "Old bottles and tools line the walls.",
+        "It smells like dust and magic."
+      ],
+      "tiles": ["look", "take", "go", "potion", "hammer", "chain", "tunnel"],
+      "commands": [
+        {
+          "pattern": ["look", "potion"],
+          "response": "A blue bottle with a label: ICE POTION - Freezes Ghost Fire. That could be useful!"
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "A heavy old hammer. It looks very strong!"
+        },
+        {
+          "pattern": ["look", "chain"],
+          "response": "A piece of ghost chain in a glass case! It glows with cold fire. Just like the book described!"
+        },
+        {
+          "pattern": ["look", "tunnel"],
+          "response": "A dark tunnel behind the shelves. It goes deep underground."
+        },
+        {
+          "pattern": ["take", "potion"],
+          "response": "You carefully take the ice potion. Don't drop it!",
+          "effects": { "inventory_add": ["potion"] }
+        },
+        {
+          "pattern": ["take", "hammer"],
+          "response": "You pick up the heavy hammer. You can do this!",
+          "effects": { "inventory_add": ["hammer"] }
+        },
+        {
+          "pattern": ["take", "chain"],
+          "response": "The glass case is sealed shut. You can't take it. But now you know what the chain looks like!"
+        },
+        {
+          "pattern": ["go", "tunnel"],
+          "requirements": { "inventory_has": ["potion", "hammer"] },
+          "response": "You have the potion and the hammer. Time to go! You squeeze through the tunnel entrance.",
+          "next": "tunnel"
+        },
+        {
+          "pattern": ["go", "tunnel"],
+          "response": "You should grab the useful stuff here before going into that dark tunnel!"
+        },
+        {
+          "pattern": ["take", "tunnel"],
+          "response": "You try to pick up the tunnel. It's... a hole in the ground. You can't put a hole in your pocket!"
+        },
+        {
+          "pattern": ["go", "chain"],
+          "response": "You can't go to a chain! What would that even look like? Just look at it!"
+        },
+        {
+          "pattern": ["go", "hammer"],
+          "response": "You can't travel to a hammer! But you CAN take it!"
+        },
+        {
+          "pattern": ["go", "potion"],
+          "response": "You can't go to a potion! Just pick it up!"
+        },
+        {
+          "pattern": ["look", "look"],
+          "response": "You look around in a circle really fast. WHEEE! Okay you're dizzy now."
+        }
+      ],
+      "default": [
+        "Look around! There are useful tools and potions here.",
+        "Take what you need before heading into the tunnel!",
+        "A secret basement! How cool is this? Grab some stuff!",
+        "This place smells funny. Like old socks mixed with magic. Take what you need and let's go!"
+      ]
+    },
+
+    "tunnel": {
+      "text": [
+        "A dark underground tunnel. You can barely see!",
+        "You hear water dripping somewhere.",
+        "It is very dark in here."
+      ],
+      "tiles": ["go", "look", "use", "web", "torch", "bridge"],
+      "commands": [
+        {
+          "pattern": ["look", "torch"],
+          "response": "An old torch sits on the wall. But it is too high to reach!"
+        },
+        {
+          "pattern": ["look", "bridge"],
+          "response": "You can barely see a bridge ahead in the darkness."
+        },
+        {
+          "pattern": ["use", "web"],
+          "requirements": { "inventory_has": ["web"] },
+          "response": "You aim the web shooter at the torch! THWIP! You pull it down and light it. Now you can see!",
+          "effects": { "flags_set": { "has_light": true } }
+        },
+        {
+          "pattern": ["use", "web"],
+          "response": "You don't have a web shooter!"
+        },
+        {
+          "pattern": ["use", "torch"],
+          "response": "The torch is too high up on the wall! You need something to reach it."
+        },
+        {
+          "pattern": ["go", "bridge"],
+          "requirements": { "flags_true": ["has_light"] },
+          "response": "With the torch lighting the way, you walk through the tunnel to the bridge!",
+          "next": "bridge"
+        },
+        {
+          "pattern": ["go", "bridge"],
+          "response": "It is too dark! You need light to go deeper into the tunnel."
+        },
+        {
+          "pattern": ["go", "torch"],
+          "response": "The torch is on the wall! You can't walk to a wall decoration!"
+        },
+        {
+          "pattern": ["go", "web"],
+          "response": "Go... to a web? Where does a web live? You can USE it though!"
+        },
+        {
+          "pattern": ["use", "bridge"],
+          "response": "You try to use the bridge as a tool. Bridges are for walking on, not swinging around!"
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your trusty web shooter! Ready to go. THWIP THWIP!"
+        }
+      ],
+      "default": [
+        "It is so dark! You need to find some light.",
+        "Maybe there is something on the wall that can help?",
+        "You bump into a wall. OOF! It's really dark in here!",
+        "Was that a bat? No wait, it was just a drip. Find some light!"
+      ]
+    },
+
+    "bridge": {
+      "text": [
+        "An old stone bridge over an underground river!",
+        "Ghost Rider's fire marks cover the walls."
+      ],
+      "tiles": ["go", "look", "climb", "wall", "bridge", "tower"],
+      "commands": [
+        {
+          "pattern": ["look", "wall"],
+          "response": "Strange ghost symbols on the wall. And a drawing of a tall tower!"
+        },
+        {
+          "pattern": ["look", "bridge"],
+          "response": "The bridge is old and cracked but it looks safe to cross."
+        },
+        {
+          "pattern": ["look", "tower"],
+          "response": "You can't see the tower from here. But it must be on the other side!"
+        },
+        {
+          "pattern": ["climb", "wall"],
+          "response": "You climb up a bit and peek through a crack. A dark tower in the distance!"
+        },
+        {
+          "pattern": ["go", "bridge"],
+          "response": "You walk across the bridge carefully. It holds! You climb out into the open air!",
+          "next": "tower"
+        },
+        {
+          "pattern": ["climb", "bridge"],
+          "response": "You try to climb the bridge. That's not how bridges work! You walk ON them, silly!"
+        },
+        {
+          "pattern": ["climb", "tower"],
+          "response": "The tower is way too far away to climb from here! Cross the bridge first!"
+        },
+        {
+          "pattern": ["go", "wall"],
+          "response": "BONK! You walk straight into the wall. Ouch! Walls are not doors!"
+        },
+        {
+          "pattern": ["go", "tower"],
+          "response": "You need to cross the bridge first to get to the tower!"
+        }
+      ],
+      "default": [
+        "Try crossing the bridge!",
+        "The bridge looks safe enough. Be brave!",
+        "The underground river below sounds loud! Just don't look down!",
+        "You're so close! Walk across the bridge!"
+      ]
+    },
+
+    "tower": {
+      "text": [
+        "A dark tower rises above you!",
+        "Ghost Rider's bike is parked by the door.",
+        "Flames flicker at the very top."
+      ],
+      "tiles": ["look", "use", "go", "bike", "door", "tower"],
+      "commands": [
+        {
+          "pattern": ["look", "bike"],
+          "response": "Ghost Rider's flaming motorcycle! The engine is off right now."
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A heavy metal door. It is very hot! You can't touch it!"
+        },
+        {
+          "pattern": ["look", "tower"],
+          "response": "The tower is tall and dark. Fire glows at the top. Ghost Rider is up there!"
+        },
+        {
+          "pattern": ["use", "potion"],
+          "requirements": { "inventory_has": ["potion"] },
+          "response": "You pour the ice potion on the hot door! CRACK! It freezes solid and breaks apart! The way is open!",
+          "effects": { "inventory_remove": ["potion"] },
+          "next": "stairs"
+        },
+        {
+          "pattern": ["use", "potion"],
+          "response": "You don't have a potion!"
+        },
+        {
+          "pattern": ["go", "door"],
+          "response": "The door is way too hot to touch! You need to cool it down somehow."
+        },
+        {
+          "pattern": ["go", "tower"],
+          "response": "You need to get through the door first!"
+        },
+        {
+          "pattern": ["use", "bike"],
+          "response": "You hop on Ghost Rider's motorcycle. VROOM! The seat is ON FIRE! OW OW OW! You jump off and pat your butt. Bad idea!"
+        },
+        {
+          "pattern": ["use", "door"],
+          "response": "You try to touch the door. SSSSS! HOT HOT HOT! You blow on your fingers. Ow!"
+        },
+        {
+          "pattern": ["use", "tower"],
+          "response": "How do you use a whole tower? It's a building, not a tool!"
+        },
+        {
+          "pattern": ["go", "bike"],
+          "response": "You don't know how to drive a motorcycle! Plus that one is literally on fire!"
+        }
+      ],
+      "default": [
+        "That door is too hot! Maybe you have something to cool it down?",
+        "Think about what's in your bag!",
+        "OUCH! Everything here is hot! If only you had something cold...",
+        "Ghost Rider really needs to learn about fire safety."
+      ]
+    },
+
+    "stairs": {
+      "text": [
+        "Spiral stairs going up!",
+        "You hear chains rattling above!",
+        "Scorch marks cover every step."
+      ],
+      "tiles": ["look", "climb", "use", "stairs", "web"],
+      "commands": [
+        {
+          "pattern": ["look", "stairs"],
+          "response": "The stairs are broken in places. Some steps are missing! It's too dangerous to climb."
+        },
+        {
+          "pattern": ["use", "web"],
+          "requirements": { "inventory_has": ["web"] },
+          "response": "THWIP! THWIP! You shoot webs across the broken stairs. Now they are strong and safe!",
+          "effects": { "flags_set": { "stairs_fixed": true } }
+        },
+        {
+          "pattern": ["use", "web"],
+          "response": "You don't have a web shooter!"
+        },
+        {
+          "pattern": ["climb", "stairs"],
+          "requirements": { "flags_true": ["stairs_fixed"] },
+          "response": "You climb the webbed stairs all the way to the top! Here we go!",
+          "next": "battle"
+        },
+        {
+          "pattern": ["climb", "stairs"],
+          "response": "The stairs are too broken! Some steps are missing. You need to fix them first."
+        },
+        {
+          "pattern": ["use", "stairs"],
+          "response": "The stairs need to be fixed first! Some steps are missing."
+        },
+        {
+          "pattern": ["climb", "web"],
+          "response": "You try to climb a web like Spider-Man. Nope! You're not a spider, silly! Your shoes get all sticky."
+        },
+        {
+          "pattern": ["look", "web"],
+          "response": "Your trusty web shooter! THWIP! ...Don't waste it! Use it on something useful!"
+        }
+      ],
+      "default": [
+        "Those stairs look broken! Can you fix them somehow?",
+        "You need to make the stairs safe before climbing.",
+        "Step, step, HOLE, step... yeah those stairs need work.",
+        "Ghost Rider really messed up these stairs. Rude!"
+      ]
+    },
+
+    "battle": {
+      "text": [
+        "You reach the top of the tower!",
+        "Ghost Rider swings his fire chain! WHOOSH!",
+        "Spider-Man swings in behind you!",
+        "This is it!"
+      ],
+      "tiles": ["look", "talk", "use", "give", "ghost", "chain", "spiderman", "hammer"],
+      "commands": [
+        {
+          "pattern": ["look", "ghost"],
+          "response": "Ghost Rider is big and scary! Fire covers his whole body!"
+        },
+        {
+          "pattern": ["look", "chain"],
+          "response": "The fire chain swings around fast. Wait... you see a weak spot in the middle! Just like the book said!",
+          "effects": { "flags_set": { "saw_weakness": true } }
+        },
+        {
+          "pattern": ["talk", "spiderman"],
+          "response": "Spider-Man says: I'll distract him with my webs! You figure out the chain! I believe in you!",
+          "effects": { "flags_set": { "spidey_ready": true } }
+        },
+        {
+          "pattern": ["talk", "ghost"],
+          "response": "Ghost Rider laughs: No one can break my chain! You will never stop me!"
+        },
+        {
+          "pattern": ["look", "spiderman"],
+          "response": "Spider-Man is ready to help! He's waiting for your signal."
+        },
+        {
+          "pattern": ["look", "hammer"],
+          "response": "The hammer feels heavy in your hands. You can do this!"
+        },
+        {
+          "pattern": ["use", "hammer"],
+          "requirements": { "inventory_has": ["hammer"], "flags_true": ["saw_weakness", "spidey_ready"] },
+          "response": "Spider-Man webs Ghost Rider's arms! NOW! You run in and SMASH the weak link with the hammer! CRASH! The chain SHATTERS into a thousand pieces!",
+          "effects": { "inventory_remove": ["hammer"] },
+          "next": "victory"
+        },
+        {
+          "pattern": ["use", "hammer"],
+          "requirements": { "inventory_has": ["hammer"] },
+          "response": "Not yet! You need to find the chain's weak spot and make sure Spider-Man is ready!"
+        },
+        {
+          "pattern": ["give", "hammer"],
+          "response": "Spider-Man says: No no no, YOU have to do this! I believe in you kid! I'll hold him!"
+        },
+        {
+          "pattern": ["give", "ghost"],
+          "response": "Give something to Ghost Rider? Are you CRAZY?! He's the bad guy! He'd just set it on fire!"
+        },
+        {
+          "pattern": ["give", "chain"],
+          "response": "Give the chain?! It's attached to Ghost Rider! And it's on FIRE! No touching!"
+        },
+        {
+          "pattern": ["give", "spiderman"],
+          "response": "Give Spider-Man to someone? He's a person, not a gift! Although he IS pretty amazing."
+        },
+        {
+          "pattern": ["use", "ghost"],
+          "response": "Use Ghost Rider as a... what exactly? A nightlight? A space heater? He's a person, not a tool!"
+        },
+        {
+          "pattern": ["use", "chain"],
+          "response": "You reach for the chain. YOWCH! It's on fire! Do NOT touch the fire chain!"
+        },
+        {
+          "pattern": ["use", "spiderman"],
+          "response": "Spider-Man is a friend, not a tool! He gives you a funny look. Don't use your friends!"
+        },
+        {
+          "pattern": ["talk", "chain"],
+          "response": "You yell at the chain: BREAK ALREADY! It just keeps swinging. Chains don't speak English."
+        },
+        {
+          "pattern": ["talk", "hammer"],
+          "response": "You whisper to the hammer: We can do this, hammer. I believe in us. The hammer says nothing. But you feel braver!"
+        }
+      ],
+      "default": [
+        "Look carefully at the chain! Remember what the book said?",
+        "Talk to Spider-Man to make a plan!",
+        "Ghost Rider is right there! Focus! Check the chain for a weak spot!",
+        "This is the big moment! Look at the chain, talk to Spider-Man, and SMASH!"
+      ]
+    },
+
+    "victory": {
+      "text": [
+        "The fire goes out! Ghost Rider's flames disappear!",
+        "A confused man stands where Ghost Rider was.",
+        "Spider-Man lands next to you with a big thumbs up!"
+      ],
+      "tiles": ["talk", "look", "go", "spiderman", "ghost", "home"],
+      "commands": [
+        {
+          "pattern": ["talk", "spiderman"],
+          "response": "Spider-Man high-fives you! He says: You were AMAZING! I never could have figured out the chain puzzle. You are a real hero!"
+        },
+        {
+          "pattern": ["talk", "ghost"],
+          "response": "The man says: Thank you so much. That chain had me cursed for years. You freed me!"
+        },
+        {
+          "pattern": ["look", "spiderman"],
+          "response": "Spider-Man is smiling under his mask. You can tell!"
+        },
+        {
+          "pattern": ["look", "ghost"],
+          "response": "The man looks tired but happy. He is free from the curse!"
+        },
+        {
+          "pattern": ["go", "home"],
+          "response": "Time to go home! What an incredible adventure!",
+          "next": "win"
+        },
+        {
+          "pattern": ["go", "spiderman"],
+          "response": "Spider-Man is right next to you! You walk over and he gives you another high five. SLAP! Ow, super strength!"
+        },
+        {
+          "pattern": ["go", "ghost"],
+          "response": "You walk over to the freed man. He smiles and shakes your hand. His hand isn't hot anymore!"
+        },
+        {
+          "pattern": ["talk", "home"],
+          "response": "You think about home. Your warm bed... your comics... your snacks... Okay maybe time to go home!"
+        },
+        {
+          "pattern": ["look", "home"],
+          "response": "You look toward home. Your warm cozy bed is waiting. And probably a snack!"
+        }
+      ],
+      "default": [
+        "What an amazing victory! Talk to everyone before heading home.",
+        "You did it! You really did it!",
+        "You saved the city! Take a moment to enjoy this!",
+        "Spider-Man keeps looking at you like you're the coolest kid ever. Because you ARE!"
+      ]
+    },
+
+    "win": {
+      "text": [
+        "You walk home as the sun rises over the city.",
+        "Spider-Man swings by and waves at you!",
+        "You smile and wave back.",
+        "You are a TRUE HERO!",
+        "",
+        "THE END"
+      ],
+      "tiles": [],
+      "commands": [],
+      "default": ["What an amazing adventure!"]
+    }
+  }
+}

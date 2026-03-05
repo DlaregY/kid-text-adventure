@@ -16,6 +16,13 @@ const EMOJI := {
 	"dog": "🐕", "dragon": "🐉",
 	"go": "👉", "open": "📖", "take": "✋", "look": "👀",
 	"talk": "💬", "give": "🎁", "climb": "🧗", "use": "🔧",
+	"window": "🪟", "comic": "📕", "note": "📝", "fire": "🔥",
+	"cat": "🐱", "rooftop": "🏢", "spiderman": "🕷️", "web": "🕸️",
+	"city": "🏙️", "lady": "👵", "bench": "🪑", "sign": "🪧",
+	"book": "📗", "shelf": "📚", "potion": "🧪", "hammer": "🔨",
+	"chain": "⛓️", "tunnel": "🚇", "torch": "🔦", "wall": "🧱",
+	"tower": "🗼", "bike": "🏍️", "stairs": "🪜", "ghost": "👻",
+	"home": "🏠", "library": "🏛️",
 }
 
 @onready var menu_bar: HBoxContainer = $ScrollContainer/Layout/MenuBar

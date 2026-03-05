@@ -19,22 +19,27 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Three scripts, one scene, JSON-driven stories.**
 
-- `scripts/Game.gd` — The entire game controller (~375 lines). Handles story discovery, scene rendering, drag-drop input, rule evaluation, inventory/flag state, scene transitions, emoji font loading, and tile categorization. This is where nearly all logic lives.
+- `scripts/Game.gd` — The entire game controller (~389 lines). Handles story discovery, scene rendering, drag-drop input, rule evaluation, inventory/flag state, scene transitions, emoji font loading, and tile categorization. This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable button: sets drag data (`token` + `label`) and creates a drag preview. Has `tile_color` property (default blue) used for drag preview background. Note: `_ready()` only sets text from `token` if `text` is empty — callers that set `text` before `add_child()` won't be overwritten.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `@export placeholder_text` for labeled slots ("Action", "Thing", "Where"); `clear()` resets to placeholder.
 - `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), GO button, story picker overlay.
 - `ui/Tile.tscn` — Reusable tile button component instantiated at runtime.
-- `stories/*.json` — Story content files auto-discovered at startup.
+- `stories/*.json` — Story content files auto-discovered at startup. Currently two stories: `dragon_egg.json` and `spider_hero.json`.
 
 **Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player drags tiles into slots → GO → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene.
 
 **State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String).
 
-**Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text. Note: bundled .ttf emoji fonts (CBDT format) don't render in Godot — SystemFont is required.
+**Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters (~48 entries); tiles display "emoji + token" text. Note: bundled .ttf emoji fonts (CBDT format) don't render in Godot — SystemFont is required.
 
 **Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_render_scene()` sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with optional color styling.
 
 **Slot3 visibility:** `_scene_has_3word_commands()` checks if any scene rule has a 3+ token pattern. `_render_scene()` shows/hides Slot3 ("Where") accordingly.
+
+## Stories
+
+- **`dragon_egg.json`** — The original story. Uses 2–3 word commands. A fantasy adventure involving a dragon egg.
+- **`spider_hero.json`** — "Spider-Man and the Ghost Chain." 13 scenes, uses only 2-word commands. A superhero story where the player helps Spider-Man chase a ghost through the city.
 
 ## Story JSON Format
 
