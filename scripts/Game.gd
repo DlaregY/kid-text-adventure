@@ -2,7 +2,7 @@
 # Commands now accept 2 or 3 tokens from Slot1/Slot2[/Slot3].
 # Rules match only when pattern length equals command length and all tokens align in order.
 # Story flow: discover JSON stories in res://stories/, let player choose from StoryPicker,
-# then load the selected path when START is pressed. MenuButton returns to picker.
+# then load the selected path when START is pressed. NewGameButton returns to picker.
 extends Control
 
 const STORIES_DIR := "res://stories"
@@ -29,7 +29,9 @@ const EMOJI := {
 @onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuBar/StoryPicker
 @onready var start_button: Button = $ScrollContainer/Layout/MenuBar/StartButton
 @onready var story_title: Label = $ScrollContainer/Layout/MenuBar/StoryTitle
-@onready var menu_button: Button = $MenuButton
+@onready var new_game_button: Button = $ScrollContainer/Layout/NewGameButton
+@onready var command_bar: HBoxContainer = $ScrollContainer/Layout/CommandBar
+@onready var tile_section: VBoxContainer = $ScrollContainer/Layout/TileSection
 @onready var story_text: Label = $ScrollContainer/Layout/StoryText
 @onready var feedback_text: Label = $ScrollContainer/Layout/FeedbackText
 @onready var action_tray: FlowContainer = $ScrollContainer/Layout/TileSection/ActionTray
@@ -62,12 +64,10 @@ func _ready() -> void:
 
 	story_picker.item_selected.connect(_on_story_selected)
 	start_button.pressed.connect(_on_start_pressed)
-	menu_button.pressed.connect(_on_menu_pressed)
+	new_game_button.pressed.connect(_on_menu_pressed)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
 	slot3.tile_dropped.connect(_check_slots_and_execute)
-	menu_button.visible = false
-
 	_discover_stories()
 	_show_menu()
 
@@ -166,16 +166,21 @@ func _start_story() -> void:
 	inventory.clear()
 	flags.clear()
 	has_active_story = true
-	_render_scene()
 	menu_bar.visible = false
-	menu_button.visible = false
+	command_bar.visible = true
+	tile_section.visible = true
+	feedback_text.visible = true
+	new_game_button.visible = false
+	_render_scene()
 
 func _show_menu() -> void:
 	has_active_story = false
 	menu_bar.visible = true
-	menu_button.visible = false
+	command_bar.visible = false
+	tile_section.visible = false
+	feedback_text.visible = false
+	new_game_button.visible = false
 	story_text.text = "Choose a story, then press START."
-	feedback_text.text = ""
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
 			child.queue_free()
@@ -185,7 +190,6 @@ func _show_menu() -> void:
 	slot3.visible = false
 	inventory.clear()
 	flags.clear()
-	_update_inventory_ui()
 
 func _set_selected_story(index: int) -> void:
 	if index < 0 or index >= discovered_stories.size():
@@ -253,13 +257,13 @@ func _render_scene() -> void:
 
 	_update_inventory_ui()
 
-	# Show "Change Story" button only on terminal scenes (no outgoing transitions)
+	# Show "New Game" button only on terminal scenes (no outgoing transitions)
 	var has_next := false
 	for rule in scene.get("commands", []):
 		if rule.has("next"):
 			has_next = true
 			break
-	menu_button.visible = not has_next
+	new_game_button.visible = not has_next
 
 func _update_inventory_ui() -> void:
 	var has_items: bool = inventory_tray.get_child_count() > 0

@@ -166,17 +166,11 @@ text = "Things:"
 layout_mode = 2
 theme_override_constants/v_separation = 10
 
-[node name="MenuButton" type="Button" parent="." unique_id=81561436]
-layout_mode = 1
-anchors_preset = 10
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -130.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = 60.0
-grow_horizontal = 0
-text = "Change Story"
+[node name="NewGameButton" type="Button" parent="ScrollContainer/Layout"]
+visible = false
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+text = "NEW GAME"
 
 [node name="TransitionOverlay" type="ColorRect" parent="."]
 layout_mode = 1

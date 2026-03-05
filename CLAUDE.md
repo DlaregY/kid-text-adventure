@@ -22,9 +22,11 @@ There is no build step, test suite, or linter — verification is manual playtes
 - `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), TransitionOverlay (full-screen ColorRect for fade transitions), story picker overlay.
+- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions), story picker in MenuBar.
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
+
+**Story selection:** Menu screen hides game UI (CommandBar, TileSection, FeedbackText) and shows only the story picker + instruction text. On start, game UI is shown and menu is hidden. On terminal scenes (no outgoing transitions), a "NEW GAME" button appears inline at the bottom, returning to the menu.
 
 **Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player taps tiles (auto-placed into correct slot by category) → when all visible slots filled, 0.5s delay then auto-execute → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene with fade.
 
@@ -73,7 +75,7 @@ Command rules: `pattern` (2-3 token array), `response`, optional `requirements` 
 
 - `vocab` labels defined but not yet used for tile rendering (tiles show emoji + raw token text via the `EMOJI` dict instead).
 - Scene `image` fields in JSON are parsed but not rendered.
-- No restart/checkpoint UI, no sound/animation feedback, no JSON validation.
+- No sound/animation feedback, no JSON validation.
 - Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS). Bundled CBDT-format emoji fonts (e.g. NotoColorEmoji.ttf) do not render in Godot.
 
 ## Deferred Features
