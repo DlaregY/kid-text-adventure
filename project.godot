@@ -10,10 +10,12 @@ config_version=5
 
 [application]
 
-config/name="KidTextAdventure"
+config/name="Ike's Adventure"
 run/main_scene="uid://da2g8wy6g4fky"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
+boot_splash/image="res://splash.png"
+boot_splash/fullsize=false
 
 [display]
 
