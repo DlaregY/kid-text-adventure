@@ -42,6 +42,7 @@ const EMOJI := {
 @onready var inventory_label: Label = $ScrollContainer/Layout/TileSection/InventoryLabel
 @onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
 @onready var transition_overlay: ColorRect = $TransitionOverlay
+@onready var continue_button: Button = $ScrollContainer/Layout/ContinueButton
 
 var story = {}
 var scenes = {}
@@ -180,6 +181,7 @@ func _show_menu() -> void:
 	tile_section.visible = false
 	feedback_text.visible = false
 	new_game_button.visible = false
+	continue_button.visible = false
 	story_text.text = "Choose a story, then press START."
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
@@ -395,8 +397,13 @@ func _transition_to_scene(scene_id: String) -> void:
 		return
 	is_transitioning = true
 
-	# Response text is already visible — wait for kid to read it
-	await get_tree().create_timer(2.5).timeout
+	# Brief pause so kid notices the response text
+	await get_tree().create_timer(1.0).timeout
+
+	# Show continue button and wait for kid to tap it
+	continue_button.visible = true
+	await continue_button.pressed
+	continue_button.visible = false
 
 	# Fade to black
 	var tween := create_tween()

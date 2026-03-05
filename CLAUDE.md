@@ -22,7 +22,7 @@ There is no build step, test suite, or linter — verification is manual playtes
 - `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions), story picker in MenuBar.
+- `Game.tscn` — Main UI scene: story text, feedback label, 3 labeled command slots (Slot3 hidden by default), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions), story picker in MenuBar.
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
@@ -34,7 +34,7 @@ There is no build step, test suite, or linter — verification is manual playtes
 
 **Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). When all visible slots are filled, waits 0.5s (so kid sees the tile land), then calls `_try_execute_command()`. Guards against stale execution with scene ID check across the await.
 
-**Scene transitions:** `_transition_to_scene()` shows response text for 1.5s (so kid reads it), then fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions.
+**Scene transitions:** `_transition_to_scene()` shows response text, pauses 1.0s, then displays a ▶ continue button. When the kid taps the button, it fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions (including while the continue button is visible).
 
 **State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String), `is_transitioning` (bool).
 

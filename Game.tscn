@@ -166,6 +166,13 @@ text = "Things:"
 layout_mode = 2
 theme_override_constants/v_separation = 10
 
+[node name="ContinueButton" type="Button" parent="ScrollContainer/Layout"]
+visible = false
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "▶"
+
 [node name="NewGameButton" type="Button" parent="ScrollContainer/Layout"]
 visible = false
 custom_minimum_size = Vector2(0, 56)
