@@ -15,6 +15,25 @@ godot4 --path .
 
 There is no build step, test suite, or linter — verification is manual playtesting in the Godot editor.
 
+## Export, Install & Release
+
+**Export APK** (debug-signed):
+```bash
+"/c/Users/geral/Downloads/Godot_v4.6.1-stable_win64.exe/Godot_v4.6.1-stable_win64_console.exe" --headless --export-debug "Ike's Adventures" exports/ike-adventure.apk
+```
+
+**Install on phone** (device must be connected via USB with ADB debugging enabled):
+```bash
+/c/Android/Sdk/platform-tools/adb.exe install -r exports/ike-adventure.apk
+```
+
+**Create a GitHub release** (attach APK for easy download):
+```bash
+gh release create v<VERSION> exports/ike-adventure.apk --title "v<VERSION> — <Title>" --notes "<markdown notes>"
+```
+
+The goodnight shutdown sequence should include: export APK, install on phone (if connected), and create a GitHub release with the APK attached. Version comes from `version.txt`.
+
 ## Architecture
 
 **Three scripts, one scene, JSON-driven stories.**
