@@ -41,7 +41,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, smart fallback responses, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. Inventory items can be placed in either slot (first-empty routing). This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: MenuScreen (VBoxContainer with logo, title, story picker, PLAY button), story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions).
+- `Game.tscn` — Main UI scene: MenuScreen (VBoxContainer with logo, title, story picker, PLAY button), story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), HintButton (hidden until 6 failed commands, shows progressive hints), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions).
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
@@ -57,7 +57,9 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Scene transitions:** `_transition_to_scene()` shows response text, pauses 1.0s, then displays a ▶ continue button. When the kid taps the button, it fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions (including while the continue button is visible).
 
-**State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String), `is_transitioning` (bool).
+**Hint system:** After 6 consecutive failed commands (no rule match), a HINT button appears below the tile section. Each scene has an optional `"hints"` array in the JSON with 3 progressive hints (gentle nudge, more specific, nearly direct). `_on_hint_pressed()` shows the next hint in FeedbackText, advancing `hint_index` and clamping at the last entry. `_reset_hints()` zeroes `fail_count` and `hint_index`, hides the button. Called by `_render_scene()` (scene change), `_apply_command()` (successful match), and `_show_menu()` (return to menu).
+
+**State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String), `is_transitioning` (bool), `fail_count` (int: consecutive failed commands), `hint_index` (int: current hint position).
 
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
 
@@ -67,6 +69,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 - **`dragon_egg.json`** — Fantasy adventure with 2-word commands. Player finds a dragon egg and returns it.
 - **`spider_hero.json`** — "Spiderdude and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spiderdude defeat Skull Rider.
+- **`phone_trap.json`** — "Phone Trap." 8 scenes, 2-word commands. Player gets sucked into Dad's phone and must defeat the Phone Boss to escape.
 
 ## Story JSON Format
 
@@ -78,6 +81,7 @@ scenes.{id}.text: [lines]        # displayed to player
 scenes.{id}.tiles: [tokens]      # available drag tiles
 scenes.{id}.commands: [rules]    # evaluated in order, first match wins
 scenes.{id}.default: [strings]   # random fallback if no rule matches (5-8 funny responses per scene)
+scenes.{id}.hints: [strings]    # progressive hints shown after 6 failed commands (optional, 3 strings: gentle → specific → direct)
 ```
 
 Command rules: `pattern` (2 token array), `response`, optional `requirements` (inventory_has, flags_true), optional `effects` (inventory_add, inventory_remove, flags_set), optional `next` (scene transition).
@@ -86,7 +90,7 @@ Command rules: `pattern` (2 token array), `response`, optional `requirements` (i
 
 - **GDScript style:** snake_case for functions/variables, PascalCase for classes. Godot 4 typed syntax (`var x: Type`). Use explicit types over `:=` inference when the source property lacks a type annotation.
 - **Adding a story:** Create a new `.json` file in `stories/` following the schema above. Include `meta.teaser` for the menu description. The game auto-discovers all JSON files in that directory and sorts by scene count.
-- **Adding a scene:** Add scene object under `scenes` in the story JSON with `text`, `tiles`, `commands`, and `default`. Point an existing rule's `next` to it.
+- **Adding a scene:** Add scene object under `scenes` in the story JSON with `text`, `tiles`, `commands`, `default`, and optionally `hints` (3 progressive strings: gentle, specific, direct). Point an existing rule's `next` to it.
 - **Code changes:** Almost everything is in `Game.gd`. UI layout changes go in `Game.tscn`.
 - **Consumable items:** Use `inventory_remove` in effects when items should be used up (e.g., rope after tying bridge, potion after pouring).
 

@@ -112,7 +112,8 @@
         "You hear Dad snoring. ZZZZZ! Better be sneaky!",
         "That's not going to help you right now!",
         "The room is quiet. That glowing phone is calling to you..."
-      ]
+      ],
+      "hints": ["That phone is glowing! Maybe pick it up?", "TAKE the PHONE first, then try to OPEN it!", "TAKE PHONE, then OPEN PHONE!"]
     },
 
     "pixel_plaza": {
@@ -196,7 +197,8 @@
         "Nope! Everything just blinks and beeps!",
         "That's not how things work in Phone World!",
         "The glowing floor hums. Try something else!"
-      ]
+      ],
+      "hints": ["The little robot looks friendly! Try talking to it!", "TALK to the ROBOT first, then GO through the DOOR!", "TALK ROBOT, then GO DOOR!"]
     },
 
     "bug_den": {
@@ -270,7 +272,8 @@
         "That didn't work! The bug sparks at you!",
         "Hmm, bugs don't like bright things... just saying!",
         "Try something else! That glitchy bug isn't moving!"
-      ]
+      ],
+      "hints": ["The bug is scared of something bright!", "Do you have something that makes light?", "Use the TORCH on the BUG!"]
     },
 
     "data_tower": {
@@ -356,7 +359,8 @@
         "Hmm, that shiny thing on the shelf looks important!",
         "Nope! Try something else! Look around!",
         "The phone's brain hums. So many blinking lights!"
-      ]
+      ],
+      "hints": ["Something shiny is way up on a high shelf!", "CLIMB the SHELF to get the key, then try the GATE!", "CLIMB SHELF, then OPEN GATE!"]
     },
 
     "firewall": {
@@ -438,7 +442,8 @@
         "Nope! The firewall is not going anywhere!",
         "Maybe use something to protect yourself?",
         "CRACKLE POP! The fire laughs at you! Wait, fire can't laugh."
-      ]
+      ],
+      "hints": ["The fire is too hot! You need something to protect yourself!", "What do you have that blocks things?", "Use the SHIELD on the FIRE!"]
     },
 
     "dark_tunnel": {
@@ -522,7 +527,8 @@
         "Nope! It's too dark and spooky!",
         "You hear strange beeps deep in the tunnel!",
         "That didn't work! Try looking around first!"
-      ]
+      ],
+      "hints": ["Something is glowing on the ground! Pick it up!", "TAKE the glowing CHIP, then GO deeper into the TUNNEL!", "TAKE CHIP, then GO TUNNEL!"]
     },
 
     "boss_room": {
@@ -594,7 +600,8 @@
         "'IS THAT ALL YOU GOT?' the Boss booms!",
         "You need something POWERFUL to stop this thing!",
         "The red room pulses. The Boss stares at you with glowing eyes!"
-      ]
+      ],
+      "hints": ["The Phone Boss runs on POWER. Maybe you can overload it!", "Use something POWERFUL from your inventory on the Boss!", "Use the CHIP on the BOSS!"]
     },
 
     "home": {
@@ -650,7 +657,8 @@
         "You pull the covers up tight. So cozy after Phone World!",
         "No more adventures tonight! Time for sleep!",
         "You close your eyes and smile. Best. Night. EVER."
-      ]
+      ],
+      "hints": ["You made it home! Just look around and relax!", "LOOK at things to remember your adventure!", "This is the end! Tap NEW GAME to play again!"]
     }
   }
 }

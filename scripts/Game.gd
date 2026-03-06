@@ -109,6 +109,7 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var continue_button: Button = $ScrollContainer/Layout/ContinueButton
 @onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
 @onready var teaser_label: Label = $ScrollContainer/Layout/MenuScreen/TeaserLabel
+@onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 
 var story = {}
 var scenes = {}
@@ -119,6 +120,8 @@ var discovered_stories: Array[Dictionary] = []
 var selected_story_path := ""
 var has_active_story := false
 var is_transitioning := false
+var fail_count: int = 0
+var hint_index: int = 0
 var action_fallback_map := {}
 
 func _ready() -> void:
@@ -143,6 +146,7 @@ func _ready() -> void:
 	story_picker.item_selected.connect(_on_story_selected)
 	play_button.pressed.connect(_on_start_pressed)
 	new_game_button.pressed.connect(_on_menu_pressed)
+	hint_button.pressed.connect(_on_hint_pressed)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
 	_discover_stories()
@@ -261,6 +265,7 @@ func _show_menu() -> void:
 	feedback_text.visible = false
 	new_game_button.visible = false
 	continue_button.visible = false
+	_reset_hints()
 	story_text.text = ""
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
@@ -301,6 +306,8 @@ func _render_scene() -> void:
 	if scene == null:
 		push_error("Scene not found: " + current_scene_id)
 		return
+
+	_reset_hints()
 
 	# text
 	var lines: Array = scene.get("text", [])
@@ -443,6 +450,7 @@ func _apply_command(cmd: Array[String]) -> bool:
 			continue
 
 		# Matched
+		_reset_hints()
 		var response = str(rule.get("response", "OK."))
 		feedback_text.text = response
 
@@ -458,6 +466,11 @@ func _apply_command(cmd: Array[String]) -> bool:
 			return false
 
 	# No match — try smart fallback, then random default
+	fail_count += 1
+	if fail_count >= 6:
+		var scene_hints: Array = scene.get("hints", [])
+		if not scene_hints.is_empty():
+			hint_button.visible = true
 	var smart: String = _get_smart_fallback(cmd)
 	if smart != "":
 		feedback_text.text = smart
@@ -552,3 +565,21 @@ func _apply_effects(eff: Dictionary) -> void:
 	var flags_set: Dictionary = eff.get("flags_set", {})
 	for k in flags_set.keys():
 		flags[str(k)] = bool(flags_set[k])
+
+func _reset_hints() -> void:
+	fail_count = 0
+	hint_index = 0
+	hint_button.visible = false
+
+func _on_hint_pressed() -> void:
+	if not has_active_story or is_transitioning:
+		return
+	var scene = scenes.get(current_scene_id, null)
+	if scene == null:
+		return
+	var hints: Array = scene.get("hints", [])
+	if hints.is_empty():
+		return
+	feedback_text.text = str(hints[hint_index])
+	if hint_index < hints.size() - 1:
+		hint_index += 1

@@ -236,6 +236,13 @@ text = "Things:"
 layout_mode = 2
 theme_override_constants/v_separation = 10
 
+[node name="HintButton" type="Button" parent="ScrollContainer/Layout"]
+visible = false
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "💡 HINT"
+
 [node name="ContinueButton" type="Button" parent="ScrollContainer/Layout"]
 visible = false
 custom_minimum_size = Vector2(0, 56)

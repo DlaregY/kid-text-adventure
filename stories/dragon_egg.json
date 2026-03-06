@@ -55,7 +55,8 @@
 		  "response": "There is no key here. Maybe keep looking."
 		}
 	  ],
-	  "default": ["Hmm, that doesn't do anything.", "Try looking around first!", "Maybe try the door?", "You wave your arms around. Nothing happens, but you look funny!", "Nope! That's sillier than putting socks on a chicken!", "The walls stare at you. They are not impressed."]
+	  "default": ["Hmm, that doesn't do anything.", "Try looking around first!", "Maybe try the door?", "You wave your arms around. Nothing happens, but you look funny!", "Nope! That's sillier than putting socks on a chicken!", "The walls stare at you. They are not impressed."],
+	  "hints": ["Look at the big door! What can you do with it?", "Try OPENING something in the room!", "Use OPEN on the DOOR!"]
 	},
 
 	"hall": {
@@ -118,7 +119,8 @@
 		  "response": "You can't open a key, silly!"
 		}
 	  ],
-	  "default": ["Nothing happens.", "Try looking around!", "You spin in a circle. Wheee! But nothing happens.", "That's about as useful as a chocolate teapot!", "The dust bunnies giggle at you from under the box."]
+	  "default": ["Nothing happens.", "Try looking around!", "You spin in a circle. Wheee! But nothing happens.", "That's about as useful as a chocolate teapot!", "The dust bunnies giggle at you from under the box."],
+	  "hints": ["There is a box on the floor. What is inside?", "Try OPENING the box, then TAKE what is inside!", "OPEN the BOX, then TAKE the KEY!"]
 	},
 
 	"gate": {
@@ -153,7 +155,8 @@
 		  "response": "You can't open a key, silly! Try using it on the gate."
 		}
 	  ],
-	  "default": ["The gate won't move. Maybe try your key on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try something shiny on the lock!"]
+	  "default": ["The gate won't move. Maybe try your key on it?", "You push really hard. Your face turns red. Still nothing!", "The gate laughs at you. Wait, gates can't laugh... can they?", "Nope! Try something shiny on the lock!"],
+	  "hints": ["The gate has a big lock. What do you have that opens locks?", "Try using something from your inventory on the gate!", "Use the KEY on the GATE!"]
 	},
 
 	"forest": {
@@ -243,7 +246,8 @@
 		  "response": "You can't go to an apple!"
 		}
 	  ],
-	  "default": ["The dog tilts its head at you.", "Leaves rustle in the breeze.", "A squirrel throws an acorn at your head. Bonk!", "You trip over a root. The dog giggles. Wait, dogs can't giggle!", "A butterfly lands on your nose. Achoo!"]
+	  "default": ["The dog tilts its head at you.", "Leaves rustle in the breeze.", "A squirrel throws an acorn at your head. Bonk!", "You trip over a root. The dog giggles. Wait, dogs can't giggle!", "A butterfly lands on your nose. Achoo!"],
+	  "hints": ["The dog looks like it wants to tell you something!", "TALK to the dog first, then maybe GIVE it something yummy!", "TALK to DOG, then GIVE APPLE, then GO FOREST!"]
 	},
 
 	"tree": {
@@ -309,7 +313,8 @@
 		  "response": "The tree has plenty of branches to grab. You can just climb it!"
 		}
 	  ],
-	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above.", "A bird poops near you. That was close!", "You try really hard but your arms are too short!", "The tree says nothing. Trees are terrible at conversation."]
+	  "default": ["You look up. The tree reaches into the clouds!", "A warm glow comes from above.", "A bird poops near you. That was close!", "You try really hard but your arms are too short!", "The tree says nothing. Trees are terrible at conversation."],
+	  "hints": ["Something shiny is at the top! How do you get up there?", "Try CLIMBING the tree first, then TAKE what you find!", "CLIMB the TREE, then TAKE the EGG!"]
 	},
 
 	"bridge": {
@@ -381,7 +386,8 @@
 		  "response": "The cave is too far away! Fix the bridge first."
 		}
 	  ],
-	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."]
+	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."],
+	  "hints": ["The bridge is broken! What do you have that could fix it?", "Try using something from your inventory on the bridge!", "Use the ROPE on the BRIDGE, then GO BRIDGE!"]
 	},
 
 	"cave": {
@@ -435,7 +441,8 @@
 		  "response": "Give what to the dragon? Go inside the cave first!"
 		}
 	  ],
-	  "default": ["Something big is in there...", "You feel brave!", "You hear a big BURP from inside the cave. Ewww!", "Echo! Echo! Echo! ... That was just you talking to yourself.", "A bat flies out and bonks into your forehead. Ow!"]
+	  "default": ["Something big is in there...", "You feel brave!", "You hear a big BURP from inside the cave. Ewww!", "Echo! Echo! Echo! ... That was just you talking to yourself.", "A bat flies out and bonks into your forehead. Ow!"],
+	  "hints": ["Something is breathing inside. Be brave!", "Try GOING somewhere!", "GO into the CAVE!"]
 	},
 
 	"dragon": {
@@ -494,7 +501,8 @@
 		  "response": "The egg hums quietly. The dragon leans closer."
 		}
 	  ],
-	  "default": ["The dragon watches you with hopeful eyes.", "She sniffs the air sadly.", "The dragon does a tiny sad sneeze. A little flame comes out!", "She taps her claws on the ground. Tappity tap tap.", "The dragon's tummy rumbles. Even dragons get hungry!"]
+	  "default": ["The dragon watches you with hopeful eyes.", "She sniffs the air sadly.", "The dragon does a tiny sad sneeze. A little flame comes out!", "She taps her claws on the ground. Tappity tap tap.", "The dragon's tummy rumbles. Even dragons get hungry!"],
+	  "hints": ["The dragon is looking for something. What do you have?", "She lost her egg! Maybe GIVE it back!", "GIVE the EGG to the dragon!"]
 	},
 
 	"treasure": {
@@ -519,7 +527,8 @@
 		  "response": "You walk up to the glowing treasure chest."
 		}
 	  ],
-	  "default": ["Sparkles fill the air!", "The dragon hums a happy song.", "Gold coins bounce around like popcorn!", "The dragon tries to wear the tiny crown. It falls off her big head!", "Gems sparkle so bright you have to squint!"]
+	  "default": ["Sparkles fill the air!", "The dragon hums a happy song.", "Gold coins bounce around like popcorn!", "The dragon tries to wear the tiny crown. It falls off her big head!", "Gems sparkle so bright you have to squint!"],
+	  "hints": ["A treasure chest! What do heroes do with treasure?", "Try TAKING something!", "TAKE the TREASURE!"]
 	},
 
 	"win": {
@@ -543,7 +552,8 @@
 		  "response": "The treasure sparkles but says nothing. Gold is a terrible listener!"
 		}
 	  ],
-	  "default": ["The dragon does a happy dance!", "Gems sparkle everywhere!", "The dragon breathes rainbow fire into the sky!", "You are the greatest hero of all time!"]
+	  "default": ["The dragon does a happy dance!", "Gems sparkle everywhere!", "The dragon breathes rainbow fire into the sky!", "You are the greatest hero of all time!"],
+	  "hints": ["You did it! Just look around and enjoy!", "TALK to the dragon or LOOK at the treasure!", "This is the end! Tap NEW GAME to play again!"]
 	}
   }
 }
