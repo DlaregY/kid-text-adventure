@@ -25,6 +25,70 @@ const EMOJI := {
 	"home": "🏠", "library": "🏛️",
 }
 
+const LOOK_FALLBACKS: Array[String] = [
+	"You look at the {thing} really hard. Yep, still a {thing}!",
+	"You stare at the {thing}. It does not do anything special.",
+	"You squint at the {thing}. Hmm, looks pretty normal!",
+	"You look at the {thing} from every angle. Nope, nothing new!",
+	"The {thing} looks back at you. Wait, no it doesn't!",
+]
+const TALK_FALLBACKS: Array[String] = [
+	"You say hello to the {thing}. It does not answer. Rude!",
+	"You talk to the {thing}. It is very quiet. Not a great chat!",
+	"Hey {thing}! ...Nothing. Not a good listener.",
+	"You whisper to the {thing}. Shhhh. Still nothing!",
+	"The {thing} has nothing to say. Maybe it is shy!",
+]
+const OPEN_FALLBACKS: Array[String] = [
+	"You try to open the {thing}. It does not open!",
+	"How do you open a {thing}? You can't! Nice try though!",
+	"You pull and push the {thing}. Nope, it won't open!",
+	"The {thing} is not something you can open, silly!",
+	"You tug on the {thing}. Nope! It stays shut!",
+]
+const TAKE_FALLBACKS: Array[String] = [
+	"You try to grab the {thing}. Nope, you can't take that!",
+	"The {thing} is way too stuck! It won't budge!",
+	"You reach for the {thing}. Your hands just slide right off!",
+	"Take the {thing}? Where would you even put it?!",
+	"You pull on the {thing} really hard. HNNNNG! Nope!",
+]
+const GO_FALLBACKS: Array[String] = [
+	"You can't go to the {thing}! That's not a place!",
+	"The {thing} is not somewhere you can go, silly!",
+	"Go to a {thing}? Your feet say no!",
+	"You walk toward the {thing}. Bonk! That didn't work!",
+	"You can't go there right now!",
+]
+const GIVE_FALLBACKS: Array[String] = [
+	"You hold out the {thing}. Nobody wants it right now!",
+	"Give the {thing}? To who? Nobody is asking for it!",
+	"You offer the {thing}. Nope! Not the right gift!",
+	"The {thing} is not something anyone needs right now!",
+	"You try to give away the {thing}. No takers! Sorry!",
+]
+const CLIMB_FALLBACKS: Array[String] = [
+	"You try to climb the {thing}. It is not climbable!",
+	"Climb the {thing}?! That would be really silly!",
+	"You put your foot on the {thing}. Nope! Can't climb that!",
+	"The {thing} is not for climbing!",
+	"You hug the {thing} and try to shimmy up. Whoops! You slide off!",
+]
+const ITEM_AS_VERB_FALLBACKS: Array[String] = [
+	"You wave the {item} at the {thing}. Nothing happens!",
+	"You bonk the {thing} with the {item}. Nope! Not useful!",
+	"You hold the {item} up to the {thing}. Hmm, nothing!",
+	"The {item} and the {thing} don't go together!",
+	"You poke the {thing} with the {item}. Boop! Nothing!",
+]
+const SAME_TOKEN_FALLBACKS: Array[String] = [
+	"{thing} the {thing}? That makes no sense! Silly!",
+	"{thing} {thing}? Nah, that's just being goofy!",
+	"That's the same word twice! Try a new combo!",
+	"Two {thing}s don't make a right! Mix it up!",
+	"You can't {thing} a {thing}! Try something different!",
+]
+
 @onready var menu_screen: VBoxContainer = $ScrollContainer/Layout/MenuScreen
 @onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuScreen/StoryPicker
 @onready var play_button: Button = $ScrollContainer/Layout/MenuScreen/PlayButton
@@ -53,8 +117,15 @@ var discovered_stories: Array[Dictionary] = []
 var selected_story_path := ""
 var has_active_story := false
 var is_transitioning := false
+var action_fallback_map := {}
 
 func _ready() -> void:
+	action_fallback_map = {
+		"look": LOOK_FALLBACKS, "talk": TALK_FALLBACKS, "open": OPEN_FALLBACKS,
+		"take": TAKE_FALLBACKS, "go": GO_FALLBACKS, "give": GIVE_FALLBACKS,
+		"climb": CLIMB_FALLBACKS,
+	}
+
 	var emoji_font := SystemFont.new()
 	emoji_font.font_names = PackedStringArray(["Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji"])
 	var fb: Font = ThemeDB.fallback_font
@@ -384,9 +455,44 @@ func _apply_command(cmd: Array[String]) -> bool:
 			feedback_text.text = response
 			return false
 
-	# No match
-	feedback_text.text = str(default_responses[randi() % default_responses.size()])
+	# No match — try smart fallback, then random default
+	var smart: String = _get_smart_fallback(cmd)
+	if smart != "":
+		feedback_text.text = smart
+	else:
+		feedback_text.text = str(default_responses[randi() % default_responses.size()])
 	return false
+
+func _classify_token(token: String) -> String:
+	if token in ACTION_TOKENS:
+		return "action"
+	if inventory.has(token):
+		return "inventory"
+	return "thing"
+
+func _get_smart_fallback(cmd: Array[String]) -> String:
+	var t1: String = cmd[0]
+	var t2: String = cmd[1]
+
+	# Same token in both slots
+	if t1 == t2:
+		var msg: String = SAME_TOKEN_FALLBACKS[randi() % SAME_TOKEN_FALLBACKS.size()]
+		return msg.replace("{thing}", t1)
+
+	var cat1: String = _classify_token(t1)
+
+	# Action verb in slot1 → action-specific fallback
+	if cat1 == "action" and action_fallback_map.has(t1):
+		var templates: Array = action_fallback_map[t1]
+		var msg: String = templates[randi() % templates.size()]
+		return msg.replace("{action}", t1).replace("{thing}", t2)
+
+	# Inventory item used as verb in slot1
+	if cat1 == "inventory":
+		var msg: String = ITEM_AS_VERB_FALLBACKS[randi() % ITEM_AS_VERB_FALLBACKS.size()]
+		return msg.replace("{item}", t1).replace("{thing}", t2)
+
+	return ""
 
 func _transition_to_scene(scene_id: String) -> void:
 	if is_transitioning:
