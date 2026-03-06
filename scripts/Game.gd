@@ -23,6 +23,8 @@ const EMOJI := {
 	"chain": "⛓️", "tunnel": "🚇", "torch": "🔦", "wall": "🧱",
 	"tower": "🗼", "bike": "🏍️", "stairs": "🪜", "ghost": "👻",
 	"home": "🏠", "library": "🏛️",
+	"phone": "📱", "robot": "🤖", "bug": "🐛",
+	"shield": "🛡️", "chip": "💾", "boss": "👾",
 }
 
 const LOOK_FALLBACKS: Array[String] = [

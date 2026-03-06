@@ -1,0 +1,656 @@
+{
+  "meta": {
+    "title": "Phone Trap",
+    "version": 1,
+    "teaser": "You sneak Dad's phone at night. The screen pulls you in!"
+  },
+  "vocab": {
+    "look": {"label": "Look"},
+    "go": {"label": "Go"},
+    "take": {"label": "Take"},
+    "open": {"label": "Open"},
+    "talk": {"label": "Talk"},
+    "give": {"label": "Give"},
+    "climb": {"label": "Climb"},
+    "phone": {"label": "Phone"},
+    "robot": {"label": "Robot"},
+    "bug": {"label": "Bug"},
+    "shield": {"label": "Shield"},
+    "chip": {"label": "Chip"},
+    "boss": {"label": "Boss"},
+    "door": {"label": "Door"},
+    "window": {"label": "Window"},
+    "sign": {"label": "Sign"},
+    "box": {"label": "Box"},
+    "torch": {"label": "Torch"},
+    "tower": {"label": "Tower"},
+    "shelf": {"label": "Shelf"},
+    "gate": {"label": "Gate"},
+    "fire": {"label": "Fire"},
+    "wall": {"label": "Wall"},
+    "tunnel": {"label": "Tunnel"},
+    "home": {"label": "Home"}
+  },
+  "start_scene": "bedroom",
+  "scenes": {
+    "bedroom": {
+      "text": [
+        "It is late at night.",
+        "Everyone is sleeping.",
+        "But you are WIDE awake!",
+        "",
+        "Your bedroom door is shut tight.",
+        "Moonlight comes through the window.",
+        "Dad left his phone on the table.",
+        "A cool game is on the screen.",
+        "It is glowing bright blue..."
+      ],
+      "tiles": ["look", "take", "open", "phone", "door", "window"],
+      "commands": [
+        {
+          "pattern": ["look", "phone"],
+          "response": "The screen glows bright blue. A game is on it! It looks SO cool!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "Your bedroom door. Shhh! Everyone is sleeping!"
+        },
+        {
+          "pattern": ["look", "window"],
+          "response": "Dark outside. Stars twinkle in the sky. The moon is big and round!"
+        },
+        {
+          "pattern": ["take", "phone"],
+          "response": "You already grabbed the phone! Try opening it!",
+          "requirements": {"inventory_has": ["phone"]}
+        },
+        {
+          "pattern": ["take", "phone"],
+          "response": "You sneak the phone off the table. It feels warm and buzzy!",
+          "effects": {"inventory_add": ["phone"]}
+        },
+        {
+          "pattern": ["take", "door"],
+          "response": "Take the door?! Where would you put it?!"
+        },
+        {
+          "pattern": ["take", "window"],
+          "response": "You can't take a window! That's silly!"
+        },
+        {
+          "pattern": ["open", "phone"],
+          "response": "You tap the screen. The glow gets SUPER bright! The room starts to spin! WHOOOOSH! You are getting SUCKED INTO THE PHONE!",
+          "requirements": {"inventory_has": ["phone"]},
+          "effects": {"inventory_remove": ["phone"]},
+          "next": "pixel_plaza"
+        },
+        {
+          "pattern": ["open", "phone"],
+          "response": "You don't have the phone! Grab it from the table first!"
+        },
+        {
+          "pattern": ["phone", "door"],
+          "response": "You point the phone at the door. The screen just glows blue. Try OPENING the phone instead!"
+        },
+        {
+          "pattern": ["phone", "window"],
+          "response": "You hold the phone up to the window. The moonlight makes the screen glow even brighter! Pretty! But try OPENING it!"
+        },
+        {
+          "pattern": ["open", "door"],
+          "response": "No way! You will wake up Mom and Dad!"
+        },
+        {
+          "pattern": ["open", "window"],
+          "response": "Too late to open the window! The phone is way more interesting!"
+        }
+      ],
+      "default": [
+        "Shhh! Be quiet! Everyone is sleeping!",
+        "That doesn't do anything. The phone looks interesting though...",
+        "Hmm, nope! Try something with the phone!",
+        "You hear Dad snoring. ZZZZZ! Better be sneaky!",
+        "That's not going to help you right now!",
+        "The room is quiet. That glowing phone is calling to you..."
+      ]
+    },
+
+    "pixel_plaza": {
+      "text": [
+        "WHOMP!",
+        "You land on a glowing floor!",
+        "Everything is made of bright colored squares!",
+        "",
+        "A cute little robot waves at you.",
+        "A blinking sign is nearby.",
+        "A glowing door hums on the far wall.",
+        "Where ARE you?!"
+      ],
+      "tiles": ["look", "talk", "go", "robot", "sign", "door"],
+      "commands": [
+        {
+          "pattern": ["look", "robot"],
+          "response": "A small robot with big blue eyes! It is waving at you and beeping!"
+        },
+        {
+          "pattern": ["look", "sign"],
+          "response": "The sign blinks: WELCOME TO PHONE WORLD! EXIT: LOCKED BY PHONE BOSS."
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A glowing blue door. It leads deeper into the phone!"
+        },
+        {
+          "pattern": ["talk", "robot"],
+          "response": "Byte beeps. BEEP BOOP! Remember, bugs hate bright light! Use the torch! Go go go!",
+          "requirements": {"flags_true": ["talked_byte"]}
+        },
+        {
+          "pattern": ["talk", "robot"],
+          "response": "BEEP BOOP! I am Byte! You are INSIDE the phone! The Phone Boss locked the exit. You need the POWER CHIP to stop him! Here, take this TORCH! Bugs hate bright light! Now go through that door!",
+          "effects": {"inventory_add": ["torch"], "flags_set": {"talked_byte": true}}
+        },
+        {
+          "pattern": ["talk", "sign"],
+          "response": "You talk to the sign. It just blinks. Signs can't talk, silly!"
+        },
+        {
+          "pattern": ["talk", "door"],
+          "response": "You say hi to the door. It buzzes. Doors don't talk here either!"
+        },
+        {
+          "pattern": ["go", "door"],
+          "response": "Byte gives you a thumbs up. BEEP! Good luck! You step through the glowing door!",
+          "requirements": {"flags_true": ["talked_byte"]},
+          "next": "bug_den"
+        },
+        {
+          "pattern": ["go", "door"],
+          "response": "The door won't budge. Maybe talk to someone first?"
+        },
+        {
+          "pattern": ["go", "robot"],
+          "response": "You walk up to the robot. It beeps and waves! Try TALKING to it!"
+        },
+        {
+          "pattern": ["go", "sign"],
+          "response": "You walk to the sign. It blinks at you. That's it!"
+        },
+        {
+          "pattern": ["torch", "robot"],
+          "response": "You shine the torch at Byte. BEEP! TOO BRIGHT! Byte covers its eyes. Oops! Save the torch for the BUGS!"
+        },
+        {
+          "pattern": ["torch", "sign"],
+          "response": "You shine the torch at the sign. The letters glow brighter! Still says the same thing though."
+        },
+        {
+          "pattern": ["torch", "door"],
+          "response": "You shine the torch at the door. It glows blue. Save the torch for later! Go through the DOOR!"
+        }
+      ],
+      "default": [
+        "BEEP BOOP! That didn't do anything!",
+        "The pixels flash but nothing happens!",
+        "Hmm, try talking to the robot! It looks friendly!",
+        "Nope! Everything just blinks and beeps!",
+        "That's not how things work in Phone World!",
+        "The glowing floor hums. Try something else!"
+      ]
+    },
+
+    "bug_den": {
+      "text": [
+        "You walk into a dark room.",
+        "Broken bits of code float in the air!",
+        "",
+        "A GIANT BUG blocks the path!",
+        "It crackles and sparks!",
+        "Behind it, you can just see a door.",
+        "There is an old box in the corner."
+      ],
+      "tiles": ["look", "take", "open", "bug", "box", "door"],
+      "commands": [
+        {
+          "pattern": ["look", "bug"],
+          "response": "A BIG glitchy bug! It crackles with sparks. It looks scared of bright LIGHT!"
+        },
+        {
+          "pattern": ["look", "box"],
+          "response": "An old dusty box. You peek inside... nothing but code dust! Achoo!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A door behind the bug! But the bug is blocking the way!"
+        },
+        {
+          "pattern": ["open", "box"],
+          "response": "You open the box all the way. Empty! Just some dusty old code crumbs."
+        },
+        {
+          "pattern": ["open", "door"],
+          "response": "You can't reach the door! The bug is in the way!"
+        },
+        {
+          "pattern": ["open", "bug"],
+          "response": "Open a bug?! Ewww! That's gross! No thank you!"
+        },
+        {
+          "pattern": ["take", "bug"],
+          "response": "BZZZT! The bug zaps your hand! OUCH! Don't touch it!"
+        },
+        {
+          "pattern": ["take", "box"],
+          "response": "The box falls apart when you try to pick it up! Too old!"
+        },
+        {
+          "pattern": ["take", "door"],
+          "response": "You can't take a door! And the bug is in the way anyway!"
+        },
+        {
+          "pattern": ["torch", "bug"],
+          "response": "You shine the torch RIGHT at the bug! BZZZZZT! CRACKLE! POP! The bug glitches and fizzles into nothing! The path is clear!",
+          "requirements": {"inventory_has": ["torch"]},
+          "effects": {"inventory_remove": ["torch"]},
+          "next": "data_tower"
+        },
+        {
+          "pattern": ["torch", "door"],
+          "response": "The door doesn't need light! That BUG does!"
+        },
+        {
+          "pattern": ["torch", "box"],
+          "response": "You shine the torch at the box. It's just an old box! Try the bug!"
+        }
+      ],
+      "default": [
+        "The bug crackles at you! Better find another way!",
+        "Bits of code float past your head. Weird!",
+        "Nope! That bug is still blocking the way!",
+        "That didn't work! The bug sparks at you!",
+        "Hmm, bugs don't like bright things... just saying!",
+        "Try something else! That glitchy bug isn't moving!"
+      ]
+    },
+
+    "data_tower": {
+      "text": [
+        "WOW!",
+        "Huge towers of blinking lights stretch way up!",
+        "Wires criss-cross everywhere like a jungle!",
+        "",
+        "A big locked gate blocks the way.",
+        "Way up on a high shelf, something is shining!"
+      ],
+      "tiles": ["look", "climb", "open", "tower", "shelf", "gate"],
+      "commands": [
+        {
+          "pattern": ["look", "tower"],
+          "response": "The towers hum and blink with tiny lights. They must be the phone's brain!"
+        },
+        {
+          "pattern": ["look", "shelf"],
+          "response": "Way up high on a shelf... is that a KEY? It is glowing gold!"
+        },
+        {
+          "pattern": ["look", "gate"],
+          "response": "A big heavy gate. It has a glowing keyhole in the middle."
+        },
+        {
+          "pattern": ["climb", "tower"],
+          "response": "Way too smooth and tall! You slide right back down! Wheee!"
+        },
+        {
+          "pattern": ["climb", "gate"],
+          "response": "The gate is too slippery to climb! Try opening it?"
+        },
+        {
+          "pattern": ["climb", "shelf"],
+          "response": "You already grabbed the key! Try the gate!",
+          "requirements": {"inventory_has": ["key"]}
+        },
+        {
+          "pattern": ["climb", "shelf"],
+          "response": "You scramble up the shelves! Almost... almost... GOT IT! A glowing KEY!",
+          "effects": {"inventory_add": ["key"]}
+        },
+        {
+          "pattern": ["open", "gate"],
+          "response": "You push the key into the lock. CLICK! CLUNK! The gate swings open! Behind it, a glowing SHIELD sits on a pedestal. You grab it!",
+          "requirements": {"inventory_has": ["key"]},
+          "effects": {"inventory_remove": ["key"], "inventory_add": ["shield"]},
+          "next": "firewall"
+        },
+        {
+          "pattern": ["open", "gate"],
+          "response": "It is locked tight! You need a key! Maybe look UP?"
+        },
+        {
+          "pattern": ["open", "tower"],
+          "response": "The towers don't open! They just hum and blink!"
+        },
+        {
+          "pattern": ["open", "shelf"],
+          "response": "It's a shelf, not a door! Try climbing it!"
+        },
+        {
+          "pattern": ["key", "gate"],
+          "response": "You push the glowing key into the lock. CLICK! The gate opens! A shiny SHIELD is inside! You grab it!",
+          "requirements": {"inventory_has": ["key"]},
+          "effects": {"inventory_remove": ["key"], "inventory_add": ["shield"]},
+          "next": "firewall"
+        },
+        {
+          "pattern": ["key", "tower"],
+          "response": "You press the key against the tower. No keyhole here! The key goes in the GATE!"
+        },
+        {
+          "pattern": ["key", "shelf"],
+          "response": "You poke the shelf with the key. Nope! The key fits in the GATE, silly!"
+        }
+      ],
+      "default": [
+        "The towers blink at you. Blink blink blink!",
+        "Wires buzz overhead! Don't touch them!",
+        "That didn't work! The gate is still locked!",
+        "Hmm, that shiny thing on the shelf looks important!",
+        "Nope! Try something else! Look around!",
+        "The phone's brain hums. So many blinking lights!"
+      ]
+    },
+
+    "firewall": {
+      "text": [
+        "WHOOSH!",
+        "A HUGE wall of FIRE blocks the path!",
+        "Flames crackle and pop everywhere!",
+        "",
+        "It is SO hot!",
+        "An old metal box sits near the wall.",
+        "No way around it.",
+        "The only way is THROUGH!"
+      ],
+      "tiles": ["look", "open", "go", "fire", "wall", "box"],
+      "commands": [
+        {
+          "pattern": ["look", "fire"],
+          "response": "Bright orange and red flames! They are made of code but feel SUPER hot!"
+        },
+        {
+          "pattern": ["look", "wall"],
+          "response": "The firewall goes all the way up and all the way across. No sneaking around it!"
+        },
+        {
+          "pattern": ["look", "box"],
+          "response": "An old metal box. The lid is welded shut. There's nothing useful inside."
+        },
+        {
+          "pattern": ["open", "box"],
+          "response": "It won't open! The lid is welded shut! Just an old junk box."
+        },
+        {
+          "pattern": ["open", "fire"],
+          "response": "You can't OPEN fire! That's not how fire works!"
+        },
+        {
+          "pattern": ["open", "wall"],
+          "response": "The wall is made of fire! It doesn't have a door!"
+        },
+        {
+          "pattern": ["shield", "fire"],
+          "response": "You hold up the shield and walk RIGHT THROUGH the fire! Flames bounce off everywhere! You are totally safe! SO COOL!",
+          "requirements": {"inventory_has": ["shield"]},
+          "effects": {"inventory_remove": ["shield"]},
+          "next": "dark_tunnel"
+        },
+        {
+          "pattern": ["go", "fire"],
+          "response": "You hold up the shield and march through the flames! They bounce right off! AMAZING! You made it through!",
+          "requirements": {"inventory_has": ["shield"]},
+          "effects": {"inventory_remove": ["shield"]},
+          "next": "dark_tunnel"
+        },
+        {
+          "pattern": ["go", "fire"],
+          "response": "OW OW OW! Way too hot! You jump back! You need something to BLOCK the heat!"
+        },
+        {
+          "pattern": ["go", "wall"],
+          "response": "OUCH! The wall IS the fire! Don't walk into it!"
+        },
+        {
+          "pattern": ["go", "box"],
+          "response": "You walk to the box. It's just old junk. Can't help you here."
+        },
+        {
+          "pattern": ["shield", "wall"],
+          "response": "You push the shield against the wall. The fire is everywhere! Try walking through the FIRE with the shield!"
+        },
+        {
+          "pattern": ["shield", "box"],
+          "response": "You bonk the box with the shield. CLANG! Nothing happens. Use the shield on the FIRE!"
+        }
+      ],
+      "default": [
+        "WHOOSH! The fire crackles at you!",
+        "That didn't help! The flames are still blazing!",
+        "Too hot too hot! Try something else!",
+        "Nope! The firewall is not going anywhere!",
+        "Maybe use something to protect yourself?",
+        "CRACKLE POP! The fire laughs at you! Wait, fire can't laugh."
+      ]
+    },
+
+    "dark_tunnel": {
+      "text": [
+        "You made it through the fire!",
+        "But now it is REALLY dark in here.",
+        "You can barely see!",
+        "",
+        "A faint glow comes from the ground.",
+        "A sign is on the wall.",
+        "The tunnel goes deeper..."
+      ],
+      "tiles": ["look", "take", "go", "chip", "sign", "tunnel"],
+      "commands": [
+        {
+          "pattern": ["look", "chip"],
+          "response": "A glowing chip on the ground! It says POWER CHIP on the side. This must be what Byte told you about!"
+        },
+        {
+          "pattern": ["look", "sign"],
+          "response": "The sign reads: BOSS ROOM AHEAD. BEWARE! The letters blink red. Gulp!"
+        },
+        {
+          "pattern": ["look", "tunnel"],
+          "response": "The dark tunnel goes deeper. A faint red glow comes from far ahead. Creepy!"
+        },
+        {
+          "pattern": ["take", "chip"],
+          "response": "You already grabbed the Power Chip! Time to go!",
+          "requirements": {"inventory_has": ["chip"]}
+        },
+        {
+          "pattern": ["take", "chip"],
+          "response": "You grab the Power Chip! It hums and buzzes with energy in your hand!",
+          "effects": {"inventory_add": ["chip"]}
+        },
+        {
+          "pattern": ["take", "sign"],
+          "response": "The sign is bolted to the wall! You can't take it!"
+        },
+        {
+          "pattern": ["take", "tunnel"],
+          "response": "You can't take a tunnel! That's not how tunnels work!"
+        },
+        {
+          "pattern": ["go", "tunnel"],
+          "response": "You squeeze the Power Chip tight and walk toward the red glow. Here goes nothing...",
+          "requirements": {"inventory_has": ["chip"]},
+          "next": "boss_room"
+        },
+        {
+          "pattern": ["go", "tunnel"],
+          "response": "It's too dark and scary! You should look around first. Don't go empty-handed!"
+        },
+        {
+          "pattern": ["go", "sign"],
+          "response": "You walk up to the sign. BOSS ROOM AHEAD. BEWARE! Yikes!"
+        },
+        {
+          "pattern": ["go", "chip"],
+          "response": "You already have the chip! Time to GO through the TUNNEL!",
+          "requirements": {"inventory_has": ["chip"]}
+        },
+        {
+          "pattern": ["go", "chip"],
+          "response": "You walk to the glowing chip. Maybe TAKE it?"
+        },
+        {
+          "pattern": ["chip", "sign"],
+          "response": "You hold the chip near the sign. It buzzes but the sign just blinks. Save the chip for the BOSS!"
+        },
+        {
+          "pattern": ["chip", "tunnel"],
+          "response": "Don't waste the chip here! You need it for the BOSS! Just GO through the TUNNEL!"
+        }
+      ],
+      "default": [
+        "It is too dark to do that!",
+        "You bump into a wall! OOF! Can't see much!",
+        "Hmm, that faint glow on the ground looks important!",
+        "Nope! It's too dark and spooky!",
+        "You hear strange beeps deep in the tunnel!",
+        "That didn't work! Try looking around first!"
+      ]
+    },
+
+    "boss_room": {
+      "text": [
+        "A HUGE room glows red!",
+        "In the middle floats a BIG scary thing!",
+        "It has angry glowing eyes!",
+        "",
+        "It is the PHONE BOSS!",
+        "'YOU CANNOT LEAVE!' it booms.",
+        "'I WILL KEEP YOU HERE FOREVER!'",
+        "Behind it, you can see a door. The exit!"
+      ],
+      "tiles": ["look", "talk", "give", "go", "boss", "door"],
+      "commands": [
+        {
+          "pattern": ["look", "boss"],
+          "response": "The Phone Boss! Big and scary with glowing red eyes. It runs on POWER. Maybe you can OVERLOAD it!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A door behind the Phone Boss! That must be the exit! But the Boss is in the way!"
+        },
+        {
+          "pattern": ["talk", "boss"],
+          "response": "'HA HA HA! You are stuck here FOREVER, little human! Nothing can stop me!' The Boss laughs."
+        },
+        {
+          "pattern": ["talk", "door"],
+          "response": "You yell at the door. HELP! But nobody answers."
+        },
+        {
+          "pattern": ["go", "boss"],
+          "response": "The Phone Boss zaps you back! 'NICE TRY!' it laughs. ZAP! Ow!"
+        },
+        {
+          "pattern": ["go", "door"],
+          "response": "The Phone Boss blocks the door! 'YOU SHALL NOT PASS!' it booms!"
+        },
+        {
+          "pattern": ["give", "boss"],
+          "response": "You try to hand over the chip nicely. The Boss just laughs! 'HA!' Maybe try a more... FORCEFUL approach!",
+          "requirements": {"inventory_has": ["chip"]}
+        },
+        {
+          "pattern": ["give", "boss"],
+          "response": "Give what? You need something POWERFUL to stop this thing!"
+        },
+        {
+          "pattern": ["give", "door"],
+          "response": "Give what to the door? That doesn't make sense!"
+        },
+        {
+          "pattern": ["chip", "boss"],
+          "response": "You SLAM the Power Chip into the Phone Boss! BZZZZZT! CRACKLE! ZAP! Sparks fly everywhere! 'NOOOOOO!' it screams! The Phone Boss shakes and wobbles and... CRASH! It powers down! The door behind it swings open! A bright swirling PORTAL appears!",
+          "requirements": {"inventory_has": ["chip"]},
+          "effects": {"inventory_remove": ["chip"]},
+          "next": "home"
+        },
+        {
+          "pattern": ["chip", "door"],
+          "response": "You press the chip against the door. Nothing! The BOSS is the problem, not the door! Use the chip on the BOSS!"
+        }
+      ],
+      "default": [
+        "'HA HA HA!' the Phone Boss laughs at you!",
+        "The Boss zaps the floor! CRACKLE! Scary!",
+        "That didn't work! The Phone Boss is too strong!",
+        "'IS THAT ALL YOU GOT?' the Boss booms!",
+        "You need something POWERFUL to stop this thing!",
+        "The red room pulses. The Boss stares at you with glowing eyes!"
+      ]
+    },
+
+    "home": {
+      "text": [
+        "FLASH! WHOOOOSH!",
+        "",
+        "You tumble through the portal and...",
+        "THUMP! You land on your bed!",
+        "",
+        "The phone is on the table.",
+        "The screen is dark and quiet.",
+        "Your door is still shut. The window glows pink.",
+        "",
+        "Was it all a dream?",
+        "You smile really big. Nope!",
+        "It was REAL!",
+        "",
+        "You pull up the covers.",
+        "That was the BEST adventure EVER!",
+        "Good night!"
+      ],
+      "tiles": ["look", "open", "phone", "window", "door"],
+      "commands": [
+        {
+          "pattern": ["look", "phone"],
+          "response": "The phone screen is dark. Wait... for a second you see Byte waving! BEEP BOOP! Then it's dark again."
+        },
+        {
+          "pattern": ["look", "window"],
+          "response": "The sun is starting to come up! Pink and orange sky. What a night!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "Your bedroom door. Everyone is still sleeping. They have no idea what just happened!"
+        },
+        {
+          "pattern": ["open", "phone"],
+          "response": "NO WAY! You are NOT going back in there! Time for sleep!"
+        },
+        {
+          "pattern": ["open", "door"],
+          "response": "Nah, you're staying in bed! That was enough adventure for one night!"
+        },
+        {
+          "pattern": ["open", "window"],
+          "response": "You crack the window open. Cool morning air comes in. Ahhh! Nice after all that!"
+        }
+      ],
+      "default": [
+        "Nope! Time for sleep! You've had enough adventure!",
+        "Zzzzz... wait, not yet. But soon!",
+        "You yawn really big. YAAAWN! What a night!",
+        "You pull the covers up tight. So cozy after Phone World!",
+        "No more adventures tonight! Time for sleep!",
+        "You close your eyes and smile. Best. Night. EVER."
+      ]
+    }
+  }
+}
