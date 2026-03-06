@@ -398,7 +398,7 @@ The included stories demonstrate all features:
 ### `spider_hero.json` (13 scenes)
 - Inventory items: `note`, `web`, `key`, `book`, `potion`, `hammer` (key/note/potion/hammer consumed after use)
 - Inventory-as-verb: `["potion", "door"]`, `["hammer", "chain"]`, `["web", "torch"]`, `["web", "stairs"]`
-- Boss battle with multi-flag gating: must find weakness AND coordinate with Spider-Man
+- Boss battle with multi-flag gating: must find weakness AND coordinate with Spiderdude
 - Extensive inventory acknowledgment: `["look", <item>]` in every scene
 
 Read through them as complete examples of story structure and patterns.

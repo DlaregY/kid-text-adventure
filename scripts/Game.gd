@@ -17,7 +17,7 @@ const EMOJI := {
 	"go": "👉", "open": "📖", "take": "✋", "look": "👀",
 	"talk": "💬", "give": "🎁", "climb": "🧗",
 	"window": "🪟", "comic": "📕", "note": "📝", "fire": "🔥",
-	"cat": "🐱", "rooftop": "🏢", "spiderman": "🕷️", "web": "🕸️",
+	"cat": "🐱", "rooftop": "🏢", "spiderdude": "🕷️", "web": "🕸️",
 	"city": "🏙️", "lady": "👵", "bench": "🪑", "sign": "🪧",
 	"book": "📗", "shelf": "📚", "potion": "🧪", "hammer": "🔨",
 	"chain": "⛓️", "tunnel": "🚇", "torch": "🔦", "wall": "🧱",

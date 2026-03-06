@@ -1,8 +1,8 @@
 {
   "meta": {
-    "title": "Spider-Man and the Ghost Chain",
+    "title": "Spiderdude and the Ghost Chain",
     "version": 2,
-    "teaser": "Help Spider-Man stop Ghost Rider and save the city!"
+    "teaser": "Help Spiderdude stop Skull Rider and save the city!"
   },
   "vocab": {
     "look": { "label": "look" },
@@ -18,7 +18,7 @@
     "fire": { "label": "fire" },
     "cat": { "label": "cat" },
     "rooftop": { "label": "rooftop" },
-    "spiderman": { "label": "Spider-Man" },
+    "spiderdude": { "label": "Spiderdude" },
     "web": { "label": "web" },
     "city": { "label": "city" },
     "lady": { "label": "lady" },
@@ -37,7 +37,7 @@
     "tower": { "label": "tower" },
     "bike": { "label": "bike" },
     "stairs": { "label": "stairs" },
-    "ghost": { "label": "Ghost Rider" },
+    "ghost": { "label": "Skull Rider" },
     "home": { "label": "home" },
     "library": { "label": "library" }
   },
@@ -53,7 +53,7 @@
       "commands": [
         {
           "pattern": ["look", "comic"],
-          "response": "Your favorite Spider-Man comic! So cool!"
+          "response": "Your favorite Spiderdude comic! So cool!"
         },
         {
           "pattern": ["look", "window"],
@@ -73,7 +73,7 @@
         {
           "pattern": ["take", "note"],
           "requirements": { "flags_true": ["window_open"] },
-          "response": "You read the note: HELP ME! Meet on the rooftop! -Spider-Man. Wow! Spider-Man needs YOUR help!",
+          "response": "You read the note: HELP ME! Meet on the rooftop! -Spiderdude. Wow! Spiderdude needs YOUR help!",
           "effects": { "inventory_add": ["note"] },
           "next": "street"
         },
@@ -87,12 +87,12 @@
         },
         {
           "pattern": ["open", "comic"],
-          "response": "You open the comic and start reading. Spider-Man punches a bad guy. POW! Cool, but you have real stuff to do!"
+          "response": "You open the comic and start reading. Spiderdude punches a bad guy. POW! Cool, but you have real stuff to do!"
         },
         {
           "pattern": ["open", "note"],
           "requirements": { "flags_true": ["window_open"] },
-          "response": "You unfold the little note. It says: HELP ME! Meet on the rooftop! -Spider-Man"
+          "response": "You unfold the little note. It says: HELP ME! Meet on the rooftop! -Spiderdude"
         },
         {
           "pattern": ["open", "note"],
@@ -101,7 +101,7 @@
         {
           "pattern": ["look", "note"],
           "requirements": { "flags_true": ["window_open"] },
-          "response": "A tiny note from the spider! It says: HELP ME! Meet on the rooftop! -Spider-Man. Take it!"
+          "response": "A tiny note from the spider! It says: HELP ME! Meet on the rooftop! -Spiderdude. Take it!"
         },
         {
           "pattern": ["look", "note"],
@@ -126,7 +126,7 @@
       "text": [
         "You run outside into the street!",
         "Fire trails cover the ground. The air smells like smoke.",
-        "Ghost Rider was here!"
+        "Skull Rider was here!"
       ],
       "tiles": ["go", "look", "talk", "fire", "cat", "rooftop"],
       "commands": [
@@ -148,7 +148,7 @@
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spider-Man's note says: HELP ME! Meet on the rooftop! You need to get up there!"
+          "response": "Spiderdude's note says: HELP ME! Meet on the rooftop! You need to get up there!"
         },
         {
           "pattern": ["go", "rooftop"],
@@ -178,7 +178,7 @@
       ],
       "default": [
         "The fire trails are scary! Maybe head up to the rooftop?",
-        "Spider-Man is waiting for you on the rooftop!",
+        "Spiderdude is waiting for you on the rooftop!",
         "Nope! That didn't work. Try going to the rooftop!",
         "The street is too hot to hang out here. Head up!",
         "A pigeon walks by. Even the pigeon looks confused.",
@@ -188,51 +188,51 @@
 
     "rooftop": {
       "text": [
-        "Spider-Man is on the rooftop! He looks worried.",
-        "The city glows orange with Ghost Rider's fire below."
+        "Spiderdude is on the rooftop! He looks worried.",
+        "The city glows orange with Skull Rider's fire below."
       ],
-      "tiles": ["look", "talk", "take", "spiderman", "web", "city"],
+      "tiles": ["look", "talk", "take", "spiderdude", "web", "city"],
       "commands": [
         {
-          "pattern": ["talk", "spiderman"],
-          "response": "Spider-Man says: Ghost Rider's fire chain melts my webs! I can't stop him alone. Can you help me find his weakness?",
+          "pattern": ["talk", "spiderdude"],
+          "response": "Spiderdude says: Skull Rider's fire chain melts my webs! I can't stop him alone. Can you help me find his weakness?",
           "effects": { "flags_set": { "talked_spidey": true } }
         },
         {
           "pattern": ["look", "city"],
-          "response": "You can see Ghost Rider's flames near the park. That's where he went!"
+          "response": "You can see Skull Rider's flames near the park. That's where he went!"
         },
         {
-          "pattern": ["look", "spiderman"],
-          "response": "Spider-Man's suit has burn marks from the fight. It was tough!"
+          "pattern": ["look", "spiderdude"],
+          "response": "Spiderdude's suit has burn marks from the fight. It was tough!"
         },
         {
           "pattern": ["look", "web"],
-          "response": "Spider-Man's web shooters! They are so cool!"
+          "response": "Spiderdude's web shooters! They are so cool!"
         },
         {
           "pattern": ["look", "note"],
-          "response": "The note says: Meet on the rooftop! You made it! Talk to Spider-Man."
+          "response": "The note says: Meet on the rooftop! You made it! Talk to Spiderdude."
         },
         {
-          "pattern": ["note", "spiderman"],
-          "response": "You show Spider-Man his note. He nods: Thanks for coming, kid! Now let me tell you what happened.",
+          "pattern": ["note", "spiderdude"],
+          "response": "You show Spiderdude his note. He nods: Thanks for coming, kid! Now let me tell you what happened.",
           "effects": { "inventory_remove": ["note"] }
         },
         {
           "pattern": ["take", "web"],
           "requirements": { "flags_true": ["talked_spidey"] },
-          "response": "Spider-Man gives you a web shooter! He says: Take this, just in case! Now go check the park!",
+          "response": "Spiderdude gives you a web shooter! He says: Take this, just in case! Now go check the park!",
           "effects": { "inventory_add": ["web"] },
           "next": "park"
         },
         {
           "pattern": ["take", "web"],
-          "response": "Maybe talk to Spider-Man first!"
+          "response": "Maybe talk to Spiderdude first!"
         },
         {
-          "pattern": ["take", "spiderman"],
-          "response": "You try to pick up Spider-Man. He's a whole person! And very confused! Put him down!"
+          "pattern": ["take", "spiderdude"],
+          "response": "You try to pick up Spiderdude. He's a whole person! And very confused! Put him down!"
         },
         {
           "pattern": ["take", "city"],
@@ -248,12 +248,12 @@
         }
       ],
       "default": [
-        "Try talking to Spider-Man! He needs your help!",
-        "Spider-Man looks like he has something to tell you.",
+        "Try talking to Spiderdude! He needs your help!",
+        "Spiderdude looks like he has something to tell you.",
         "Don't just stand there! A superhero needs your help!",
-        "Spider-Man is tapping his foot. He's waiting for you to talk to him!",
+        "Spiderdude is tapping his foot. He's waiting for you to talk to him!",
         "The wind blows your hair into your face. Pthhh!",
-        "Spider-Man does a backflip while he waits. Show off!"
+        "Spiderdude does a backflip while he waits. Show off!"
       ]
     },
 
@@ -272,11 +272,11 @@
         {
           "pattern": ["talk", "lady"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "The lady says: I saw Ghost Rider drop a glowing key near the bench!"
+          "response": "The lady says: I saw Skull Rider drop a glowing key near the bench!"
         },
         {
           "pattern": ["talk", "lady"],
-          "response": "The lady says: Ghost Rider rode right through here! He dropped a glowing key near the bench!",
+          "response": "The lady says: Skull Rider rode right through here! He dropped a glowing key near the bench!",
           "effects": { "flags_set": { "lady_talked": true } }
         },
         {
@@ -287,7 +287,7 @@
         {
           "pattern": ["look", "bench"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "You look under the bench. A glowing purple key! Ghost Rider must have dropped it!"
+          "response": "You look under the bench. A glowing purple key! Skull Rider must have dropped it!"
         },
         {
           "pattern": ["look", "bench"],
@@ -320,7 +320,7 @@
         },
         {
           "pattern": ["go", "library"],
-          "response": "You should find that key first! The lady said Ghost Rider dropped one."
+          "response": "You should find that key first! The lady said Skull Rider dropped one."
         },
         {
           "pattern": ["take", "lady"],
@@ -378,11 +378,11 @@
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spider-Man's note. You already found him! Now you're on a mission!"
+          "response": "Spiderdude's note. You already found him! Now you're on a mission!"
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your web shooter from Spider-Man! It goes THWIP!"
+          "response": "Your web shooter from Spiderdude! It goes THWIP!"
         },
         {
           "pattern": ["web", "lady"],
@@ -400,7 +400,7 @@
       "default": [
         "Maybe talk to the lady? She looks like she saw something.",
         "Look around the park for clues!",
-        "The park is a mess! Ghost Rider has no manners.",
+        "The park is a mess! Skull Rider has no manners.",
         "Hmm, that didn't work. Try talking to someone!",
         "A duck waddles past. It quacks at you. QUACK!",
         "You step on a crunchy leaf. Crunch! Satisfying."
@@ -442,7 +442,7 @@
         {
           "pattern": ["open", "book"],
           "requirements": { "inventory_has": ["book"] },
-          "response": "The book says: A Ghost Rider's power lives in its chain. Break the chain, free the spirit! That's the secret!",
+          "response": "The book says: A Skull Rider's power lives in its chain. Break the chain, free the spirit! That's the secret!",
           "effects": { "flags_set": { "read_book": true } }
         },
         {
@@ -498,11 +498,11 @@
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your web shooter from Spider-Man. Save it for later!"
+          "response": "Your web shooter from Spiderdude. Save it for later!"
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spider-Man's note. It got you into this adventure!"
+          "response": "Spiderdude's note. It got you into this adventure!"
         },
         {
           "pattern": ["key", "shelf"],
@@ -638,7 +638,7 @@
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spider-Man's note. It feels like forever ago you read it in your room!"
+          "response": "Spiderdude's note. It feels like forever ago you read it in your room!"
         }
       ],
       "default": [
@@ -703,7 +703,7 @@
         },
         {
           "pattern": ["look", "potion"],
-          "response": "The ice potion. The label says: FREEZES GHOST FIRE. Save it for Ghost Rider!"
+          "response": "The ice potion. The label says: FREEZES GHOST FIRE. Save it for Skull Rider!"
         },
         {
           "pattern": ["look", "hammer"],
@@ -727,7 +727,7 @@
     "bridge": {
       "text": [
         "An old stone bridge over an underground river!",
-        "Ghost Rider's fire marks cover the walls."
+        "Skull Rider's fire marks cover the walls."
       ],
       "tiles": ["go", "look", "climb", "wall", "bridge", "tower"],
       "commands": [
@@ -778,7 +778,7 @@
         },
         {
           "pattern": ["look", "potion"],
-          "response": "The ice potion. Save it for Ghost Rider's fire!"
+          "response": "The ice potion. Save it for Skull Rider's fire!"
         },
         {
           "pattern": ["look", "hammer"],
@@ -802,14 +802,14 @@
     "tower": {
       "text": [
         "A dark tower rises above you!",
-        "Ghost Rider's bike is parked by the door.",
+        "Skull Rider's bike is parked by the door.",
         "Flames flicker at the very top."
       ],
       "tiles": ["look", "go", "bike", "door", "tower"],
       "commands": [
         {
           "pattern": ["look", "bike"],
-          "response": "Ghost Rider's flaming motorcycle! The engine is off right now."
+          "response": "Skull Rider's flaming motorcycle! The engine is off right now."
         },
         {
           "pattern": ["look", "door"],
@@ -817,7 +817,7 @@
         },
         {
           "pattern": ["look", "tower"],
-          "response": "The tower is tall and dark. Fire glows at the top. Ghost Rider is up there!"
+          "response": "The tower is tall and dark. Fire glows at the top. Skull Rider is up there!"
         },
         {
           "pattern": ["potion", "door"],
@@ -868,7 +868,7 @@
         "That door is too hot! Maybe you have something to cool it down?",
         "Think about what's in your bag!",
         "OUCH! Everything here is hot! If only you had something cold...",
-        "Ghost Rider really needs to learn about fire safety.",
+        "Skull Rider really needs to learn about fire safety.",
         "The motorcycle revs by itself. VROOM! Creepy!",
         "You touch the door. OW! Hot hot hot!"
       ]
@@ -914,7 +914,7 @@
         },
         {
           "pattern": ["climb", "web"],
-          "response": "You try to climb a web like Spider-Man. Nope! You're not a spider, silly! Your shoes get all sticky."
+          "response": "You try to climb a web like Spiderdude. Nope! You're not a spider, silly! Your shoes get all sticky."
         },
         {
           "pattern": ["look", "web"],
@@ -934,24 +934,24 @@
         "Those stairs look broken! Can you fix them somehow?",
         "You need to make the stairs safe before climbing.",
         "Step, step, HOLE, step... yeah those stairs need work.",
-        "Ghost Rider really messed up these stairs. Rude!",
+        "Skull Rider really messed up these stairs. Rude!",
         "You hear chains rattling above. Hurry up!",
-        "The walls are warm. Ghost Rider's fire was here!"
+        "The walls are warm. Skull Rider's fire was here!"
       ]
     },
 
     "battle": {
       "text": [
         "You reach the top of the tower!",
-        "Ghost Rider swings his fire chain! WHOOSH!",
-        "Spider-Man swings in behind you!",
+        "Skull Rider swings his fire chain! WHOOSH!",
+        "Spiderdude swings in behind you!",
         "This is it!"
       ],
-      "tiles": ["look", "talk", "give", "ghost", "chain", "spiderman", "hammer"],
+      "tiles": ["look", "talk", "give", "ghost", "chain", "spiderdude", "hammer"],
       "commands": [
         {
           "pattern": ["look", "ghost"],
-          "response": "Ghost Rider is big and scary! Fire covers his whole body!"
+          "response": "Skull Rider is big and scary! Fire covers his whole body!"
         },
         {
           "pattern": ["look", "chain"],
@@ -959,17 +959,17 @@
           "effects": { "flags_set": { "saw_weakness": true } }
         },
         {
-          "pattern": ["talk", "spiderman"],
-          "response": "Spider-Man says: I'll distract him with my webs! You figure out the chain! I believe in you!",
+          "pattern": ["talk", "spiderdude"],
+          "response": "Spiderdude says: I'll distract him with my webs! You figure out the chain! I believe in you!",
           "effects": { "flags_set": { "spidey_ready": true } }
         },
         {
           "pattern": ["talk", "ghost"],
-          "response": "Ghost Rider laughs: No one can break my chain! You will never stop me!"
+          "response": "Skull Rider laughs: No one can break my chain! You will never stop me!"
         },
         {
-          "pattern": ["look", "spiderman"],
-          "response": "Spider-Man is ready to help! He's waiting for your signal."
+          "pattern": ["look", "spiderdude"],
+          "response": "Spiderdude is ready to help! He's waiting for your signal."
         },
         {
           "pattern": ["look", "hammer"],
@@ -978,30 +978,30 @@
         {
           "pattern": ["hammer", "chain"],
           "requirements": { "inventory_has": ["hammer"], "flags_true": ["saw_weakness", "spidey_ready"] },
-          "response": "Spider-Man webs Ghost Rider's arms! NOW! You run in and SMASH the weak link with the hammer! CRASH! The chain SHATTERS into a thousand pieces!",
+          "response": "Spiderdude webs Skull Rider's arms! NOW! You run in and SMASH the weak link with the hammer! CRASH! The chain SHATTERS into a thousand pieces!",
           "effects": { "inventory_remove": ["hammer"] },
           "next": "victory"
         },
         {
           "pattern": ["hammer", "chain"],
           "requirements": { "inventory_has": ["hammer"] },
-          "response": "Not yet! You need to find the chain's weak spot and make sure Spider-Man is ready!"
+          "response": "Not yet! You need to find the chain's weak spot and make sure Spiderdude is ready!"
         },
         {
           "pattern": ["give", "hammer"],
-          "response": "Spider-Man says: No no no, YOU have to do this! I believe in you kid! I'll hold him!"
+          "response": "Spiderdude says: No no no, YOU have to do this! I believe in you kid! I'll hold him!"
         },
         {
           "pattern": ["give", "ghost"],
-          "response": "Give something to Ghost Rider? Are you CRAZY?! He's the bad guy! He'd just set it on fire!"
+          "response": "Give something to Skull Rider? Are you CRAZY?! He's the bad guy! He'd just set it on fire!"
         },
         {
           "pattern": ["give", "chain"],
-          "response": "Give the chain?! It's attached to Ghost Rider! And it's on FIRE! No touching!"
+          "response": "Give the chain?! It's attached to Skull Rider! And it's on FIRE! No touching!"
         },
         {
-          "pattern": ["give", "spiderman"],
-          "response": "Give Spider-Man to someone? He's a person, not a gift! Although he IS pretty amazing."
+          "pattern": ["give", "spiderdude"],
+          "response": "Give Spiderdude to someone? He's a person, not a gift! Although he IS pretty amazing."
         },
         {
           "pattern": ["talk", "chain"],
@@ -1013,7 +1013,7 @@
         },
         {
           "pattern": ["web", "ghost"],
-          "response": "THWIP! Your web hits Ghost Rider but burns up instantly! His fire is too strong for webs alone!"
+          "response": "THWIP! Your web hits Skull Rider but burns up instantly! His fire is too strong for webs alone!"
         },
         {
           "pattern": ["web", "chain"],
@@ -1027,7 +1027,7 @@
         {
           "pattern": ["book", "ghost"],
           "requirements": { "inventory_has": ["book"] },
-          "response": "The book says: A Ghost Rider's power lives in its chain. Destroy the chain to free the spirit!"
+          "response": "The book says: A Skull Rider's power lives in its chain. Destroy the chain to free the spirit!"
         },
         {
           "pattern": ["key", "chain"],
@@ -1035,7 +1035,7 @@
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your web shooter. Ghost Rider is too hot for webs! But Spider-Man can use his own."
+          "response": "Your web shooter. Skull Rider is too hot for webs! But Spiderdude can use his own."
         },
         {
           "pattern": ["look", "book"],
@@ -1045,33 +1045,33 @@
       ],
       "default": [
         "Look carefully at the chain! Remember what the book said?",
-        "Talk to Spider-Man to make a plan!",
-        "Ghost Rider is right there! Focus! Check the chain for a weak spot!",
-        "This is the big moment! Look at the chain, talk to Spider-Man, and SMASH!",
-        "Ghost Rider spins his chain. WHOOSH! Duck!",
+        "Talk to Spiderdude to make a plan!",
+        "Skull Rider is right there! Focus! Check the chain for a weak spot!",
+        "This is the big moment! Look at the chain, talk to Spiderdude, and SMASH!",
+        "Skull Rider spins his chain. WHOOSH! Duck!",
         "Fire shoots past your head. Whoa, that was close!"
       ]
     },
 
     "victory": {
       "text": [
-        "The fire goes out! Ghost Rider's flames disappear!",
-        "A confused man stands where Ghost Rider was.",
-        "Spider-Man lands next to you with a big thumbs up!"
+        "The fire goes out! Skull Rider's flames disappear!",
+        "A confused man stands where Skull Rider was.",
+        "Spiderdude lands next to you with a big thumbs up!"
       ],
-      "tiles": ["talk", "look", "go", "spiderman", "ghost", "home"],
+      "tiles": ["talk", "look", "go", "spiderdude", "ghost", "home"],
       "commands": [
         {
-          "pattern": ["talk", "spiderman"],
-          "response": "Spider-Man high-fives you! He says: You were AMAZING! I never could have figured out the chain puzzle. You are a real hero!"
+          "pattern": ["talk", "spiderdude"],
+          "response": "Spiderdude high-fives you! He says: You were AMAZING! I never could have figured out the chain puzzle. You are a real hero!"
         },
         {
           "pattern": ["talk", "ghost"],
           "response": "The man says: Thank you so much. That chain had me cursed for years. You freed me!"
         },
         {
-          "pattern": ["look", "spiderman"],
-          "response": "Spider-Man is smiling under his mask. You can tell!"
+          "pattern": ["look", "spiderdude"],
+          "response": "Spiderdude is smiling under his mask. You can tell!"
         },
         {
           "pattern": ["look", "ghost"],
@@ -1083,8 +1083,8 @@
           "next": "win"
         },
         {
-          "pattern": ["go", "spiderman"],
-          "response": "Spider-Man is right next to you! You walk over and he gives you another high five. SLAP! Ow, super strength!"
+          "pattern": ["go", "spiderdude"],
+          "response": "Spiderdude is right next to you! You walk over and he gives you another high five. SLAP! Ow, super strength!"
         },
         {
           "pattern": ["go", "ghost"],
@@ -1099,12 +1099,12 @@
           "response": "You look toward home. Your warm cozy bed is waiting. And probably a snack!"
         },
         {
-          "pattern": ["web", "spiderman"],
-          "response": "THWIP! You web Spider-Man! He laughs and webs you back! Web fight!"
+          "pattern": ["web", "spiderdude"],
+          "response": "THWIP! You web Spiderdude! He laughs and webs you back! Web fight!"
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your web shooter! Spider-Man says you can keep it. Best. Gift. EVER!"
+          "response": "Your web shooter! Spiderdude says you can keep it. Best. Gift. EVER!"
         },
         {
           "pattern": ["look", "book"],
@@ -1115,8 +1115,8 @@
         "What an amazing victory! Talk to everyone before heading home.",
         "You did it! You really did it!",
         "You saved the city! Take a moment to enjoy this!",
-        "Spider-Man keeps looking at you like you're the coolest kid ever. Because you ARE!",
-        "Spider-Man shoots confetti webs! Party time!",
+        "Spiderdude keeps looking at you like you're the coolest kid ever. Because you ARE!",
+        "Spiderdude shoots confetti webs! Party time!",
         "You flex your muscles. You ARE a hero!"
       ]
     },
@@ -1124,7 +1124,7 @@
     "win": {
       "text": [
         "You walk home as the sun rises over the city.",
-        "Spider-Man swings by and waves at you!",
+        "Spiderdude swings by and waves at you!",
         "You smile and wave back.",
         "You are a TRUE HERO!",
         "",
@@ -1132,7 +1132,7 @@
       ],
       "tiles": [],
       "commands": [],
-      "default": ["What an amazing adventure!", "The city is safe thanks to you!", "Spider-Man swings by and gives you a thumbs up!", "Best. Day. Ever!"]
+      "default": ["What an amazing adventure!", "The city is safe thanks to you!", "Spiderdude swings by and gives you a thumbs up!", "Best. Day. Ever!"]
     }
   }
 }

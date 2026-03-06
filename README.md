@@ -115,9 +115,9 @@ Command rule keys:
 
 10 scenes. Find a dragon egg in a tree and return it to the mother dragon. Features inventory gating (key, rope, egg), multi-step puzzles, and item consumption.
 
-### Spider-Man and the Ghost Chain (`spider_hero.json`)
+### Spiderdude and the Ghost Chain (`spider_hero.json`)
 
-13 scenes. Help Spider-Man defeat Ghost Rider by finding his chain's weakness. Features flag-based progression, multiple inventory items (web, potion, hammer, book), and a boss battle.
+13 scenes. Help Spiderdude defeat Skull Rider by finding his chain's weakness. Features flag-based progression, multiple inventory items (web, potion, hammer, book), and a boss battle.
 
 ---
 

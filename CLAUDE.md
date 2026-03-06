@@ -66,7 +66,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 ## Stories
 
 - **`dragon_egg.json`** — Fantasy adventure with 2-word commands. Player finds a dragon egg and returns it.
-- **`spider_hero.json`** — "Spider-Man and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spider-Man defeat Ghost Rider.
+- **`spider_hero.json`** — "Spiderdude and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spiderdude defeat Skull Rider.
 
 ## Story JSON Format
 
