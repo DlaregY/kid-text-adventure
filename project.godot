@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Ike's Adventure"
+config/name="Ike Quest"
 run/main_scene="uid://da2g8wy6g4fky"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.png"
