@@ -124,9 +124,9 @@ Command rule keys:
 
 8 scenes. You sneak Dad's phone at night and get sucked into the screen. Navigate a digital world, defeat bugs and a firewall, and battle the Phone Boss to escape.
 
-### Salt Trap (`salt_trap.json`)
+### Shake Escape (`shake_escape.json`)
 
-7 scenes. Your breakfast eggs need salt, but the saltshaker sucks you inside! Explore a tiny salt crystal world, float across a Dead Sea-style salt lake, climb slippery cliffs with a crystal pick, and bounce on a salt trampoline. Mom shakes you out in the end.
+8 scenes. Your breakfast eggs need salt, but the saltshaker sucks you inside! Explore a tiny salt crystal world, float across a Dead Sea-style salt lake, climb slippery cliffs with a crystal pick, and bounce on a salt trampoline. Mom shakes you out in the end.
 
 ---
 

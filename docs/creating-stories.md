@@ -76,6 +76,7 @@ Each scene is an object inside `scenes` with a unique ID as its key.
 | `tiles` | Yes | Array of token strings available as tappable/draggable tiles |
 | `commands` | Yes | Array of command rules (evaluated in order) |
 | `default` | Yes | Array of fallback responses (one picked at random when no rule matches) |
+| `hints` | No | Array of 3 progressive hint strings (gentle → specific → direct). Shown after 6 failed commands. |
 
 ## Tiles
 
@@ -113,9 +114,16 @@ Many tokens automatically display with an emoji icon. These are the built-in map
 | `dragon` | 🐉 | `gate` | 🏰 |
 | `tree` | 🌳 | `bridge` | 🌉 |
 | `cave` | 🕳️ | `web` | 🕸️ |
-| `spiderman` | 🕷️ | `ghost` | 👻 |
+| `spiderdude` | 🕷️ | `ghost` | 👻 |
 | `hammer` | 🔨 | `potion` | 🧪 |
 | `chain` | ⛓️ | `torch` | 🔦 |
+| `phone` | 📱 | `robot` | 🤖 |
+| `bug` | 🐛 | `shield` | 🛡️ |
+| `chip` | 💾 | `boss` | 👾 |
+| `eggs` | 🍳 | `salt` | 🧂 |
+| `plate` | 🍽️ | `lake` | 🌊 |
+| `cliff` | 🏔️ | `crystal` | 🔮 |
+| `rock` | 🪨 | | |
 
 Tokens not in this list display without an emoji. To add new emoji, edit the `EMOJI` dictionary in `scripts/Game.gd`.
 
@@ -400,5 +408,17 @@ The included stories demonstrate all features:
 - Inventory-as-verb: `["potion", "door"]`, `["hammer", "chain"]`, `["web", "torch"]`, `["web", "stairs"]`
 - Boss battle with multi-flag gating: must find weakness AND coordinate with Spiderdude
 - Extensive inventory acknowledgment: `["look", <item>]` in every scene
+
+### `phone_trap.json` (8 scenes)
+- Inventory items: `phone`, `torch`, `key`, `shield`, `chip` (all consumed after use)
+- Inventory-as-verb: `["torch", "bug"]`, `["shield", "fire"]`, `["chip", "boss"]`, `["key", "gate"]`
+- Multi-step bedroom: take phone then look at it to get sucked in
+- Progressive item chain: each item unlocks the next obstacle
+
+### `shake_escape.json` (8 scenes)
+- Inventory items: `crystal` (consumed climbing cliffs)
+- Flags: `seen_glow`, `floating`, `built_pile`, `heard_mom`
+- Multi-step puzzles in 4 scenes: look before act pattern (see glow → get sucked in, step in lake → grab crystal, stack salt → bounce, hear Mom → yell for help)
+- Every tile combination has a specific contextual response
 
 Read through them as complete examples of story structure and patterns.

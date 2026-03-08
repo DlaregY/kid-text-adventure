@@ -49,7 +49,14 @@
       "commands": [
         {
           "pattern": ["look", "phone"],
-          "response": "The screen glows bright blue. A game is on it! It looks SO cool!"
+          "response": "You stare at the screen. The glow gets SUPER bright! The room starts to spin! WHOOOOSH! You are getting SUCKED INTO THE PHONE!",
+          "requirements": {"inventory_has": ["phone"]},
+          "effects": {"inventory_remove": ["phone"]},
+          "next": "pixel_plaza"
+        },
+        {
+          "pattern": ["look", "phone"],
+          "response": "The screen glows bright blue. A game is on it! It looks SO cool! You should grab it!"
         },
         {
           "pattern": ["look", "door"],
@@ -61,7 +68,7 @@
         },
         {
           "pattern": ["take", "phone"],
-          "response": "You already grabbed the phone! Try opening it!",
+          "response": "You already grabbed the phone! Try LOOKING at the screen!",
           "requirements": {"inventory_has": ["phone"]}
         },
         {
@@ -79,10 +86,8 @@
         },
         {
           "pattern": ["open", "phone"],
-          "response": "You tap the screen. The glow gets SUPER bright! The room starts to spin! WHOOOOSH! You are getting SUCKED INTO THE PHONE!",
-          "requirements": {"inventory_has": ["phone"]},
-          "effects": {"inventory_remove": ["phone"]},
-          "next": "pixel_plaza"
+          "response": "You already grabbed the phone! Try LOOKING at the screen!",
+          "requirements": {"inventory_has": ["phone"]}
         },
         {
           "pattern": ["open", "phone"],
@@ -90,11 +95,11 @@
         },
         {
           "pattern": ["phone", "door"],
-          "response": "You point the phone at the door. The screen just glows blue. Try OPENING the phone instead!"
+          "response": "You point the phone at the door. The screen just glows blue. Try LOOKING at the screen instead!"
         },
         {
           "pattern": ["phone", "window"],
-          "response": "You hold the phone up to the window. The moonlight makes the screen glow even brighter! Pretty! But try OPENING it!"
+          "response": "You hold the phone up to the window. The moonlight makes the screen glow even brighter! Pretty! But try LOOKING at the screen!"
         },
         {
           "pattern": ["open", "door"],
@@ -113,7 +118,7 @@
         "That's not going to help you right now!",
         "The room is quiet. That glowing phone is calling to you..."
       ],
-      "hints": ["That phone is glowing! Maybe pick it up?", "TAKE the PHONE first, then try to OPEN it!", "TAKE PHONE, then OPEN PHONE!"]
+      "hints": ["That phone is glowing! Maybe pick it up?", "TAKE the PHONE first, then LOOK at it!", "TAKE PHONE, then LOOK PHONE!"]
     },
 
     "pixel_plaza": {
