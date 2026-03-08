@@ -28,6 +28,8 @@ const EMOJI := {
 	"home": "🏠", "library": "🏛️",
 	"phone": "📱", "robot": "🤖", "bug": "🐛",
 	"shield": "🛡️", "chip": "💾", "boss": "👾",
+	"eggs": "🍳", "salt": "🧂", "plate": "🍽️",
+	"lake": "🌊", "cliff": "🏔️", "crystal": "🔮",
 }
 
 const LOOK_FALLBACKS: Array[String] = [

@@ -59,7 +59,7 @@ Rule evaluation is deterministic and simple:
    - apply `effects` (inventory/flag changes)
    - re-render tiles so inventory items move between trays immediately
    - optionally transition to `next` scene with fade effect
-5. If no rule matches, show a random scene `default` message.
+5. If no rule matches, try smart fallback responses, then show a random scene `default` message.
 
 ### 5) Scene transitions
 
@@ -93,6 +93,7 @@ Scene object keys:
 - `tiles`: list of tokens available as tiles in that scene
 - `commands`: list of rules
 - `default`: list of fallback responses (one picked at random)
+- `hints` (optional): array of 3 progressive hints (gentle → specific → direct), shown after 6 failed commands
 
 Command rule keys:
 
@@ -118,6 +119,14 @@ Command rule keys:
 ### Spiderdude and the Ghost Chain (`spider_hero.json`)
 
 13 scenes. Help Spiderdude defeat Skull Rider by finding his chain's weakness. Features flag-based progression, multiple inventory items (web, potion, hammer, book), and a boss battle.
+
+### Phone Trap (`phone_trap.json`)
+
+8 scenes. You sneak Dad's phone at night and get sucked into the screen. Navigate a digital world, defeat bugs and a firewall, and battle the Phone Boss to escape.
+
+### Salt Trap (`salt_trap.json`)
+
+7 scenes. Your breakfast eggs need salt, but the saltshaker sucks you inside! Explore a tiny salt crystal world, float across a Dead Sea-style salt lake, climb slippery cliffs with a crystal pick, and bounce on a salt trampoline. Mom shakes you out in the end.
 
 ---
 

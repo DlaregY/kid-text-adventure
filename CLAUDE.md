@@ -38,7 +38,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Three scripts, one scene, JSON-driven stories.**
 
-- `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, smart fallback responses, inventory/flag state, scene transitions with fade effect, emoji font loading, and tile categorization. Inventory items can be placed in either slot (first-empty routing). This is where nearly all logic lives.
+- `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, smart fallback responses, inventory/flag state, scene transitions with fade effect, emoji font loading, tile categorization, and auto-fit text sizing. Inventory items can be placed in either slot (first-empty routing). This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
 - `Game.tscn` — Main UI scene: MenuScreen (VBoxContainer with logo, title, story picker, PLAY button), story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), HintButton (hidden until 6 failed commands, shows progressive hints), ContinueButton (▶ arrow, shown during scene transitions), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions).
@@ -59,6 +59,8 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Hint system:** After 6 consecutive failed commands (no rule match), a HINT button appears below the tile section. Each scene has an optional `"hints"` array in the JSON with 3 progressive hints (gentle nudge, more specific, nearly direct). `_on_hint_pressed()` shows the next hint in FeedbackText, advancing `hint_index` and clamping at the last entry. `_reset_hints()` zeroes `fail_count` and `hint_index`, hides the button. Called by `_render_scene()` (scene change), `_apply_command()` (successful match), and `_show_menu()` (return to menu).
 
+**Auto-fit text:** `_auto_fit_story_text()` runs at the end of every `_render_scene()` call. It iteratively shrinks StoryText font size from `STORY_FONT_MAX` (32px) down to `STORY_FONT_MIN` (18px) in `STORY_FONT_STEP` (2px) increments until the layout fits the viewport without scrolling. Also scales `custom_minimum_size.y` proportionally (`font_size * 5`). Resets scroll position to top after fitting. `_render_scene()` is async due to the frame-wait loop. Font size resets to max in `_show_menu()`.
+
 **State:** `inventory` (Dictionary as set: token→true), `flags` (Dictionary: flag→bool), `current_scene_id` (String), `is_transitioning` (bool), `fail_count` (int: consecutive failed commands), `hint_index` (int: current hint position).
 
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
@@ -70,6 +72,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - **`dragon_egg.json`** — Fantasy adventure with 2-word commands. Player finds a dragon egg and returns it.
 - **`spider_hero.json`** — "Spiderdude and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spiderdude defeat Skull Rider.
 - **`phone_trap.json`** — "Phone Trap." 8 scenes, 2-word commands. Player gets sucked into Dad's phone and must defeat the Phone Boss to escape.
+- **`salt_trap.json`** — "Salt Trap." 7 scenes, 2-word commands. Player gets sucked into a saltshaker, explores a salt crystal world (Dead Sea lake, salt cliffs), and escapes when Mom shakes the shaker.
 
 ## Story JSON Format
 

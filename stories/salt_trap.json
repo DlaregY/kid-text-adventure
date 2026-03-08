@@ -1,0 +1,337 @@
+{
+  "meta": {
+    "title": "Salt Trap",
+    "version": 1,
+    "teaser": "Your eggs need salt. But the saltshaker has other plans!"
+  },
+  "vocab": {
+    "look": {"label": "Look"},
+    "go": {"label": "Go"},
+    "take": {"label": "Take"},
+    "open": {"label": "Open"},
+    "talk": {"label": "Talk"},
+    "give": {"label": "Give"},
+    "climb": {"label": "Climb"},
+    "eggs": {"label": "Eggs"},
+    "salt": {"label": "Salt"},
+    "plate": {"label": "Plate"},
+    "lake": {"label": "Lake"},
+    "cliff": {"label": "Cliff"},
+    "crystal": {"label": "Crystal"}
+  },
+  "start_scene": "kitchen",
+  "scenes": {
+    "kitchen": {
+      "text": [
+        "You sit at the table. Breakfast time!",
+        "There are eggs on your plate.",
+        "You take a bite. Hmm...",
+        "Not salty enough!"
+      ],
+      "tiles": ["look", "take", "eggs", "salt", "plate"],
+      "commands": [
+        {
+          "pattern": ["look", "eggs"],
+          "response": "The eggs are okay but they need more salt!"
+        },
+        {
+          "pattern": ["look", "plate"],
+          "response": "A nice plate of eggs. Yummy! But not salty enough."
+        },
+        {
+          "pattern": ["look", "salt"],
+          "response": "The saltshaker sits on the table. Maybe you should grab it!"
+        },
+        {
+          "pattern": ["take", "eggs"],
+          "response": "You already have eggs on your fork, silly!"
+        },
+        {
+          "pattern": ["take", "plate"],
+          "response": "You can't take the whole plate! Just eat your eggs!"
+        },
+        {
+          "pattern": ["take", "salt"],
+          "response": "You grab the saltshaker.",
+          "next": "stuck"
+        }
+      ],
+      "default": [
+        "You bonk your fork on the table. That didn't help!",
+        "Nope! Just eat your breakfast!",
+        "That's not how breakfast works, silly!",
+        "Your eggs are getting cold! Try something else!",
+        "The table wiggles. Nothing happens though!",
+        "You wave your fork around. Nope! Still not salty!"
+      ],
+      "hints": [
+        "Hmm, the eggs need something...",
+        "What could make eggs taste better? Look around!",
+        "Try TAKE SALT!"
+      ]
+    },
+    "stuck": {
+      "text": [
+        "You try to shake salt on your eggs.",
+        "But OH NO!",
+        "Your finger slides into one of the little holes!",
+        "You try to pull it out. It won't budge!",
+        "You push it back in and try again..."
+      ],
+      "tiles": ["look", "open", "salt", "eggs"],
+      "commands": [
+        {
+          "pattern": ["look", "salt"],
+          "response": "Your finger is really stuck in there!"
+        },
+        {
+          "pattern": ["look", "eggs"],
+          "response": "Your eggs are getting cold! You need to get unstuck!"
+        },
+        {
+          "pattern": ["open", "salt"],
+          "response": "You push your finger in one more time and WHOOOOSH! Your whole body gets sucked inside the saltshaker!",
+          "next": "salt_bottom"
+        },
+        {
+          "pattern": ["open", "eggs"],
+          "response": "You can't open eggs! Your finger is stuck, remember?!"
+        }
+      ],
+      "default": [
+        "Your finger is stuck! Focus on the saltshaker!",
+        "Wiggle wiggle! Nope, still stuck!",
+        "That won't help you get unstuck!",
+        "Your finger says: HELP ME!",
+        "The saltshaker holds on tight! Try something else!",
+        "Nope! Your finger isn't going anywhere like that!"
+      ],
+      "hints": [
+        "Your finger is stuck in the saltshaker...",
+        "Maybe try to OPEN it?",
+        "Try OPEN SALT!"
+      ]
+    },
+    "salt_bottom": {
+      "text": [
+        "WHOA! You are TINY!",
+        "You are standing inside the saltshaker!",
+        "Salt crystals big as rocks are everywhere.",
+        "Way up above you can see tiny holes letting in light.",
+        "There is a shimmery lake ahead",
+        "and tall salt cliffs behind it."
+      ],
+      "tiles": ["look", "go", "lake", "cliff"],
+      "commands": [
+        {
+          "pattern": ["look", "lake"],
+          "response": "The lake sparkles and shimmers. It looks REALLY salty!"
+        },
+        {
+          "pattern": ["look", "cliff"],
+          "response": "The cliffs are made of giant salt crystals. They go way up high!"
+        },
+        {
+          "pattern": ["go", "cliff"],
+          "response": "The cliffs are on the other side of the lake. You need to cross the lake first!"
+        },
+        {
+          "pattern": ["go", "lake"],
+          "response": "You walk toward the shimmery salt lake.",
+          "next": "salt_lake"
+        }
+      ],
+      "default": [
+        "You lick a salt rock. SO SALTY! But that didn't help!",
+        "You kick a salt crystal. Ouch! Bad idea!",
+        "Nope! You are tiny and stuck in a saltshaker!",
+        "You yell HELLO! Your voice echoes off the salt walls!",
+        "That doesn't work when you are this tiny!",
+        "You sit on a salt rock. Comfy! But not helpful!"
+      ],
+      "hints": [
+        "You need to find a way up to those holes...",
+        "The lake and the cliffs might help. Try going somewhere!",
+        "Try GO LAKE!"
+      ]
+    },
+    "salt_lake": {
+      "text": [
+        "You stand at the edge of the salt lake.",
+        "The water is SO salty!",
+        "You step in and... you FLOAT!",
+        "Like a cork!",
+        "You bob around on top of the water.",
+        "On the far side you see a big shiny crystal."
+      ],
+      "tiles": ["look", "take", "go", "crystal", "lake"],
+      "commands": [
+        {
+          "pattern": ["look", "lake"],
+          "response": "The water is thick and salty. You float on top like magic!"
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "A big sparkly crystal sits on the far shore. It looks pointy and strong!"
+        },
+        {
+          "pattern": ["go", "lake"],
+          "response": "You are already floating on the lake! That crystal on the far side looks useful!"
+        },
+        {
+          "pattern": ["go", "crystal"],
+          "response": "The crystal is right there! Try to TAKE it!"
+        },
+        {
+          "pattern": ["take", "lake"],
+          "response": "You scoop up some water. BLEH! So salty! You spit it out!"
+        },
+        {
+          "pattern": ["take", "crystal"],
+          "response": "You float across the lake and grab the big crystal! It is pointy and strong like a pick!",
+          "effects": {"inventory_add": ["crystal"]},
+          "next": "salt_cliffs"
+        }
+      ],
+      "default": [
+        "You splash in the salty water. Wheee! But not helpful!",
+        "You float on your back. This is fun! But you need to escape!",
+        "The salt makes your skin tingly! But that didn't do anything!",
+        "You do a little spin in the water. Bloop bloop!",
+        "Nope! The lake is fun but you need to keep moving!",
+        "You blow bubbles in the salty water. POP POP POP!"
+      ],
+      "hints": [
+        "There is something shiny on the far side of the lake...",
+        "That crystal looks useful! How do you pick things up?",
+        "Try TAKE CRYSTAL!"
+      ]
+    },
+    "salt_cliffs": {
+      "text": [
+        "You stand at the bottom of the tall salt cliffs.",
+        "The holes at the top are WAY up there!",
+        "The cliff is smooth and slippery.",
+        "You need something to help you grip!"
+      ],
+      "tiles": ["look", "climb", "crystal", "cliff"],
+      "commands": [
+        {
+          "pattern": ["look", "cliff"],
+          "response": "So smooth and slippery! You need something pointy to hold on to."
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal is pointy and strong. Like a little pick!"
+        },
+        {
+          "pattern": ["climb", "cliff"],
+          "response": "You dig the crystal into the salt wall like a pick! Chip! Chip! Chip! You pull yourself up higher and higher!",
+          "requirements": {"inventory_has": ["crystal"]},
+          "effects": {"inventory_remove": ["crystal"]},
+          "next": "salt_top"
+        },
+        {
+          "pattern": ["climb", "cliff"],
+          "response": "You try to climb but it is too slippery! You slide right back down!"
+        },
+        {
+          "pattern": ["climb", "crystal"],
+          "response": "You can't climb a crystal! Try climbing the cliff!"
+        },
+        {
+          "pattern": ["crystal", "cliff"],
+          "response": "You poke the cliff with the crystal. Try CLIMBING the cliff instead!"
+        }
+      ],
+      "default": [
+        "You lick the cliff wall. Yep, still salt!",
+        "You poke the cliff. It is hard as a rock!",
+        "Nope! The cliff is too slippery for that!",
+        "You slide down the cliff on your belly. Wheeee! But not helpful!",
+        "That won't get you up the cliff!",
+        "You jump up and down. Not high enough!"
+      ],
+      "hints": [
+        "The cliff is too slippery to climb with bare hands...",
+        "You have something pointy that could help you grip!",
+        "Try CLIMB CLIFF while holding the crystal!"
+      ]
+    },
+    "salt_top": {
+      "text": [
+        "You made it near the top!",
+        "You can see the little holes right above you!",
+        "Light pours in from the kitchen.",
+        "You stack up salt crystals into a big bouncy pile.",
+        "Time to jump!"
+      ],
+      "tiles": ["look", "climb", "go", "salt"],
+      "commands": [
+        {
+          "pattern": ["look", "salt"],
+          "response": "A big pile of salt crystals. Looks bouncy! Like a trampoline!"
+        },
+        {
+          "pattern": ["climb", "salt"],
+          "response": "You bounce UP UP UP! Your fingers touch the edge of a hole! But... you slip! WHOOOOSH! You fall ALL the way back down! THUD!",
+          "next": "escape"
+        },
+        {
+          "pattern": ["go", "salt"],
+          "response": "You bounce UP UP UP! Your fingers touch the edge of a hole! But... you slip! WHOOOOSH! You fall ALL the way back down! THUD!",
+          "next": "escape"
+        }
+      ],
+      "default": [
+        "You are so close to the holes! Try the salt pile!",
+        "Almost there! The bouncy pile is right there!",
+        "Nope! The holes are right above you! Try jumping!",
+        "You wave at the light coming through the holes. HELLO!",
+        "So close to freedom! Try the salt pile!",
+        "You can almost taste breakfast again! Try jumping!"
+      ],
+      "hints": [
+        "That bouncy pile of salt looks like it could launch you up...",
+        "Try climbing or going to the salt pile!",
+        "Try CLIMB SALT!"
+      ]
+    },
+    "escape": {
+      "text": [
+        "You land at the bottom with a THUMP.",
+        "Ouch! That did not work.",
+        "But wait... you hear a GIANT voice!",
+        "\"Where did all the salt go?\"",
+        "It is Mom!",
+        "She picks up the saltshaker and shakes it.",
+        "WHOOOOOOSH!",
+        "You fly out through a hole!",
+        "POP! You are big again!",
+        "You are sitting at the table like nothing happened.",
+        "Mom looks at you funny.",
+        "\"Why are you covered in salt?\"",
+        "You just smile.",
+        "Your eggs are perfectly salty now."
+      ],
+      "tiles": ["look", "talk", "salt"],
+      "commands": [
+        {
+          "pattern": ["look", "salt"],
+          "response": "You are covered in salt from head to toe. What an adventure!"
+        },
+        {
+          "pattern": ["talk", "salt"],
+          "response": "You whisper to the saltshaker: I am NEVER doing that again!"
+        }
+      ],
+      "default": [
+        "You made it out! Time to enjoy those salty eggs!",
+        "No more adventures for now! Just eat your breakfast!",
+        "You did it! You escaped the saltshaker!",
+        "Mom is still looking at you funny. Just smile!",
+        "Your eggs are perfect now. Worth it? Maybe!"
+      ]
+    }
+  }
+}
