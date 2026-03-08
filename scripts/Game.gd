@@ -8,6 +8,9 @@ extends Control
 const STORIES_DIR := "res://stories"
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
+const STORY_FONT_MAX: int = 32
+const STORY_FONT_MIN: int = 18
+const STORY_FONT_STEP: int = 2
 const EMOJI := {
 	"key": "🗝️", "box": "📦", "door": "🚪", "rope": "🪢",
 	"apple": "🍎", "treasure": "💎", "egg": "🥚",
@@ -110,6 +113,8 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
 @onready var teaser_label: Label = $ScrollContainer/Layout/MenuScreen/TeaserLabel
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
+@onready var scroll_container: ScrollContainer = $ScrollContainer
+@onready var layout: VBoxContainer = $ScrollContainer/Layout
 
 var story = {}
 var scenes = {}
@@ -255,7 +260,7 @@ func _start_story() -> void:
 	tile_section.visible = true
 	feedback_text.visible = true
 	new_game_button.visible = false
-	_render_scene()
+	await _render_scene()
 
 func _show_menu() -> void:
 	has_active_story = false
@@ -267,6 +272,8 @@ func _show_menu() -> void:
 	continue_button.visible = false
 	_reset_hints()
 	story_text.text = ""
+	story_text.add_theme_font_size_override("font_size", STORY_FONT_MAX)
+	story_text.custom_minimum_size.y = STORY_FONT_MAX * 5
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
 			child.queue_free()
@@ -348,6 +355,23 @@ func _render_scene() -> void:
 			has_next = true
 			break
 	new_game_button.visible = not has_next
+	await _auto_fit_story_text()
+
+func _auto_fit_story_text() -> void:
+	var font_size: int = STORY_FONT_MAX
+	story_text.add_theme_font_size_override("font_size", font_size)
+	story_text.custom_minimum_size.y = font_size * 5
+	await get_tree().process_frame
+
+	while font_size > STORY_FONT_MIN:
+		if layout.size.y <= scroll_container.size.y:
+			break
+		font_size -= STORY_FONT_STEP
+		story_text.add_theme_font_size_override("font_size", font_size)
+		story_text.custom_minimum_size.y = font_size * 5
+		await get_tree().process_frame
+
+	scroll_container.scroll_vertical = 0
 
 func _update_inventory_ui() -> void:
 	var has_items: bool = inventory_tray.get_child_count() > 0
@@ -409,7 +433,7 @@ func _check_slots_and_execute() -> void:
 		return
 	if not has_active_story or is_transitioning:
 		return
-	_try_execute_command()
+	await _try_execute_command()
 
 func _try_execute_command() -> void:
 	var first: String = slot1.token
@@ -420,7 +444,7 @@ func _try_execute_command() -> void:
 
 	var cmd: Array[String] = [first, second]
 
-	var transitioned := _apply_command(cmd)
+	var transitioned := await _apply_command(cmd)
 	if not transitioned:
 		slot1.clear()
 		slot2.clear()
@@ -461,7 +485,7 @@ func _apply_command(cmd: Array[String]) -> bool:
 			return true
 		else:
 			# stay in same scene — re-render tiles so inventory moves between trays
-			_render_scene()
+			await _render_scene()
 			feedback_text.text = response
 			return false
 
@@ -529,7 +553,7 @@ func _transition_to_scene(scene_id: String) -> void:
 
 	# Change scene content
 	current_scene_id = scene_id
-	_render_scene()
+	await _render_scene()
 
 	# Fade back in
 	var tween2 := create_tween()
