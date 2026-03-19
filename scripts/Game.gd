@@ -29,7 +29,7 @@ const EMOJI := {
 	"phone": "📱", "robot": "🤖", "bug": "🐛",
 	"shield": "🛡️", "chip": "💾", "boss": "👾",
 	"eggs": "🍳", "salt": "🧂", "plate": "🍽️",
-	"lake": "🌊", "cliff": "🏔️", "crystal": "🔮", "rock": "🪨",
+	"lake": "🌊", "cliff": "🏔️", "crystal": "🔮", "rock": "🪨", "river": "🏞️",
 }
 
 const LOOK_FALLBACKS: Array[String] = [

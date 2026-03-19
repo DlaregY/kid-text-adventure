@@ -73,6 +73,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - **`spider_hero.json`** — "Spiderdude and the Ghost Chain." 13 scenes, 2-word commands. Player helps Spiderdude defeat Skull Rider.
 - **`phone_trap.json`** — "Phone Trap." 8 scenes, 2-word commands. Player gets sucked into Dad's phone and must defeat the Phone Boss to escape.
 - **`shake_escape.json`** — "Shake Escape." 8 scenes, 2-word commands. Player gets sucked into a saltshaker, explores a salt crystal world (Dead Sea lake, salt cliffs), and escapes when Mom shakes the shaker.
+- **`crystal_cave.json`** — "The Crystal Cave." 8 scenes, 2-word commands. Player explores a glowing cave behind a waterfall, finds crystals, crosses a rope bridge, and unlocks hidden treasure.
 
 ## Story JSON Format
 
