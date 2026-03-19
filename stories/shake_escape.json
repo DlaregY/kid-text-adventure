@@ -97,13 +97,13 @@
       "commands": [
         {
           "pattern": ["look", "salt"],
-          "response": "Wait... the salt inside is GLOWING! And it is starting to SPIN! Like a tiny whirlpool! This is NOT normal!",
-          "effects": {"flags_set": {"seen_glow": true}}
+          "response": "The salt is still glowing and spinning faster! This is NOT normal! You should get AWAY from it!",
+          "requirements": {"flags_true": ["seen_glow"]}
         },
         {
           "pattern": ["look", "salt"],
-          "response": "The salt is still glowing and spinning faster! This is NOT normal! You should get AWAY from it!",
-          "requirements": {"flags_true": ["seen_glow"]}
+          "response": "Wait... the salt inside is GLOWING! And it is starting to SPIN! Like a tiny whirlpool! This is NOT normal!",
+          "effects": {"flags_set": {"seen_glow": true}}
         },
         {
           "pattern": ["look", "eggs"],
@@ -169,7 +169,7 @@
         "Huge salt cliffs tower behind it.",
         "A big salt boulder blocks part of the path."
       ],
-      "tiles": ["look", "go", "climb", "lake", "cliff", "rock"],
+      "tiles": ["look", "go", "take", "climb", "lake", "cliff", "rock"],
       "commands": [
         {
           "pattern": ["look", "lake"],
@@ -194,7 +194,19 @@
         },
         {
           "pattern": ["go", "rock"],
-          "response": "You walk up to the rock. It is as big as you are! You could climb it."
+          "response": "You walk up to the big salt rock. It is as big as you are! Try climbing it!"
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "You try to pick up the rock but it is WAY too heavy! You are tiny, remember?"
+        },
+        {
+          "pattern": ["take", "lake"],
+          "response": "You can't carry a lake!"
+        },
+        {
+          "pattern": ["take", "cliff"],
+          "response": "You cannot take a cliff. Nobody can take a cliff."
         },
         {
           "pattern": ["climb", "rock"],
@@ -361,7 +373,12 @@
         },
         {
           "pattern": ["take", "crystal"],
-          "response": "You already have it! Maybe use it to CLIMB the cliff?"
+          "response": "You already have it! Maybe use it to CLIMB the cliff?",
+          "requirements": {"inventory_has": ["crystal"]}
+        },
+        {
+          "pattern": ["take", "crystal"],
+          "response": "There are no loose crystals here. You used your crystal climbing the cliff!"
         },
         {
           "pattern": ["crystal", "cliff"],
@@ -478,7 +495,7 @@
         "You are stuck.",
         "But wait... is that a voice?"
       ],
-      "tiles": ["look", "talk", "go", "climb", "salt", "cliff"],
+      "tiles": ["look", "talk", "go", "climb", "salt", "cliff", "lake"],
       "commands": [
         {
           "pattern": ["look", "salt"],
@@ -493,6 +510,10 @@
         {
           "pattern": ["look", "cliff"],
           "response": "The cliff is way too tall to climb again without the crystal. There must be another way out!"
+        },
+        {
+          "pattern": ["look", "lake"],
+          "response": "The shimmery salt lake stretches out behind you. You can see where you floated across. It feels like forever ago."
         },
         {
           "pattern": ["talk", "salt"],
@@ -515,6 +536,10 @@
         {
           "pattern": ["go", "cliff"],
           "response": "You can't climb the cliffs without the crystal. There must be another way out!"
+        },
+        {
+          "pattern": ["go", "lake"],
+          "response": "You don't want to go back to the lake. You need to get OUT of this saltshaker!"
         },
         {
           "pattern": ["climb", "salt"],

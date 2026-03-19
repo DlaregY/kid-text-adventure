@@ -1,0 +1,564 @@
+{
+  "meta": { "title": "The Crystal Cave", "version": 1, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!" },
+  "vocab": {
+    "go": { "label": "go" },
+    "open": { "label": "open" },
+    "take": { "label": "take" },
+    "look": { "label": "look" },
+    "talk": { "label": "talk" },
+    "give": { "label": "give" },
+    "climb": { "label": "climb" },
+    "lake": { "label": "lake" },
+    "cave": { "label": "cave" },
+    "rock": { "label": "rock" },
+    "torch": { "label": "torch" },
+    "crystal": { "label": "crystal" },
+    "cliff": { "label": "cliff" },
+    "rope": { "label": "rope" },
+    "bridge": { "label": "bridge" },
+    "key": { "label": "key" },
+    "door": { "label": "door" },
+    "box": { "label": "box" },
+    "treasure": { "label": "treasure" },
+    "river": { "label": "river" }
+  },
+  "start_scene": "shore",
+  "scenes": {
+    "shore": {
+      "text": ["You stand by a big blue lake.", "Behind a waterfall, you see a dark cave!", "The rocks around it glow a little bit."],
+      "tiles": ["go", "look", "take", "cave", "lake", "rock"],
+      "commands": [
+        {
+          "pattern": ["go", "cave"],
+          "response": "You squeeze behind the waterfall and step into the cave!",
+          "next": "dark_cave"
+        },
+        {
+          "pattern": ["look", "cave"],
+          "response": "A dark opening behind the waterfall. Something inside is glowing!"
+        },
+        {
+          "pattern": ["look", "lake"],
+          "response": "The lake is deep and blue. Little fish swim near the surface."
+        },
+        {
+          "pattern": ["look", "rock"],
+          "response": "The rocks are warm! Tiny sparkles blink inside them."
+        },
+        {
+          "pattern": ["go", "lake"],
+          "response": "You dip your toes in. Brrrr! Too cold for swimming!"
+        },
+        {
+          "pattern": ["go", "rock"],
+          "response": "You walk up to the rocks. They feel warm and tingly!"
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "You try to pick one up but it is stuck tight. Like a rock. Because it is a rock."
+        },
+        {
+          "pattern": ["take", "cave"],
+          "response": "You cannot pick up a whole cave! But you can go inside."
+        },
+        {
+          "pattern": ["take", "lake"],
+          "response": "You scoop up some water. It drips through your fingers. Lakes are hard to carry!"
+        },
+        {
+          "pattern": ["talk", "rock"],
+          "response": "You whisper to the rock. It says nothing. Very rude for a glowing rock."
+        },
+        {
+          "pattern": ["talk", "lake"],
+          "response": "You say hello to the lake. A fish jumps. Maybe that was a wave?"
+        },
+        {
+          "pattern": ["talk", "cave"],
+          "response": "HELLO! ... hello... hello... Your echo is the only one home."
+        }
+      ],
+      "default": ["The waterfall splashes. You get a little wet!", "A frog ribbits at you from a lily pad.", "The glowing rocks blink like sleepy stars.", "You skip a stone across the lake. Three bounces! Not bad!", "A dragonfly zooms past your nose. Whoa!"],
+      "hints": ["There is a cave behind the waterfall! How do you get there?", "Try GOING somewhere interesting!", "GO to the CAVE!"]
+    },
+
+    "dark_cave": {
+      "text": ["The cave is very dark!", "You can barely see your own hands.", "Wait... is that a light on the ground?"],
+      "tiles": ["go", "look", "take", "torch", "cave", "rock"],
+      "commands": [
+        {
+          "pattern": ["take", "torch"],
+          "response": "You grab the torch. It glows bright blue! Now you can see!",
+          "effects": { "inventory_add": ["torch"] },
+          "next": "crystal_hall"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "A crystal torch on the ground! It glows with a soft blue light."
+        },
+        {
+          "pattern": ["look", "cave"],
+          "response": "So dark! But you can see a faint blue glow on the ground nearby."
+        },
+        {
+          "pattern": ["look", "rock"],
+          "response": "The cave walls are rough and bumpy. Tiny crystals sparkle in them."
+        },
+        {
+          "pattern": ["go", "cave"],
+          "response": "It is too dark to go deeper! You need some light first."
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "You pull a rock from the wall. It crumbles into dust. Oops!"
+        },
+        {
+          "pattern": ["take", "cave"],
+          "response": "You are already IN the cave, silly!"
+        },
+        {
+          "pattern": ["talk", "torch"],
+          "response": "The torch hums quietly. Pick it up!"
+        },
+        {
+          "pattern": ["talk", "cave"],
+          "response": "Your voice echoes everywhere! Spooky!"
+        },
+        {
+          "pattern": ["talk", "rock"],
+          "response": "You talk to the wall. The wall does not talk back. Walls are not great friends."
+        },
+        {
+          "pattern": ["go", "torch"],
+          "response": "You walk toward the glow. It is right there! Just pick it up!"
+        },
+        {
+          "pattern": ["go", "rock"],
+          "response": "You bump into a rock. Ow! It is really dark in here."
+        }
+      ],
+      "default": ["Something drips from the ceiling. Plop!", "You hear a tiny squeak. Probably a bat. Probably.", "It is SO dark. Like the inside of a chocolate cake, but less tasty.", "You stub your toe. The darkness giggles. Wait, darkness can't giggle... right?", "A cold breeze blows through. Brrr!"],
+      "hints": ["Something is glowing on the ground! What is it?", "Try TAKING the glowing thing!", "TAKE the TORCH!"]
+    },
+
+    "crystal_hall": {
+      "text": ["WOW! A giant hall of crystals!", "Pink, blue, and green crystals grow from every wall!", "One big crystal glows brighter than the rest."],
+      "tiles": ["go", "look", "take", "climb", "crystal", "rock", "cliff", "torch"],
+      "commands": [
+        {
+          "pattern": ["take", "crystal"],
+          "response": "You carefully break off the bright crystal. It hums in your hand!",
+          "effects": { "inventory_add": ["crystal"] },
+          "next": "underground_cliff"
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "The big crystal pulses with light. It looks like it could come loose!"
+        },
+        {
+          "pattern": ["look", "rock"],
+          "response": "The cave walls are covered in crystals of every color. So pretty!"
+        },
+        {
+          "pattern": ["look", "cliff"],
+          "response": "Ahead, the hall drops off into a deep cliff. You will need to climb down!"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "Your blue torch makes all the crystals sparkle even brighter!"
+        },
+        {
+          "pattern": ["go", "cliff"],
+          "response": "The cliff is steep! You should grab something useful before going down."
+        },
+        {
+          "pattern": ["go", "crystal"],
+          "response": "You walk up to the big glowing crystal. It is warm!"
+        },
+        {
+          "pattern": ["go", "rock"],
+          "response": "You walk along the rocky walls. Crystals crunch under your feet!"
+        },
+        {
+          "pattern": ["climb", "cliff"],
+          "response": "The cliff is too steep and slippery! Maybe grab something helpful first."
+        },
+        {
+          "pattern": ["climb", "crystal"],
+          "response": "You try to climb the crystal. It is too smooth and pointy! Ouch!"
+        },
+        {
+          "pattern": ["climb", "rock"],
+          "response": "You climb a rock and can see the whole hall. Amazing!"
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "Tiny crystals fall off like glitter. Cool, but not very useful!"
+        },
+        {
+          "pattern": ["talk", "crystal"],
+          "response": "The crystal hums louder. Is it singing to you?"
+        }
+      ],
+      "default": ["Crystals tinkle like tiny bells!", "A rainbow bounces off the walls!", "You sneeze and crystals ring like wind chimes. Bling bling bling!", "Your shadow dances with all the sparkly lights!", "A crystal falls from the ceiling and shatters into glitter. Ooh!"],
+      "hints": ["That big crystal looks special! Maybe you should take it.", "Try TAKING something bright and glowing!", "TAKE the CRYSTAL!"]
+    },
+
+    "underground_cliff": {
+      "text": ["You stand at the edge of an underground cliff.", "Way down below, you see a river and a rope bridge.", "It is a long way down!"],
+      "tiles": ["go", "look", "take", "climb", "cliff", "bridge", "rope", "rock", "torch", "crystal"],
+      "commands": [
+        {
+          "pattern": ["climb", "cliff"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "You tie the rope to a rock and climb down safely!",
+          "effects": { "inventory_remove": ["rope"] },
+          "next": "rope_bridge"
+        },
+        {
+          "pattern": ["climb", "cliff"],
+          "response": "Too steep! You would slip and fall. You need something to hold onto."
+        },
+        {
+          "pattern": ["look", "cliff"],
+          "response": "A deep drop! The walls are smooth. You need a rope to climb down safely."
+        },
+        {
+          "pattern": ["look", "bridge"],
+          "response": "Far below, an old rope bridge crosses an underground river."
+        },
+        {
+          "pattern": ["look", "rock"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "You already found the rope behind the rocks!"
+        },
+        {
+          "pattern": ["look", "rock"],
+          "response": "Some loose rocks are piled near the edge. Something peeks out from behind them!"
+        },
+        {
+          "pattern": ["look", "rope"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "A strong rope! Perfect for climbing down the cliff."
+        },
+        {
+          "pattern": ["look", "rope"],
+          "response": "You don't have a rope yet. But there might be one nearby..."
+        },
+        {
+          "pattern": ["take", "rope"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "You already have the rope!"
+        },
+        {
+          "pattern": ["take", "rope"],
+          "response": "You don't see a rope. Try looking behind the rocks!"
+        },
+        {
+          "pattern": ["take", "rock"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "You already moved the rocks and found the rope!"
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "You move the rocks aside and find a coil of rope! Nice!",
+          "effects": { "inventory_add": ["rope"], "flags_set": { "found_rope": true } }
+        },
+        {
+          "pattern": ["go", "bridge"],
+          "response": "The bridge is way down there! You need to climb down the cliff first."
+        },
+        {
+          "pattern": ["go", "cliff"],
+          "response": "You peek over the edge. Whoa! That is a long way down!"
+        },
+        {
+          "pattern": ["climb", "rope"],
+          "requirements": { "flags_true": ["found_rope"] },
+          "response": "You tie the rope to a rock and climb down safely!",
+          "effects": { "inventory_remove": ["rope"] },
+          "next": "rope_bridge"
+        },
+        {
+          "pattern": ["climb", "rope"],
+          "response": "You don't have a rope! Try looking around for one."
+        },
+        {
+          "pattern": ["climb", "rock"],
+          "response": "You climb the rock pile. Good view! But you still need to go DOWN."
+        },
+        {
+          "pattern": ["climb", "bridge"],
+          "response": "The bridge is at the bottom! Climb the cliff first."
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal glows brighter near the cliff edge. Something good is down there!"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "Your torch lights up the cavern. You can see the river glittering below!"
+        },
+        {
+          "pattern": ["rope", "cliff"],
+          "requirements": { "inventory_has": ["rope"] },
+          "response": "You tie the rope to a rock and climb down safely!",
+          "effects": { "inventory_remove": ["rope"] },
+          "next": "rope_bridge"
+        }
+      ],
+      "default": ["A pebble falls off the cliff. You count... one... two... three... SPLASH!", "The underground wind blows your hair around.", "You throw a rock and listen. That is a LONG drop!", "Bats swoop by! One nearly gets stuck in your hair!", "Echo! ECHO! echo... This cliff is super deep!"],
+      "hints": ["The cliff is too steep to climb without help. Look around!", "Check behind the ROCKS for something useful!", "TAKE the ROCK to find a rope, then CLIMB the CLIFF!"]
+    },
+
+    "rope_bridge": {
+      "text": ["You stand at a wobbly rope bridge.", "It stretches across an underground river.", "The water rushes fast below!"],
+      "tiles": ["go", "look", "take", "bridge", "river", "rock", "torch", "crystal"],
+      "commands": [
+        {
+          "pattern": ["go", "bridge"],
+          "response": "You hold on tight and walk across. The bridge wobbles but holds!",
+          "next": "locked_door"
+        },
+        {
+          "pattern": ["look", "bridge"],
+          "response": "An old rope bridge. It sways in the breeze, but it looks safe enough!"
+        },
+        {
+          "pattern": ["look", "river"],
+          "response": "The underground river rushes past. Glowing fish swim in the blue water!"
+        },
+        {
+          "pattern": ["look", "rock"],
+          "response": "Smooth wet rocks line the riverbank. They sparkle with crystal dust."
+        },
+        {
+          "pattern": ["go", "river"],
+          "response": "The river is too fast! You would get swept away. Try the bridge!"
+        },
+        {
+          "pattern": ["go", "rock"],
+          "response": "You hop across some rocks. Slippery! Better stick to the bridge."
+        },
+        {
+          "pattern": ["take", "rock"],
+          "response": "You pick up a smooth river stone. Pretty, but you put it back."
+        },
+        {
+          "pattern": ["take", "bridge"],
+          "response": "You can't take a whole bridge! But you can walk across it."
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal glows brighter! Whatever it is leading you to is across the river!"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "Your torch makes the river sparkle. The glowing fish scatter!"
+        },
+        {
+          "pattern": ["talk", "river"],
+          "response": "You shout at the river. WHOOSH! It is too loud to hear you."
+        }
+      ],
+      "default": ["The bridge creaks and sways!", "A glowing fish jumps out of the water. Splash!", "You throw a pebble in the river. Plonk!", "Water sprays up and tickles your nose!", "The wind makes the bridge strings hum like a guitar. Twang!"],
+      "hints": ["A bridge goes across the river. How do you cross?", "Try GOING across something!", "GO across the BRIDGE!"]
+    },
+
+    "locked_door": {
+      "text": ["You find a huge stone door carved with crystals.", "A keyhole glows in the center.", "A dusty box sits in the corner."],
+      "tiles": ["open", "look", "take", "key", "door", "box", "torch", "crystal"],
+      "commands": [
+        {
+          "pattern": ["open", "box"],
+          "requirements": { "flags_true": ["box_opened"], "inventory_has": ["key"] },
+          "response": "The box is empty now. You already took the key!"
+        },
+        {
+          "pattern": ["open", "box"],
+          "requirements": { "flags_true": ["box_opened"] },
+          "response": "The box is already open. The crystal key is right there!"
+        },
+        {
+          "pattern": ["open", "box"],
+          "response": "The lid creaks open. A crystal key shines inside!",
+          "effects": { "flags_set": { "box_opened": true } }
+        },
+        {
+          "pattern": ["take", "key"],
+          "requirements": { "flags_true": ["box_opened"] },
+          "response": "You grab the crystal key. It fits your hand perfectly!",
+          "effects": { "inventory_add": ["key"] }
+        },
+        {
+          "pattern": ["take", "key"],
+          "response": "You don't see a key. Maybe check the box?"
+        },
+        {
+          "pattern": ["key", "door"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "The crystal key slides in. CLICK! The stone door rumbles open!",
+          "effects": { "inventory_remove": ["key"] },
+          "next": "treasure_room"
+        },
+        {
+          "pattern": ["open", "door"],
+          "requirements": { "inventory_has": ["key"] },
+          "response": "You put the crystal key in the lock and turn. CLICK! The stone door rumbles open!",
+          "effects": { "inventory_remove": ["key"] },
+          "next": "treasure_room"
+        },
+        {
+          "pattern": ["open", "door"],
+          "response": "The door won't budge! The keyhole glows. You need a key!"
+        },
+        {
+          "pattern": ["look", "door"],
+          "response": "A giant stone door covered in crystal patterns. A glowing keyhole is in the center."
+        },
+        {
+          "pattern": ["look", "box"],
+          "requirements": { "flags_true": ["box_opened"], "inventory_has": ["key"] },
+          "response": "An empty dusty box. The key is gone!"
+        },
+        {
+          "pattern": ["look", "box"],
+          "requirements": { "flags_true": ["box_opened"] },
+          "response": "The box is open. A shiny crystal key sits inside! Take it!"
+        },
+        {
+          "pattern": ["look", "box"],
+          "response": "A dusty old box in the corner. What could be inside?"
+        },
+        {
+          "pattern": ["look", "key"],
+          "requirements": { "flags_true": ["box_opened"], "inventory_has": ["key"] },
+          "response": "A beautiful crystal key. It matches the keyhole perfectly!"
+        },
+        {
+          "pattern": ["look", "key"],
+          "requirements": { "flags_true": ["box_opened"] },
+          "response": "The crystal key sits in the open box. Take it!"
+        },
+        {
+          "pattern": ["look", "key"],
+          "response": "You don't see a key anywhere. Try the box?"
+        },
+        {
+          "pattern": ["take", "box"],
+          "response": "The box is stuck to the floor! But you could open it..."
+        },
+        {
+          "pattern": ["take", "door"],
+          "response": "The door weighs a million pounds! You are not taking that anywhere."
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal is going WILD! Flashing and humming! Treasure must be close!"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "Your torch lights up the crystal carvings on the door. They are beautiful!"
+        },
+        {
+          "pattern": ["open", "key"],
+          "response": "You can't open a key! But you can use it on the door."
+        }
+      ],
+      "default": ["The crystal carvings on the door shimmer.", "Dust falls from the ceiling. Achoo!", "You knock on the door. BOOM BOOM BOOM! Nobody answers.", "The keyhole winks at you. Wait, keyholes don't have eyes!", "You push the door with all your might. It does not even wobble."],
+      "hints": ["There is a keyhole in the door. Where could a key be?", "Check the BOX in the corner! OPEN it!", "OPEN the BOX, TAKE the KEY, then use KEY on DOOR!"]
+    },
+
+    "treasure_room": {
+      "text": ["The door opens to a magical room!", "Crystals cover every wall like a rainbow!", "In the center sits a glowing treasure chest!"],
+      "tiles": ["open", "look", "take", "treasure", "crystal", "torch"],
+      "commands": [
+        {
+          "pattern": ["open", "treasure"],
+          "requirements": { "flags_true": ["chest_open"] },
+          "response": "The chest is already open! All that gold and those crystals are waiting for you!"
+        },
+        {
+          "pattern": ["open", "treasure"],
+          "response": "The chest bursts open! Gold coins and rainbow crystals spill everywhere!",
+          "effects": { "flags_set": { "chest_open": true } }
+        },
+        {
+          "pattern": ["take", "treasure"],
+          "requirements": { "flags_true": ["chest_open"] },
+          "response": "You fill your pockets with gold and crystals! You are RICH!",
+          "next": "win"
+        },
+        {
+          "pattern": ["take", "treasure"],
+          "response": "The chest is closed! Try opening it first."
+        },
+        {
+          "pattern": ["look", "treasure"],
+          "requirements": { "flags_true": ["chest_open"] },
+          "response": "Gold coins, rainbow crystals, and a tiny golden crown! All for you!"
+        },
+        {
+          "pattern": ["look", "treasure"],
+          "response": "A glowing chest covered in crystals. What is inside?!"
+        },
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal glows SO bright now! It is happy to be home with all the other crystals!"
+        },
+        {
+          "pattern": ["take", "crystal"],
+          "requirements": { "flags_true": ["chest_open"] },
+          "response": "You grab handfuls of rainbow crystals! They join the one in your pocket!"
+        },
+        {
+          "pattern": ["take", "crystal"],
+          "response": "You already have a crystal! And soon you will have a LOT more."
+        },
+        {
+          "pattern": ["open", "crystal"],
+          "response": "You can't open a crystal! But you can open the treasure chest..."
+        },
+        {
+          "pattern": ["look", "torch"],
+          "response": "Your torch flickers and glows rainbow colors! The room is magical!"
+        }
+      ],
+      "default": ["Rainbow light bounces everywhere!", "A crystal chimes a happy song!", "Gold dust floats in the air like tiny stars!", "The walls sparkle so bright you have to squint!", "You do a happy dance! Your shadow dances too!"],
+      "hints": ["A treasure chest! What do you do with treasure chests?", "Try OPENING the chest, then TAKING what is inside!", "OPEN the TREASURE, then TAKE the TREASURE!"]
+    },
+
+    "win": {
+      "text": ["YOU FOUND THE TREASURE!", "Rainbow light fills the cave!", "The crystals carry you up, up, up!", "You burst out of the cave into the sunshine!", "You are the CRYSTAL EXPLORER!"],
+      "tiles": ["look", "talk", "crystal", "treasure", "lake"],
+      "commands": [
+        {
+          "pattern": ["look", "crystal"],
+          "response": "Your crystal still glows, even in the sunshine. A souvenir from the deep!"
+        },
+        {
+          "pattern": ["look", "treasure"],
+          "response": "Gold coins, rainbow gems, and a tiny crown! You are the richest kid ever!"
+        },
+        {
+          "pattern": ["look", "lake"],
+          "response": "The lake sparkles in the sun. Behind the waterfall, the cave glows faintly. Your secret!"
+        },
+        {
+          "pattern": ["talk", "crystal"],
+          "response": "The crystal hums one last happy song. What an adventure!"
+        },
+        {
+          "pattern": ["talk", "lake"],
+          "response": "You yell THANK YOU at the lake. The echo bounces off the mountains!"
+        },
+        {
+          "pattern": ["talk", "treasure"],
+          "response": "You whisper to your gold coins. They clink together. You are best friends now."
+        }
+      ],
+      "default": ["The sun feels warm on your face!", "You did it! You are a real explorer!", "The crystal in your pocket hums happily!", "Birds sing to celebrate your adventure!"],
+      "hints": ["You did it! Look around and enjoy!", "LOOK at your treasures!", "This is the end! Tap NEW GAME to play again!"]
+    }
+  }
+}
