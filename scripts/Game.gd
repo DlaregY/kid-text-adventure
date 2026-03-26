@@ -321,7 +321,17 @@ func _validate_story(story_data: Dictionary) -> Dictionary:
 					elif not story_scenes.has(next_scene):
 						errors.append("Scene `%s` command #%d points to missing next scene `%s`." % [scene_name, i, next_scene])
 
-				if command.has("effects"):
+				if command.has("requirements"):
+				var reqs = command.get("requirements", null)
+				if typeof(reqs) != TYPE_DICTIONARY:
+					errors.append("Scene `%s` command #%d has invalid `requirements` (expected dictionary when present)." % [scene_name, i])
+				else:
+					if reqs.has("inventory_has") and typeof(reqs.get("inventory_has", null)) != TYPE_ARRAY:
+						errors.append("Scene `%s` command #%d has invalid `requirements.inventory_has` (expected array)." % [scene_name, i])
+					if reqs.has("flags_true") and typeof(reqs.get("flags_true", null)) != TYPE_ARRAY:
+						errors.append("Scene `%s` command #%d has invalid `requirements.flags_true` (expected array)." % [scene_name, i])
+
+			if command.has("effects"):
 					var effects = command.get("effects", null)
 					if typeof(effects) != TYPE_DICTIONARY:
 						errors.append("Scene `%s` command #%d has invalid `effects` (expected dictionary when present)." % [scene_name, i])

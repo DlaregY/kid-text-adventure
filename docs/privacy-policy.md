@@ -1,6 +1,6 @@
-# Privacy Policy (Template)
+# Privacy Policy
 
-_Last updated: YYYY-MM-DD_
+_Last updated: 2026-03-26_
 
 ## Overview
 
@@ -40,6 +40,6 @@ We may update this Privacy Policy if app functionality changes. When we do, we w
 
 For privacy questions, contact:
 
-- Developer/Studio name: _[Your name or studio]_
-- Email: _[privacy contact email]_
-- Country/Region: _[optional]_
+- Developer/Studio name: Norbonics Industries
+- Email: gerald@geraldnorby.com
+- Country/Region: United States
