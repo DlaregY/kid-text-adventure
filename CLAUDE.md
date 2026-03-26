@@ -32,7 +32,14 @@ There is no build step, test suite, or linter — verification is manual playtes
 gh release create v<VERSION> exports/ike-adventure.apk --title "v<VERSION> — <Title>" --notes "<markdown notes>"
 ```
 
-The goodnight shutdown sequence should include: export APK, install on phone (if connected), and create a GitHub release with the APK attached. Version comes from `version.txt`.
+The goodnight shutdown sequence should include: export APK, install on phone (if connected), and create a GitHub release with the APK attached.
+
+**Release version source of truth:** `version.txt` is the canonical release version. During release/export, read `version.txt` first, then update Android export metadata so `export_presets.cfg` stays in sync.
+
+**Pre-Play export checklist (required):**
+- [ ] Bump `version.txt` to the intended release version.
+- [ ] Bump Android `version/name` in `export_presets.cfg` to match `version.txt`.
+- [ ] Bump Android `version/code` in `export_presets.cfg` (must be a monotonically increasing integer for Play).
 
 ## Architecture
 
