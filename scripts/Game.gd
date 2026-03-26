@@ -243,6 +243,14 @@ func _load_story(path: String) -> bool:
 		feedback_text.text = "Selected story has invalid JSON."
 		return false
 
+	var validation: Dictionary = _validate_story(parsed)
+	if not bool(validation.get("ok", false)):
+		var validation_errors: Array = validation.get("errors", [])
+		for err in validation_errors:
+			push_error("Story validation failed (%s): %s" % [path, str(err)])
+		feedback_text.text = "This story file has setup issues and can't be started. Please choose another story."
+		return false
+
 	story = parsed
 	scenes = story.get("scenes", {})
 	current_scene_id = story.get("start_scene", "")
@@ -252,6 +260,80 @@ func _load_story(path: String) -> bool:
 		return false
 
 	return true
+
+func _validate_story(story_data: Dictionary) -> Dictionary:
+	var errors: Array[String] = []
+	var story_scenes = story_data.get("scenes", null)
+	var start_scene = story_data.get("start_scene", null)
+
+	if typeof(story_scenes) != TYPE_DICTIONARY:
+		errors.append("`scenes` must be a dictionary.")
+		return {"ok": false, "errors": errors}
+
+	if typeof(start_scene) != TYPE_STRING or str(start_scene).strip_edges() == "":
+		errors.append("`start_scene` must be a non-empty string.")
+	elif not story_scenes.has(start_scene):
+		errors.append("`start_scene` references missing scene: `%s`." % str(start_scene))
+
+	for scene_id in story_scenes.keys():
+		var scene = story_scenes.get(scene_id, null)
+		var scene_name: String = str(scene_id)
+		if typeof(scene) != TYPE_DICTIONARY:
+			errors.append("Scene `%s` must be a dictionary." % scene_name)
+			continue
+
+		if typeof(scene.get("text", null)) != TYPE_ARRAY:
+			errors.append("Scene `%s` has invalid `text` (expected array)." % scene_name)
+		if typeof(scene.get("tiles", null)) != TYPE_ARRAY:
+			errors.append("Scene `%s` has invalid `tiles` (expected array)." % scene_name)
+		if typeof(scene.get("commands", null)) != TYPE_ARRAY:
+			errors.append("Scene `%s` has invalid `commands` (expected array)." % scene_name)
+		if typeof(scene.get("default", null)) != TYPE_ARRAY:
+			errors.append("Scene `%s` has invalid `default` (expected array)." % scene_name)
+
+		if scene.has("hints") and typeof(scene.get("hints", null)) != TYPE_ARRAY:
+			errors.append("Scene `%s` has invalid `hints` (expected array when present)." % scene_name)
+
+		var commands = scene.get("commands", [])
+		if typeof(commands) == TYPE_ARRAY:
+			for i in range(commands.size()):
+				var command = commands[i]
+				if typeof(command) != TYPE_DICTIONARY:
+					errors.append("Scene `%s` command #%d must be a dictionary." % [scene_name, i])
+					continue
+
+				var pattern = command.get("pattern", null)
+				if typeof(pattern) != TYPE_ARRAY or pattern.size() != 2:
+					errors.append("Scene `%s` command #%d has invalid `pattern` (expected 2 tokens)." % [scene_name, i])
+				else:
+					for token in pattern:
+						if typeof(token) != TYPE_STRING:
+							errors.append("Scene `%s` command #%d has non-string token in `pattern`." % [scene_name, i])
+							break
+
+				if typeof(command.get("response", null)) != TYPE_STRING:
+					errors.append("Scene `%s` command #%d has invalid `response` (expected string)." % [scene_name, i])
+
+				if command.has("next"):
+					var next_scene = command.get("next", null)
+					if typeof(next_scene) != TYPE_STRING or next_scene.strip_edges() == "":
+						errors.append("Scene `%s` command #%d has invalid `next` (expected non-empty string)." % [scene_name, i])
+					elif not story_scenes.has(next_scene):
+						errors.append("Scene `%s` command #%d points to missing next scene `%s`." % [scene_name, i, next_scene])
+
+				if command.has("effects"):
+					var effects = command.get("effects", null)
+					if typeof(effects) != TYPE_DICTIONARY:
+						errors.append("Scene `%s` command #%d has invalid `effects` (expected dictionary when present)." % [scene_name, i])
+					else:
+						if effects.has("inventory_add") and typeof(effects.get("inventory_add", null)) != TYPE_ARRAY:
+							errors.append("Scene `%s` command #%d has invalid `effects.inventory_add` (expected array)." % [scene_name, i])
+						if effects.has("inventory_remove") and typeof(effects.get("inventory_remove", null)) != TYPE_ARRAY:
+							errors.append("Scene `%s` command #%d has invalid `effects.inventory_remove` (expected array)." % [scene_name, i])
+						if effects.has("flags_set") and typeof(effects.get("flags_set", null)) != TYPE_DICTIONARY:
+							errors.append("Scene `%s` command #%d has invalid `effects.flags_set` (expected dictionary)." % [scene_name, i])
+
+	return {"ok": errors.is_empty(), "errors": errors}
 
 func _start_story() -> void:
 	inventory.clear()
