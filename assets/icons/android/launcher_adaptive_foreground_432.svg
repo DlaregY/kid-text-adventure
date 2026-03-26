@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432" viewBox="0 0 432 432">
+  <!-- Artwork stays inside Android safe zone (center ~66%). -->
+  <g>
+    <circle cx="216" cy="216" r="118" fill="#fff"/>
+    <circle cx="216" cy="216" r="98" fill="#243f77"/>
+    <path d="M158 136h29v80l78-80h38l-67 67 74 93h-35l-56-70-32 31v39h-29z" fill="#42d0ff"/>
+    <circle cx="263" cy="152" r="10" fill="#fff"/>
+  </g>
+</svg>
