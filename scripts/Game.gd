@@ -501,8 +501,14 @@ func _apply_command(cmd: Array[String]) -> bool:
 	if smart != "":
 		feedback_text.text = smart
 	else:
-		feedback_text.text = str(default_responses[randi() % default_responses.size()])
+		feedback_text.text = _pick_random_text(default_responses, "Nothing happens.")
 	return false
+
+
+func _pick_random_text(options: Array, fallback: String = "Nothing happens.") -> String:
+	if options.is_empty():
+		return fallback
+	return str(options[randi() % options.size()])
 
 func _classify_token(token: String) -> String:
 	if token in ACTION_TOKENS:
@@ -517,7 +523,7 @@ func _get_smart_fallback(cmd: Array[String]) -> String:
 
 	# Same token in both slots
 	if t1 == t2:
-		var msg: String = SAME_TOKEN_FALLBACKS[randi() % SAME_TOKEN_FALLBACKS.size()]
+		var msg: String = _pick_random_text(SAME_TOKEN_FALLBACKS, "Nothing happens.")
 		return msg.replace("{thing}", t1)
 
 	var cat1: String = _classify_token(t1)
@@ -525,12 +531,12 @@ func _get_smart_fallback(cmd: Array[String]) -> String:
 	# Action verb in slot1 → action-specific fallback
 	if cat1 == "action" and action_fallback_map.has(t1):
 		var templates: Array = action_fallback_map[t1]
-		var msg: String = templates[randi() % templates.size()]
+		var msg: String = _pick_random_text(templates, "Nothing happens.")
 		return msg.replace("{action}", t1).replace("{thing}", t2)
 
 	# Inventory item used as verb in slot1
 	if cat1 == "inventory":
-		var msg: String = ITEM_AS_VERB_FALLBACKS[randi() % ITEM_AS_VERB_FALLBACKS.size()]
+		var msg: String = _pick_random_text(ITEM_AS_VERB_FALLBACKS, "Nothing happens.")
 		return msg.replace("{item}", t1).replace("{thing}", t2)
 
 	return ""
