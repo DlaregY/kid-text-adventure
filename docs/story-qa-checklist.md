@@ -176,8 +176,12 @@ For every state-changing command, test this sequence:
 - [ ] Character names, pronouns, tense, and point of view stay consistent.
 - [ ] Spelling, punctuation, and grammar have been reviewed.
 - [ ] Humor and suspense are age-appropriate; frightening outcomes are gentle.
-- [ ] The story does not encourage unsafe real-world behavior a child might copy.
-      Risky situations include appropriate supervision, framing, or consequences.
+- [ ] Safety review distinguishes fantasy adventure from realistic risk. Normal
+      cartoon, movie, and video-game action such as climbing, chases, caves,
+      monsters, and magical danger is acceptable. Flag realistic, readily
+      imitated behavior likely to cause serious harm, especially when the story
+      gives actionable detail or presents it as safe without context or
+      consequences.
 - [ ] Endings feel distinct and acknowledge the choice or state that caused them.
 - [ ] Text fits on the target desktop and mobile layouts without becoming
       uncomfortably small or requiring awkward scrolling.
