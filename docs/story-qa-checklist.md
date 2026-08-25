@@ -83,9 +83,11 @@ Add rows until every ending and materially different route is covered.
 - [ ] Obvious commands suggested by the scene text have specific responses.
 - [ ] Important nouns mentioned in the scene text have tiles when the player is
       expected to interact with them.
-- [ ] A regular Thing tile represents something actually present in the scene.
-      Inventory-only items are omitted from `tiles` because carried items appear
-      automatically in the Inventory tray.
+- [ ] A regular Thing tile represents something present or intentionally
+      referenceable. If a state change removes it while the scene remains active,
+      relevant commands acknowledge that it is gone. Inventory-only items are
+      omitted from `tiles` because carried items appear automatically in the
+      Inventory tray.
 - [ ] New tokens either have an appropriate emoji mapping in `scripts/Game.gd`
       or have been intentionally accepted without an icon.
 - [ ] No tile is present without at least one sensible use or response, unless it
