@@ -1,12 +1,11 @@
 {
-  "meta": { "title": "The Crystal Cave", "version": 1, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!" },
+  "meta": { "title": "The Crystal Cave", "version": 2, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!" },
   "vocab": {
     "go": { "label": "go" },
     "open": { "label": "open" },
     "take": { "label": "take" },
     "look": { "label": "look" },
     "talk": { "label": "talk" },
-    "give": { "label": "give" },
     "climb": { "label": "climb" },
     "lake": { "label": "lake" },
     "cave": { "label": "cave" },
@@ -26,7 +25,7 @@
   "scenes": {
     "shore": {
       "text": ["You stand by a big blue lake.", "Behind a waterfall, you see a dark cave!", "The rocks around it glow a little bit."],
-      "tiles": ["go", "look", "take", "cave", "lake", "rock"],
+      "tiles": ["go", "look", "talk", "take", "cave", "lake", "rock"],
       "commands": [
         {
           "pattern": ["go", "cave"],
@@ -84,7 +83,7 @@
 
     "dark_cave": {
       "text": ["The cave is very dark!", "You can barely see your own hands.", "Wait... is that a light on the ground?"],
-      "tiles": ["go", "look", "take", "torch", "cave", "rock"],
+      "tiles": ["go", "look", "talk", "take", "torch", "cave", "rock"],
       "commands": [
         {
           "pattern": ["take", "torch"],
@@ -143,7 +142,7 @@
 
     "crystal_hall": {
       "text": ["WOW! A giant hall of crystals!", "Pink, blue, and green crystals grow from every wall!", "One big crystal glows brighter than the rest."],
-      "tiles": ["go", "look", "take", "climb", "crystal", "rock", "cliff", "torch"],
+      "tiles": ["go", "look", "talk", "take", "climb", "crystal", "rock", "cliff", "torch"],
       "commands": [
         {
           "pattern": ["take", "crystal"],
@@ -313,7 +312,7 @@
 
     "rope_bridge": {
       "text": ["You stand at a wobbly rope bridge.", "It stretches across an underground river.", "The water rushes fast below!"],
-      "tiles": ["go", "look", "take", "bridge", "river", "rock", "torch", "crystal"],
+      "tiles": ["go", "look", "talk", "take", "bridge", "river", "rock", "torch", "crystal"],
       "commands": [
         {
           "pattern": ["go", "bridge"],
@@ -535,6 +534,11 @@
         {
           "pattern": ["look", "crystal"],
           "response": "Your crystal still glows, even in the sunshine. A souvenir from the deep!"
+        },
+        {
+          "pattern": ["look", "torch"],
+          "requirements": { "inventory_has": ["torch"] },
+          "response": "Your blue torch still glows. It will always remind you of the crystal cave!"
         },
         {
           "pattern": ["look", "treasure"],
