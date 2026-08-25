@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "The Bigfoot Campout",
-    "version": 1,
+    "version": 2,
     "teaser": "Follow giant footprints and discover who is hiding in the woods!"
   },
   "vocab": {
@@ -10,7 +10,6 @@
     "look": { "label": "look" },
     "talk": { "label": "talk" },
     "give": { "label": "give" },
-    "climb": { "label": "climb" },
     "camp": { "label": "camp" },
     "tent": { "label": "tent" },
     "bushes": { "label": "bushes" },
@@ -59,12 +58,12 @@
         },
         {
           "pattern": ["look", "tent"],
-          "response": "Dad is inside the tent, snoring like a tiny lawn mower."
+          "response": "Your sleeping bags are ready inside. Dad checks both lanterns."
         },
         {
           "pattern": ["go", "forest"],
           "requirements": { "flags_true": ["saw_movement"] },
-          "response": "You switch on your lantern and follow the rustling sound.",
+          "response": "You tell Dad. Together, you switch on your lanterns and follow the sound.",
           "next": "forest_edge"
         },
         {
@@ -74,7 +73,7 @@
         {
           "pattern": ["go", "bushes"],
           "requirements": { "flags_true": ["saw_movement"] },
-          "response": "You slip past the bushes and follow the furry stranger.",
+          "response": "You tell Dad. Together, you pass the bushes and follow the furry stranger.",
           "next": "forest_edge"
         },
         {
@@ -91,7 +90,7 @@
         "The campfire pops like it is laughing.",
         "Something in the woods goes CRUNCH!",
         "That would make a very strange camping trick.",
-        "The tent stays quiet except for Dad's snoring.",
+        "Dad checks the lanterns and waits for you.",
         "Try checking the bushes."
       ],
       "hints": [
@@ -102,7 +101,7 @@
     },
     "forest_edge": {
       "text": [
-        "At the forest edge, you find enormous tracks.",
+        "At the forest edge, you and Dad find enormous tracks.",
         "Each footprint is longer than your shoe."
       ],
       "tiles": ["go", "look", "talk", "forest", "tracks", "bushes", "tree"],
@@ -161,7 +160,7 @@
     },
     "creek": {
       "text": [
-        "The tracks stop beside a moonlit creek.",
+        "You and Dad follow the tracks to a moonlit creek.",
         "Across the water, the bushes sneeze: AH-CHOO!"
       ],
       "tiles": ["go", "look", "talk", "creek", "bushes", "tracks", "forest"],
@@ -215,55 +214,39 @@
     },
     "bigfoot_meeting": {
       "text": [
-        "A friendly Bigfoot steps into the moonlight!",
+        "You and Dad stop as a friendly Bigfoot steps into the moonlight!",
         "He looks hungry, but he also looks ready to run."
       ],
-      "tiles": ["go", "look", "talk", "give", "climb", "bigfoot", "camp", "tree", "snack"],
+      "tiles": ["go", "look", "talk", "give", "bigfoot", "camp"],
       "commands": [
         {
           "pattern": ["give", "snack"],
           "requirements": { "inventory_has": ["snack"] },
           "response": "Bigfoot's eyes light up. He gently takes the snack.",
           "effects": {
-            "inventory_remove": ["snack"],
-            "flags_set": { "befriended_bigfoot": true }
+            "inventory_remove": ["snack"]
           },
           "next": "ending_friend"
         },
         {
-          "pattern": ["give", "snack"],
-          "response": "You pat your pockets, but you did not bring the snack."
-        },
-        {
           "pattern": ["look", "bigfoot"],
           "response": "You stay calm and watch. Bigfoot gives you a tiny wave.",
-          "effects": { "flags_set": { "kept_secret": true } },
           "next": "ending_cautious"
         },
         {
-          "pattern": ["climb", "tree"],
-          "response": "You scramble up a tree, but Bigfoot climbs it in one giant step!",
-          "effects": { "flags_set": { "made_bigfoot_laugh": true } },
+          "pattern": ["talk", "bigfoot"],
+          "response": "You copy Bigfoot's friendly hoot. His eyes grow wide, then he laughs!",
           "next": "ending_goofy"
         },
         {
           "pattern": ["go", "camp"],
-          "response": "You hurry back to camp to get Dad.",
-          "effects": { "flags_set": { "bigfoot_got_away": true } },
+          "response": "You and Dad hurry back to camp to get the camera.",
           "next": "ending_missed"
-        },
-        {
-          "pattern": ["talk", "bigfoot"],
-          "response": "Bigfoot whispers, 'Hi.' His stomach growls even louder."
         },
         {
           "pattern": ["look", "snack"],
           "requirements": { "inventory_has": ["snack"] },
           "response": "Bigfoot looks at your snack, then politely looks away."
-        },
-        {
-          "pattern": ["look", "tree"],
-          "response": "It is tall, but Bigfoot is almost halfway up without climbing."
         },
         {
           "pattern": ["give", "bigfoot"],
@@ -283,16 +266,16 @@
         "Choose carefully. Bigfoot is watching you."
       ],
       "hints": [
-        "There are four ways this meeting could end.",
-        "Try LOOK BIGFOOT, GIVE SNACK, CLIMB TREE, or GO CAMP.",
-        "Each of those four commands leads to a different ending."
+        "Your next choice will decide how the meeting ends.",
+        "Try LOOK BIGFOOT, TALK BIGFOOT, or GO CAMP. A snack offers another choice.",
+        "Use LOOK BIGFOOT, TALK BIGFOOT, or GO CAMP. If you packed it, use GIVE SNACK."
       ]
     },
     "ending_cautious": {
       "text": [
         "THE QUIET SECRET ENDING",
         "You watch quietly as Bigfoot crosses the creek and vanishes into the trees.",
-        "Back at camp, you keep his secret and draw one enormous footprint in your notebook."
+        "Back at camp, you and Dad keep his secret and draw one enormous footprint in your notebook."
       ],
       "tiles": ["look", "bigfoot", "tracks", "forest"],
       "commands": [
@@ -323,7 +306,7 @@
     "ending_friend": {
       "text": [
         "THE BIGFOOT FRIEND ENDING",
-        "Bigfoot shares the snack, then shows you his hidden berry patch.",
+        "Bigfoot shares the snack with you and Dad, then shows you his hidden berry patch.",
         "Before sunrise, your new friend gives you a pinecone the size of a football."
       ],
       "tiles": ["look", "talk", "bigfoot", "forest", "camp"],
@@ -353,39 +336,40 @@
     },
     "ending_goofy": {
       "text": [
-        "THE UPSIDE-DOWN ENDING",
-        "The branch bends, and you dangle upside down by your sleeping-bag pants!",
-        "Bigfoot catches you, sets you down, and laughs so hard that owls fly away."
+        "THE MIXED-UP MESSAGE ENDING",
+        "You meant to say hello in Bigfoot language.",
+        "Instead, you said, 'My socks taste like pinecones!' Bigfoot laughs so hard that owls fly away."
       ],
-      "tiles": ["look", "talk", "bigfoot", "tree", "camp"],
+      "tiles": ["look", "talk", "bigfoot", "camp"],
       "commands": [
         {
           "pattern": ["talk", "bigfoot"],
-          "response": "Bigfoot calls you 'Little Clumsy Foot.' You both laugh."
+          "response": "Bigfoot repeats your mixed-up greeting. You and Dad laugh too."
         },
         {
           "pattern": ["look", "bigfoot"],
-          "response": "He acts out your upside-down wiggle and laughs again."
-        },
-        {
-          "pattern": ["look", "tree"],
-          "response": "Your pants are still caught on one tiny twig."
+          "response": "He points at your socks, then pretends to nibble a pinecone."
         },
         {
           "pattern": ["look", "camp"],
-          "response": "You return to camp with muddy hair and a very silly story."
+          "response": "You and Dad return to camp practicing the correct Bigfoot word for hello."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "You still have your snack. Bigfoot is too busy laughing to notice."
         }
       ],
       "default": [
         "Somewhere in the woods, Bigfoot is still chuckling.",
-        "At least you did not land on your head!",
-        "You may never climb that tree again."
+        "Bigfoot language is harder than it sounds!",
+        "Next time, you will practice the greeting first."
       ]
     },
     "ending_missed": {
       "text": [
         "THE GIANT FOOTPRINT ENDING",
-        "Dad follows you back to the creek, but Bigfoot has disappeared.",
+        "When you and Dad return with the camera, Bigfoot has disappeared.",
         "All you find is one giant footprint and a soft brown hair on a branch."
       ],
       "tiles": ["look", "talk", "tracks", "forest", "camp"],
