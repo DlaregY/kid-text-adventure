@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Phone Trap",
-    "version": 1,
+    "version": 2,
     "teaser": "You sneak Dad's phone at night. The screen pulls you in!"
   },
   "vocab": {
@@ -26,10 +26,10 @@
     "tower": {"label": "Tower"},
     "shelf": {"label": "Shelf"},
     "gate": {"label": "Gate"},
+    "key": {"label": "Key"},
     "fire": {"label": "Fire"},
     "wall": {"label": "Wall"},
-    "tunnel": {"label": "Tunnel"},
-    "home": {"label": "Home"}
+    "tunnel": {"label": "Tunnel"}
   },
   "start_scene": "bedroom",
   "scenes": {
@@ -147,6 +147,11 @@
           "response": "A glowing blue door. It leads deeper into the phone!"
         },
         {
+          "pattern": ["look", "torch"],
+          "requirements": {"inventory_has": ["torch"]},
+          "response": "A bright digital torch from Byte. Bugs hate its light!"
+        },
+        {
           "pattern": ["talk", "robot"],
           "response": "Byte beeps. BEEP BOOP! Remember, bugs hate bright light! Use the torch! Go go go!",
           "requirements": {"flags_true": ["talked_byte"]}
@@ -231,6 +236,11 @@
           "response": "A door behind the bug! But the bug is blocking the way!"
         },
         {
+          "pattern": ["look", "torch"],
+          "requirements": {"inventory_has": ["torch"]},
+          "response": "The torch shines brightly. The bug scoots away from its beam!"
+        },
+        {
           "pattern": ["open", "box"],
           "response": "You open the box all the way. Empty! Just some dusty old code crumbs."
         },
@@ -303,6 +313,11 @@
         {
           "pattern": ["look", "gate"],
           "response": "A big heavy gate. It has a glowing keyhole in the middle."
+        },
+        {
+          "pattern": ["look", "key"],
+          "requirements": {"inventory_has": ["key"]},
+          "response": "A glowing gold key. It should fit the gate!"
         },
         {
           "pattern": ["climb", "tower"],
@@ -394,6 +409,11 @@
           "response": "An old metal box. The lid is welded shut. There's nothing useful inside."
         },
         {
+          "pattern": ["look", "shield"],
+          "requirements": {"inventory_has": ["shield"]},
+          "response": "A bright digital shield. It should block something dangerous!"
+        },
+        {
           "pattern": ["open", "box"],
           "response": "It won't open! The lid is welded shut! Just an old junk box."
         },
@@ -418,10 +438,6 @@
           "requirements": {"inventory_has": ["shield"]},
           "effects": {"inventory_remove": ["shield"]},
           "next": "dark_tunnel"
-        },
-        {
-          "pattern": ["go", "fire"],
-          "response": "OW OW OW! Way too hot! You jump back! You need something to BLOCK the heat!"
         },
         {
           "pattern": ["go", "wall"],
@@ -558,6 +574,11 @@
           "response": "A door behind the Phone Boss! That must be the exit! But the Boss is in the way!"
         },
         {
+          "pattern": ["look", "chip"],
+          "requirements": {"inventory_has": ["chip"]},
+          "response": "The Power Chip pulses in your hand. It is packed with energy!"
+        },
+        {
           "pattern": ["talk", "boss"],
           "response": "'HA HA HA! You are stuck here FOREVER, little human! Nothing can stop me!' The Boss laughs."
         },
@@ -577,10 +598,6 @@
           "pattern": ["give", "boss"],
           "response": "You try to hand over the chip nicely. The Boss just laughs! 'HA!' Maybe try a more... FORCEFUL approach!",
           "requirements": {"inventory_has": ["chip"]}
-        },
-        {
-          "pattern": ["give", "boss"],
-          "response": "Give what? You need something POWERFUL to stop this thing!"
         },
         {
           "pattern": ["give", "door"],
