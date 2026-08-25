@@ -126,6 +126,10 @@ Many tokens automatically display with an emoji icon. These are the built-in map
 | `plate` | 🍽️ | `lake` | 🌊 |
 | `cliff` | 🏔️ | `crystal` | 🔮 |
 | `rock` | 🪨 | | |
+| `camp` | ⛺ | `tent` | ⛺ |
+| `bushes` | 🌿 | `snack` | 🍪 |
+| `tracks` | 👣 | `creek` | 🏞️ |
+| `bigfoot` | 🦶 | | |
 
 Tokens not in this list display without an emoji. To add new emoji, edit the `EMOJI` dictionary in `scripts/Game.gd`.
 
