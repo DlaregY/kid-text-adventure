@@ -2,6 +2,8 @@
 
 This guide explains how to create new stories for the tap-and-play text adventure game. No programming required — stories are written as JSON files.
 
+Before releasing a story, complete the [Story QA Checklist](story-qa-checklist.md).
+
 ## Quick Start
 
 1. Create a new `.json` file in the `stories/` folder (e.g. `stories/my_story.json`)
