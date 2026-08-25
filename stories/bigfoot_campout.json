@@ -1,0 +1,423 @@
+{
+  "meta": {
+    "title": "The Bigfoot Campout",
+    "version": 1,
+    "teaser": "Follow giant footprints and discover who is hiding in the woods!"
+  },
+  "vocab": {
+    "go": { "label": "go" },
+    "take": { "label": "take" },
+    "look": { "label": "look" },
+    "talk": { "label": "talk" },
+    "give": { "label": "give" },
+    "climb": { "label": "climb" },
+    "camp": { "label": "camp" },
+    "tent": { "label": "tent" },
+    "bushes": { "label": "bushes" },
+    "snack": { "label": "snack" },
+    "forest": { "label": "forest" },
+    "tracks": { "label": "tracks" },
+    "creek": { "label": "creek" },
+    "tree": { "label": "tree" },
+    "bigfoot": { "label": "Bigfoot" }
+  },
+  "start_scene": "camp",
+  "scenes": {
+    "camp": {
+      "text": [
+        "You are camping with Dad under the stars.",
+        "Something tall moves behind the bushes."
+      ],
+      "tiles": ["go", "take", "look", "camp", "tent", "bushes", "snack", "forest"],
+      "commands": [
+        {
+          "pattern": ["look", "bushes"],
+          "requirements": { "flags_true": ["saw_movement"] },
+          "response": "The bushes shake again. Whatever is there is very tall!"
+        },
+        {
+          "pattern": ["look", "bushes"],
+          "response": "Two furry legs hurry into the forest!",
+          "effects": { "flags_set": { "saw_movement": true } }
+        },
+        {
+          "pattern": ["take", "snack"],
+          "requirements": { "flags_true": ["packed_snack"] },
+          "response": "Your trail snack is already in your pocket."
+        },
+        {
+          "pattern": ["take", "snack"],
+          "response": "You tuck a granola snack into your pocket.",
+          "effects": {
+            "inventory_add": ["snack"],
+            "flags_set": { "packed_snack": true }
+          }
+        },
+        {
+          "pattern": ["look", "snack"],
+          "response": "A crunchy granola snack. Good food for a hike!"
+        },
+        {
+          "pattern": ["look", "tent"],
+          "response": "Dad is inside the tent, snoring like a tiny lawn mower."
+        },
+        {
+          "pattern": ["go", "forest"],
+          "requirements": { "flags_true": ["saw_movement"] },
+          "response": "You switch on your lantern and follow the rustling sound.",
+          "next": "forest_edge"
+        },
+        {
+          "pattern": ["go", "forest"],
+          "response": "The woods are dark. First, find out what moved!"
+        },
+        {
+          "pattern": ["go", "bushes"],
+          "requirements": { "flags_true": ["saw_movement"] },
+          "response": "You slip past the bushes and follow the furry stranger.",
+          "next": "forest_edge"
+        },
+        {
+          "pattern": ["go", "bushes"],
+          "response": "You should look before you march into a bush!"
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "The fire crackles. Beyond its light, the forest waits."
+        }
+      ],
+      "default": [
+        "A cricket chirps. That did not help.",
+        "The campfire pops like it is laughing.",
+        "Something in the woods goes CRUNCH!",
+        "That would make a very strange camping trick.",
+        "The tent stays quiet except for Dad's snoring.",
+        "Try checking the bushes."
+      ],
+      "hints": [
+        "Something moved nearby. Take a closer look!",
+        "LOOK at the BUSHES, then follow it into the woods.",
+        "Use LOOK BUSHES, then GO FOREST."
+      ]
+    },
+    "forest_edge": {
+      "text": [
+        "At the forest edge, you find enormous tracks.",
+        "Each footprint is longer than your shoe."
+      ],
+      "tiles": ["go", "look", "talk", "forest", "tracks", "bushes", "tree"],
+      "commands": [
+        {
+          "pattern": ["look", "tracks"],
+          "requirements": { "flags_true": ["saw_tracks"] },
+          "response": "Five big toes point deeper into the forest."
+        },
+        {
+          "pattern": ["look", "tracks"],
+          "response": "The muddy tracks are fresh. One has five giant toes!",
+          "effects": { "flags_set": { "saw_tracks": true } }
+        },
+        {
+          "pattern": ["go", "forest"],
+          "requirements": { "flags_true": ["saw_tracks"] },
+          "response": "You follow the giant tracks between the trees.",
+          "next": "creek"
+        },
+        {
+          "pattern": ["go", "forest"],
+          "response": "Which way did it go? The ground may hold a clue."
+        },
+        {
+          "pattern": ["look", "bushes"],
+          "response": "Only ferns and berries. The tracks are more interesting."
+        },
+        {
+          "pattern": ["talk", "bushes"],
+          "response": "You whisper hello. A squirrel chatters back."
+        },
+        {
+          "pattern": ["look", "tree"],
+          "response": "A strip of brown fur is caught on the bark, very high up."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "Your snack is safe in your pocket."
+        }
+      ],
+      "default": [
+        "An owl hoots: Who? Who?",
+        "A twig snaps farther ahead.",
+        "That does not tell you which way to go.",
+        "The trees rustle in the night breeze.",
+        "Your lantern makes long, wiggly shadows.",
+        "Maybe the huge footprints are a clue."
+      ],
+      "hints": [
+        "The ground has a very large clue.",
+        "LOOK at the TRACKS before going on.",
+        "Use LOOK TRACKS, then GO FOREST."
+      ]
+    },
+    "creek": {
+      "text": [
+        "The tracks stop beside a moonlit creek.",
+        "Across the water, the bushes sneeze: AH-CHOO!"
+      ],
+      "tiles": ["go", "look", "talk", "creek", "bushes", "tracks", "forest"],
+      "commands": [
+        {
+          "pattern": ["look", "bushes"],
+          "response": "A huge furry face peeks out, then ducks down!",
+          "next": "bigfoot_meeting"
+        },
+        {
+          "pattern": ["talk", "bushes"],
+          "response": "You call, 'Bless you!' A deep voice says, 'Thank you.'",
+          "next": "bigfoot_meeting"
+        },
+        {
+          "pattern": ["go", "creek"],
+          "response": "You hop across three flat stones. The bushes tremble.",
+          "next": "bigfoot_meeting"
+        },
+        {
+          "pattern": ["look", "creek"],
+          "response": "The water sparkles. Three flat stones make a safe crossing."
+        },
+        {
+          "pattern": ["look", "tracks"],
+          "response": "The giant tracks cross the creek and end at the bushes."
+        },
+        {
+          "pattern": ["go", "forest"],
+          "response": "The trail ends here. Check the other side of the creek."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "The granola smells extra tasty after your hike."
+        }
+      ],
+      "default": [
+        "AH-CHOO! The bushes sneeze again.",
+        "A frog splashes into the creek.",
+        "The giant tracks definitely cross the water.",
+        "That only makes the hidden stranger giggle.",
+        "Moonlight dances on the creek.",
+        "Try finding out what is in those bushes."
+      ],
+      "hints": [
+        "The sneeze came from across the creek.",
+        "LOOK at or TALK to the BUSHES.",
+        "Use LOOK BUSHES, TALK BUSHES, or GO CREEK."
+      ]
+    },
+    "bigfoot_meeting": {
+      "text": [
+        "A friendly Bigfoot steps into the moonlight!",
+        "He looks hungry, but he also looks ready to run."
+      ],
+      "tiles": ["go", "look", "talk", "give", "climb", "bigfoot", "camp", "tree", "snack"],
+      "commands": [
+        {
+          "pattern": ["give", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "Bigfoot's eyes light up. He gently takes the snack.",
+          "effects": {
+            "inventory_remove": ["snack"],
+            "flags_set": { "befriended_bigfoot": true }
+          },
+          "next": "ending_friend"
+        },
+        {
+          "pattern": ["give", "snack"],
+          "response": "You pat your pockets, but you did not bring the snack."
+        },
+        {
+          "pattern": ["look", "bigfoot"],
+          "response": "You stay calm and watch. Bigfoot gives you a tiny wave.",
+          "effects": { "flags_set": { "kept_secret": true } },
+          "next": "ending_cautious"
+        },
+        {
+          "pattern": ["climb", "tree"],
+          "response": "You scramble up a tree, but Bigfoot climbs it in one giant step!",
+          "effects": { "flags_set": { "made_bigfoot_laugh": true } },
+          "next": "ending_goofy"
+        },
+        {
+          "pattern": ["go", "camp"],
+          "response": "You hurry back to camp to get Dad.",
+          "effects": { "flags_set": { "bigfoot_got_away": true } },
+          "next": "ending_missed"
+        },
+        {
+          "pattern": ["talk", "bigfoot"],
+          "response": "Bigfoot whispers, 'Hi.' His stomach growls even louder."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "Bigfoot looks at your snack, then politely looks away."
+        },
+        {
+          "pattern": ["look", "tree"],
+          "response": "It is tall, but Bigfoot is almost halfway up without climbing."
+        },
+        {
+          "pattern": ["give", "bigfoot"],
+          "response": "Bigfoot tilts his head. Give him what?"
+        },
+        {
+          "pattern": ["go", "bigfoot"],
+          "response": "You take one step closer. Bigfoot takes one step back."
+        }
+      ],
+      "default": [
+        "Bigfoot blinks and waits.",
+        "His giant stomach rumbles: GRRRRUMBLE!",
+        "A moth circles your lantern.",
+        "Bigfoot scratches his fuzzy chin.",
+        "That is not quite how you greet a forest giant.",
+        "Choose carefully. Bigfoot is watching you."
+      ],
+      "hints": [
+        "There are four ways this meeting could end.",
+        "Try LOOK BIGFOOT, GIVE SNACK, CLIMB TREE, or GO CAMP.",
+        "Each of those four commands leads to a different ending."
+      ]
+    },
+    "ending_cautious": {
+      "text": [
+        "THE QUIET SECRET ENDING",
+        "You watch quietly as Bigfoot crosses the creek and vanishes into the trees.",
+        "Back at camp, you keep his secret and draw one enormous footprint in your notebook."
+      ],
+      "tiles": ["look", "bigfoot", "tracks", "forest"],
+      "commands": [
+        {
+          "pattern": ["look", "bigfoot"],
+          "response": "He is gone, but you will always remember his little wave."
+        },
+        {
+          "pattern": ["look", "tracks"],
+          "response": "By morning, the creek has washed the giant tracks away."
+        },
+        {
+          "pattern": ["look", "forest"],
+          "response": "For just a moment, a huge hand waves between the trees."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "You still have your snack for tomorrow's hike."
+        }
+      ],
+      "default": [
+        "The secret is safe with you.",
+        "The forest is peaceful again.",
+        "What an amazing camping night!"
+      ]
+    },
+    "ending_friend": {
+      "text": [
+        "THE BIGFOOT FRIEND ENDING",
+        "Bigfoot shares the snack, then shows you his hidden berry patch.",
+        "Before sunrise, your new friend gives you a pinecone the size of a football."
+      ],
+      "tiles": ["look", "talk", "bigfoot", "forest", "camp"],
+      "commands": [
+        {
+          "pattern": ["talk", "bigfoot"],
+          "response": "Bigfoot whispers, 'Same camp next summer?' You say yes!"
+        },
+        {
+          "pattern": ["look", "bigfoot"],
+          "response": "Your new friend smiles a huge, fuzzy smile."
+        },
+        {
+          "pattern": ["look", "forest"],
+          "response": "Bigfoot knows every berry bush and animal trail."
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "Dad will never guess where the giant pinecone came from."
+        }
+      ],
+      "default": [
+        "Bigfoot gives you a careful fist bump.",
+        "This is the best camping trip ever!",
+        "Your new friend makes a happy hooting sound."
+      ]
+    },
+    "ending_goofy": {
+      "text": [
+        "THE UPSIDE-DOWN ENDING",
+        "The branch bends, and you dangle upside down by your sleeping-bag pants!",
+        "Bigfoot catches you, sets you down, and laughs so hard that owls fly away."
+      ],
+      "tiles": ["look", "talk", "bigfoot", "tree", "camp"],
+      "commands": [
+        {
+          "pattern": ["talk", "bigfoot"],
+          "response": "Bigfoot calls you 'Little Clumsy Foot.' You both laugh."
+        },
+        {
+          "pattern": ["look", "bigfoot"],
+          "response": "He acts out your upside-down wiggle and laughs again."
+        },
+        {
+          "pattern": ["look", "tree"],
+          "response": "Your pants are still caught on one tiny twig."
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "You return to camp with muddy hair and a very silly story."
+        }
+      ],
+      "default": [
+        "Somewhere in the woods, Bigfoot is still chuckling.",
+        "At least you did not land on your head!",
+        "You may never climb that tree again."
+      ]
+    },
+    "ending_missed": {
+      "text": [
+        "THE GIANT FOOTPRINT ENDING",
+        "Dad follows you back to the creek, but Bigfoot has disappeared.",
+        "All you find is one giant footprint and a soft brown hair on a branch."
+      ],
+      "tiles": ["look", "talk", "tracks", "forest", "camp"],
+      "commands": [
+        {
+          "pattern": ["look", "tracks"],
+          "response": "The footprint is real. Dad says it is bigger than a dinner plate!"
+        },
+        {
+          "pattern": ["look", "forest"],
+          "response": "Two bushes shake far away, then everything is still."
+        },
+        {
+          "pattern": ["talk", "forest"],
+          "response": "You call hello, but only an owl answers."
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "You and Dad spend the morning wondering what might have happened."
+        },
+        {
+          "pattern": ["look", "snack"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "Maybe Bigfoot would have liked this snack."
+        }
+      ],
+      "default": [
+        "Maybe you will see Bigfoot next time.",
+        "The forest keeps its mystery.",
+        "Dad takes a picture of the giant footprint."
+      ]
+    }
+  }
+}
+
