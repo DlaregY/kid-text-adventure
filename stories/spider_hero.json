@@ -700,6 +700,9 @@
           "requirements": {
             "inventory_has": [
               "key"
+            ],
+            "flags_true": [
+              "read_book"
             ]
           },
           "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
@@ -709,6 +712,18 @@
             ]
           },
           "next": "basement"
+        },
+        {
+          "pattern": [
+            "open",
+            "door"
+          ],
+          "requirements": {
+            "inventory_has": [
+              "key"
+            ]
+          },
+          "response": "The key fits, but the glowing book pulses in your bag. You should open the book and learn the chain's secret before going farther!"
         },
         {
           "pattern": [
@@ -758,6 +773,9 @@
           "requirements": {
             "inventory_has": [
               "key"
+            ],
+            "flags_true": [
+              "read_book"
             ]
           },
           "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
@@ -767,6 +785,18 @@
             ]
           },
           "next": "basement"
+        },
+        {
+          "pattern": [
+            "key",
+            "door"
+          ],
+          "requirements": {
+            "inventory_has": [
+              "key"
+            ]
+          },
+          "response": "The key fits, but the glowing book pulses in your bag. You should open the book and learn the chain's secret before going farther!"
         },
         {
           "pattern": [
