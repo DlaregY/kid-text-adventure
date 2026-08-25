@@ -30,6 +30,8 @@ const EMOJI := {
 	"shield": "🛡️", "chip": "💾", "boss": "👾",
 	"eggs": "🍳", "salt": "🧂", "plate": "🍽️",
 	"lake": "🌊", "cliff": "🏔️", "crystal": "🔮", "rock": "🪨", "river": "🏞️",
+	"camp": "⛺", "tent": "⛺", "bushes": "🌿", "snack": "🍪",
+	"tracks": "👣", "creek": "🏞️", "bigfoot": "🦶",
 }
 
 const LOOK_FALLBACKS: Array[String] = [
