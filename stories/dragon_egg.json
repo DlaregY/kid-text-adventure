@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Lost Dragon Egg", "version": 2, "teaser": "Find the lost dragon egg and bring it home!" },
+  "meta": { "title": "The Lost Dragon Egg", "version": 3, "teaser": "Find the lost dragon egg and bring it home!" },
   "vocab": {
 	"go": { "label": "go" },
 	"open": { "label": "open" },
@@ -226,6 +226,11 @@
 		  "response": "A winding path leads deeper into the forest. Who knows what is out there?"
 		},
 		{
+		  "pattern": ["look", "rope"],
+		  "requirements": { "inventory_has": ["rope"] },
+		  "response": "A strong rope from the dog. It should help with something ahead!"
+		},
+		{
 		  "pattern": ["give", "dog"],
 		  "response": "Give the dog what? Maybe it wants something yummy."
 		},
@@ -319,7 +324,7 @@
 
 	"bridge": {
 	  "text": ["A bridge stretches across a deep canyon.", "But the middle is broken!", "You can see a cave on the other side."],
-	  "tiles": ["go", "look", "rope", "bridge", "cave"],
+	  "tiles": ["go", "look", "bridge", "cave"],
 	  "commands": [
 		{
 		  "pattern": ["rope", "bridge"],
@@ -362,10 +367,6 @@
 		  "response": "A strong rope. It could hold the bridge together!"
 		},
 		{
-		  "pattern": ["look", "rope"],
-		  "response": "You don't have any rope."
-		},
-		{
 		  "pattern": ["look", "cave"],
 		  "response": "A dark cave across the canyon. You hear something inside..."
 		},
@@ -387,7 +388,11 @@
 		}
 	  ],
 	  "default": ["The wind howls through the canyon.", "Don't look down!", "A rock falls into the canyon. You wait... and wait... SPLASH! That's deep!", "You do a little dance to stay warm. The canyon echoes your footsteps!", "Nope! The canyon just yawns at you."],
-	  "hints": ["The bridge is broken! What do you have that could fix it?", "Try using something from your inventory on the bridge!", "Use the ROPE on the BRIDGE, then GO BRIDGE!"]
+	  "hints": [
+		"The bridge must be safe before you cross.",
+		"If it is broken, use something strong from your inventory. If it is fixed, cross it!",
+		"If needed, use ROPE on BRIDGE. Then use GO BRIDGE!"
+	  ]
 	},
 
 	"cave": {
@@ -453,14 +458,14 @@
 		  "pattern": ["give", "egg"],
 		  "requirements": { "inventory_has": ["egg"] },
 		  "response": "The dragon's eyes light up! She nuzzles her egg happily!",
-		  "effects": { "inventory_remove": ["egg"], "flags_set": { "egg_returned": true } },
+		  "effects": { "inventory_remove": ["egg"] },
 		  "next": "treasure"
 		},
 		{
 		  "pattern": ["egg", "dragon"],
 		  "requirements": { "inventory_has": ["egg"] },
 		  "response": "The dragon's eyes light up! She nuzzles her egg happily!",
-		  "effects": { "inventory_remove": ["egg"], "flags_set": { "egg_returned": true } },
+		  "effects": { "inventory_remove": ["egg"] },
 		  "next": "treasure"
 		},
 		{
@@ -477,16 +482,8 @@
 		  "response": "The warm dragon egg glows in your hands. The dragon stares at it!"
 		},
 		{
-		  "pattern": ["look", "egg"],
-		  "response": "You don't have an egg."
-		},
-		{
 		  "pattern": ["give", "dragon"],
 		  "response": "Give the dragon what? She keeps looking at your hands..."
-		},
-		{
-		  "pattern": ["give", "egg"],
-		  "response": "You don't have an egg to give."
 		},
 		{
 		  "pattern": ["go", "dragon"],
