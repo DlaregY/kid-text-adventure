@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "Shake Escape",
-    "version": 2,
+    "version": 3,
     "teaser": "Your eggs need salt. But the saltshaker has other plans!"
   },
   "vocab": {
@@ -352,10 +352,6 @@
           "next": "salt_top"
         },
         {
-          "pattern": ["climb", "cliff"],
-          "response": "You try to climb but it is too slippery! You slide right back down. You need something to grip with!"
-        },
-        {
           "pattern": ["climb", "salt"],
           "response": "You climb a little pile of salt. Not high enough! The cliff goes way higher!"
         },
@@ -375,10 +371,6 @@
           "pattern": ["take", "crystal"],
           "response": "You already have it! Maybe use it to CLIMB the cliff?",
           "requirements": {"inventory_has": ["crystal"]}
-        },
-        {
-          "pattern": ["take", "crystal"],
-          "response": "There are no loose crystals here. You used your crystal climbing the cliff!"
         },
         {
           "pattern": ["crystal", "cliff"],
