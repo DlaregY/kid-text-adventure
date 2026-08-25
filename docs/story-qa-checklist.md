@@ -21,6 +21,10 @@ the story format, see [Creating Stories](creating-stories.md).
 - [ ] Every scene has `text`, `tiles`, `commands`, and `default` arrays.
 - [ ] Every optional `hints` value is an array.
 - [ ] Every command has a two-string `pattern` and a string `response`.
+- [ ] Required strings are non-empty; arrays contain values of the expected type,
+      and every `flags_set` value is boolean.
+- [ ] Continuing scenes have at least one command, and player-facing `text` and
+      `default` arrays are not empty.
 - [ ] Every `next` value is a non-empty ID for an existing scene.
 - [ ] Every `requirements` value uses only supported fields: `inventory_has` and
       `flags_true`.
@@ -39,6 +43,8 @@ the story format, see [Creating Stories](creating-stories.md).
       and documented as unused.
 - [ ] Every intended branch can be reached through commands available to the
       player at that point.
+- [ ] Every transition rule has been exercised, including multiple commands that
+      lead to the same destination scene.
 - [ ] No transition creates an unintended loop or traps the player in a scene.
 - [ ] A scene that should continue has at least one reachable command with
       `next`.
@@ -77,6 +83,9 @@ Add rows until every ending and materially different route is covered.
 - [ ] Obvious commands suggested by the scene text have specific responses.
 - [ ] Important nouns mentioned in the scene text have tiles when the player is
       expected to interact with them.
+- [ ] A regular Thing tile represents something actually present in the scene.
+      Inventory-only items are omitted from `tiles` because carried items appear
+      automatically in the Inventory tray.
 - [ ] New tokens either have an appropriate emoji mapping in `scripts/Game.gd`
       or have been intentionally accepted without an icon.
 - [ ] No tile is present without at least one sensible use or response, unless it
@@ -94,6 +103,8 @@ requirements pass wins.
 - [ ] When a requirement fails, a later rule handles the same command with a
       useful explanation whenever the player is likely to try it.
 - [ ] Every flag in `flags_true` is set to `true` on at least one reachable path.
+- [ ] Every flag written by `flags_set` is read by a reachable rule later, or its
+      intentional future purpose is documented.
 - [ ] Every required inventory item is added on at least one reachable path.
 - [ ] Requirements do not assume support for negative conditions. The engine can
       require only items that are present and flags that are true.
@@ -163,6 +174,8 @@ For every state-changing command, test this sequence:
 - [ ] Character names, pronouns, tense, and point of view stay consistent.
 - [ ] Spelling, punctuation, and grammar have been reviewed.
 - [ ] Humor and suspense are age-appropriate; frightening outcomes are gentle.
+- [ ] The story does not encourage unsafe real-world behavior a child might copy.
+      Risky situations include appropriate supervision, framing, or consequences.
 - [ ] Endings feel distinct and acknowledge the choice or state that caused them.
 - [ ] Text fits on the target desktop and mobile layouts without becoming
       uncomfortably small or requiring awkward scrolling.
@@ -176,6 +189,8 @@ otherwise.
 - [ ] Complete the longest or most stateful route.
 - [ ] Complete every alternate route and ending.
 - [ ] Complete routes both with and without each optional item.
+- [ ] Enter each scene with every materially different inventory and flag state
+      that can change its available commands, hints, or outcomes.
 - [ ] Repeat every pickup and state-changing command before leaving its scene.
 - [ ] Try progression commands before meeting their requirements.
 - [ ] Inspect every inventory item in every scene where it can be carried.
