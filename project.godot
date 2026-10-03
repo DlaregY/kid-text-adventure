@@ -13,8 +13,8 @@ config_version=5
 config/name="Ike Quest"
 run/main_scene="uid://da2g8wy6g4fky"
 config/features=PackedStringArray("4.6", "Forward Plus")
-config/icon="res://icon.png"
-boot_splash/image="res://splash.png"
+config/icon="res://assets/icons/android/launcher_main_192.svg"
+boot_splash/image="res://assets/branding/norbonics-games.png"
 boot_splash/fullsize=true
 
 [display]

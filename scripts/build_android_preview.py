@@ -1,9 +1,11 @@
 import argparse
+import hashlib
 import os
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import zipfile
 
 
 def main():
@@ -60,9 +62,32 @@ def main():
                XDG_DATA_HOME=str(output / "data"), JAVA_HOME=str(java),
                ANDROID_HOME=str(sdk), ANDROID_SDK_ROOT=str(sdk))
     subprocess.run([str(godot), "--headless", "--path", str(stage), "--editor", "--import"], env=env, check=True)
+    android = stage / "android"
+    android.mkdir()
+    with zipfile.ZipFile(templates / "android_source.zip") as archive:
+        archive.extractall(android / "build")
+    template = templates / "android_source.zip"
+    (android / ".build_version").write_text(f"{template} [{hashlib.md5(template.read_bytes()).hexdigest()}]\n")
+    (android / ".gdignore").touch()
+    (android / "build/gradlew").chmod(0o755)
+    if not args.diagnostic_target_34:
+        for required in (sdk / "platforms/android-36/android.jar", sdk / "build-tools/36.0.0/aapt2"):
+            if not required.exists():
+                raise SystemExit(f"Missing Android 36 prerequisite: {required}")
+        gradle_config = stage / "android/build/config.gradle"
+        content = gradle_config.read_text()
+        for old, new in {
+            "androidGradlePlugin: '8.6.1'": "androidGradlePlugin: '8.9.2'",
+            "compileSdk         : 35": "compileSdk         : 36",
+            "buildTools         : '35.0.1'": "buildTools         : '36.0.0'",
+        }.items():
+            if content.count(old) != 1:
+                raise SystemExit(f"Unexpected Android template configuration: {old}")
+            content = content.replace(old, new)
+        gradle_config.write_text(content)
     apk = output / ("ike-quest-preview-target34.apk" if args.diagnostic_target_34 else "ike-quest-preview.apk")
     subprocess.run([str(godot), "--headless", "--path", str(stage),
-                    "--install-android-build-template", "--export-debug",
+                    "--export-debug",
                     "Ike's Adventures", str(apk)], env=env, check=True)
     print(apk)
 

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8su1qp12tm63" path="res://scripts/CommandSlot.gd" id="1_wbfu4"]
 [ext_resource type="Script" uid="uid://b6jbs8g6nrgnj" path="res://scripts/Game.gd" id="1_xkndl"]
-[ext_resource type="Texture2D" path="res://icon.png" id="icon_tex"]
+[ext_resource type="Texture2D" path="res://assets/branding/norbonics-games.png" id="icon_tex"]
 
 [sub_resource type="StyleBoxFlat" id="slot_panel"]
 bg_color = Color(1.0, 0.953, 0.878, 1)
@@ -85,11 +85,19 @@ custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(220, 220)
+custom_minimum_size = Vector2(460, 203)
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 3
+expand_mode = 1
 texture = ExtResource("icon_tex")
 stretch_mode = 5
+
+[node name="GamesURL" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
+text = "games.norbonics.com"
+horizontal_alignment = 1
 
 [node name="Title" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2

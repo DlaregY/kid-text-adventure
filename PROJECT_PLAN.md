@@ -1,6 +1,6 @@
 # Ike Quest Android release
 
-Updated: 2026-10-02. Status: Gerald confirms target-34 preview installation and basic Bigfoot gameplay work on his phone; story pacing and ending presentation need review. Target-36 installation failure remains unresolved.
+Updated: 2026-10-03. Status: approved Norbonics Games menu and splash branding plus a visible Games URL implemented. Android 36 toolchain preview rebuilt for a new device check; the original target-36 installer rejection remains unproven. Gerald confirms the earlier target-34 preview and basic Bigfoot gameplay work on his phone. Story pacing, ending presentation and save/resume remain proposals.
 
 ## Goal and scope
 
@@ -18,9 +18,19 @@ Browser checks on October 2 reached the Google account chooser through the Play 
 
 Release checklist: `docs/play-release-checklist.md`. Begin with enrollment and resolving the target-36 build installation issue, then signing/AAB and declarations, followed by internal/closed testing and a separately approved public launch. A new personal account requires 12 testers continuously opted in for 14 days before applying for production access.
 
-Approved branding requirements (pending implementation, Hub #1511):
+Approved branding requirements (implemented October 3, Hub #1511):
 - Replace the menu portrait with the unchanged approved transparent master `../norbonics-games/assets/logo-clean.png` (1888x833); preserve its aspect ratio. Inspect launcher/store icons for the old portrait as part of the same pass.
 - Show `games.norbonics.com` in the app, proposed beneath the menu branding as a plain URL. Full destination https://games.norbonics.com/ returned HTTP 200 on October 2. A plain URL meets Gerald's request without adding browser navigation to the child-facing flow.
+
+The unchanged master is copied to `assets/branding/norbonics-games.png` and displayed with preserved proportions. Menu and boot splash now use it. The project icon and all Android launcher variants use the existing K artwork, which contains no portrait. Old portrait source images are retained but excluded from exported assets. The Games URL is plain menu text. A 540x960 desktop capture is saved at `exports/norbonics-menu-preview.png`; this is not a phone screenshot.
+
+October 3 verification: both branded previews built successfully. The default APK reports compile SDK 36, target 36, min 24, preview package `com.ike.textadventure.preview`, version 0.6.0/code 600, ARM64 and no permissions. Android-13-specific signature verification, APK CRC integrity, 16 KB ZIP/native ELF alignment, six byte-identical story JSONs, version metadata and exact branding master all passed. The old portraits are absent from packaged assets. Godot regression rendered all 55 scenes across six stories without failures. Original unbranded APKs are preserved as `exports/ike-quest-preview-original-target36.apk` and `exports/ike-quest-preview-original-target34.apk`.
+
+Fresh download filenames avoid confusion with the earlier previews:
+- `exports/ike-quest-preview-norbonics-target36.apk`: SHA-256 `89c50313330e914f1e23f1ead20dc47d3bfe4f004f8a5f91191d4e23f710dec7`.
+- `exports/ike-quest-preview-norbonics-target34.apk`: SHA-256 `e89184572b27dd8757f67ac506131ed2e9e768d0a74b548699222d9cf66ff743`.
+
+Both retain the earlier debug signer and preview identity. Phone installation and runtime of these new artifacts remain untested. Production identity stays `com.ike.textadventure`. Hub #1511 remains in progress.
 
 Enrollment sources checked October 2:
 - https://support.google.com/googleplay/android-developer/answer/13628312
@@ -61,11 +71,11 @@ Diagnostic update, October 2: Gerald successfully installed both the unchanged v
 
 1. **Progress is memory-only.** Force-stop or process death loses the current story. No save/resume implementation or mid-story restart control was added. Recommend local checkpoint/resume before public launch; decide after the phone test.
 2. **Basic device compatibility confirmed on one phone.** Gerald reports the target-34 preview works on his Android 13 moto g stylus 5G (2022). Project uses Forward Plus rendering and system emoji fonts. Broader device coverage, Android 16 safe areas, gesture navigation and large font behavior remain unverified.
-3. **Build toolchain needs a release pass.** Godot 4.6.1's template compiles with SDK 35 while the app targets 36. The debug build succeeds, but a production toolchain update/validation is still needed. Do not infer Play acceptance from APK construction.
+3. **Build toolchain needs a release pass.** The October 3 default preview builder stages the Godot template with compile SDK 36, Build Tools 36.0.0 and AGP 8.9.2, retaining Gradle 8.11.1 and Java 17. The target-34 diagnostic retains the earlier template configuration. This removes the default preview's compile-35/target-36 mismatch; it does not establish the reason for the phone's rejection. A production build using the preset directly still needs the equivalent toolchain pass and bundle validation. No Play acceptance is inferred from APK construction.
 4. **Production signing/AAB not prepared.** No upload/release key generated; no Play App Signing configuration changed. Keep future production keys out of the workspace. Verify native 16 KB page support and bundle validation before submission.
 5. **Privacy document is a draft.** `docs/privacy-policy.md` still names Norbonics Industries and an older contact. Reconcile with current Norbonics identity/support contact, actual final behavior and a public policy URL before launch. No policy was published.
 6. **Audience/content decisions remain.** Early-reader positioning requires an accurate target-audience/Families declaration, content rating and Data Safety form. Review story/icon/asset provenance; the Spiderdude/Skull Rider story needs a deliberate public-release content decision. Renaming alone does not establish rights clearance.
-7. **Store setup and testing remain.** Verify whether Gerald already has a Play account before creating one. For a new personal account, Google's current rule requires 12 testers continuously opted in for 14 days before applying for production access. Phone sideloading does not count toward that closed test.
+7. **Store setup and testing remain.** Gerald reports enrollment and all three verifications complete; do not enroll again. Console app status and production access remain uninspected. A new personal account requires 12 testers continuously opted in for 14 days before applying for production access. Phone sideloading does not count toward that closed test.
 8. **Listing assets remain.** Capture real device screenshots and prepare feature graphic, description and support links after UI verification.
 
 ## Local build and verification
@@ -79,10 +89,11 @@ python3 /home/workspace/Projects/ike-quest/scripts/build_android_preview.py
 
 Initial APK SHA-256: `87ed63a586c94071094e4f4fe7c8b390c9d742ca7918737100a8e631c10a296c`.
 
-The initial export completed with Godot shutdown/scan warnings and an unavailable ADB daemon in Zo. No phone is attached; this is not an on-device test. Code changes remain local and uncommitted.
+The initial export completed with Godot shutdown/scan warnings and an unavailable ADB daemon in Zo. No phone is attached; `/dev/kvm` is unavailable. The concrete next step is to install the rebuilt target-36 preview on Gerald's phone, retaining the working diagnostic. If it fails, capture the exact ADB installer error and package-manager log rather than changing more settings without evidence. No story/save changes or publication were performed.
 
 ## Sources checked October 2, 2026
 
 - https://support.google.com/googleplay/android-developer/answer/11926878
 - https://support.google.com/googleplay/android-developer/answer/14151465
 - https://docs.godotengine.org/en/4.6/tutorials/export/exporting_for_android.html
+- Android 16 toolchain setup checked October 3: https://developer.android.com/about/versions/16/setup-sdk
