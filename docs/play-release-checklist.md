@@ -2,6 +2,19 @@
 
 Use this checklist before submitting a new release to Google Play.
 
+Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-02).
+
+## Enrollment and release prerequisites
+
+- [ ] Confirm owner Google account and whether it already has a Play developer account.
+- [ ] Complete personal enrollment, payment and identity/contact/device verification. Proposed public display name: Norbonics; support: support@norbonics.com; website: https://norbonics.com/. Gerald must confirm ownership and payment details.
+- [ ] Resolve target-36 preview installation rejection; target-34 diagnostic works on Gerald's Android 13 phone but is not a store release candidate.
+- [ ] Replace menu portrait with the approved Norbonics Games logo from `../../norbonics-games/assets/logo-clean.png`; preserve proportions and check Android launcher/store imagery for old portrait use.
+- [ ] Include `games.norbonics.com` visibly in the menu or About area; plain text is acceptable. Do not add analytics or automatic browser navigation.
+- [ ] Finalize release signing, secure key backup, version metadata and Android App Bundle; preserve the production application ID.
+- [ ] Run internal testing, then required closed testing and production-access application. Recruit at least 12 active testers for a new personal account and keep them opted in continuously for at least 14 days.
+- [ ] Obtain Gerald's release decision after addressing story/content feedback and reviewing the final listing.
+
 ## Required submission items
 
 - [ ] **Privacy Policy URL**
