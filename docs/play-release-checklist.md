@@ -2,11 +2,13 @@
 
 Use this checklist before submitting a new release to Google Play.
 
+Read the shared workflow first: `../../../Docs/Standard-Operating-Procedures/android-play-publishing.md`. Reuse its account, signing, artifact-validation and Console steps; retain this project's Godot, device and content gates below.
+
 Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-02).
 
 ## Enrollment and release prerequisites
 
-- [x] Gerald reports personal enrollment and all three verifications complete on October 2. Do not enroll or pay again; independently inspect Console app status and production access before submission.
+- [x] Personal developer account created and paid for (Gerald reconfirmed October 3); all three verifications completed October 2. Owner geraldnorby@gmail.com; developer ID `8341017993051504358`. Do not enroll or pay again. Zo browser sign-in failure is separate from enrollment; inspect Console app status and production access before submission.
 - [ ] Resolve target-36 preview installation rejection; target-34 diagnostic works on Gerald's Android 13 phone but is not a store release candidate.
 - [x] Replace menu and splash portraits with the unchanged approved Norbonics Games master; preserve proportions. Project/Android icons use existing K artwork without portraits; old portrait sources are excluded from exports. Store imagery remains to prepare.
 - [x] Include `games.norbonics.com` as visible plain menu text without analytics or automatic browser navigation.

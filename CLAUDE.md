@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
+Historical origin, JSON-engine rationale and camping/Bigfoot provenance: `docs/chatgpt-history-2026-10-02.md`. Historical assistant prompts, including a three-slot proposal, do not override the current two-slot game.
+
 Godot 4.6 text adventure for early readers. Players tap word tiles to fill 2 command slots (action + thing); commands auto-execute when both slots are filled. The engine evaluates commands against JSON-defined rules.
 
 ## Running
@@ -16,6 +18,8 @@ godot4 --path .
 Run the headless smoke and regression suites with `godot4 --headless --path . --script res://tests/story_smoke.gd` and `godot4 --headless --path . --script res://tests/game_regressions.gd`. On a fresh checkout, import first with `godot4 --headless --path . --editor --import`. Also playtest in the Godot editor and on target devices.
 
 ## Export, Install & Release
+
+Android-only release preparation is tracked in `PROJECT_PLAN.md`; read `AGENTS.md` for account continuity. Google Play enrollment is already paid and all three account verifications are complete, per Gerald (October 2–3, 2026). Owner: geraldnorby@gmail.com; developer ID `8341017993051504358`. Do not enroll or pay again. Zo browser access is blocked; app approval and production access remain unverified. Zo's local preview builder is `scripts/build_android_preview.py`; it uses a separate `.preview` application ID. Run `tests/story_smoke.gd` with headless Godot for story loading, validation, scene-layout and state-helper regression checks. Real phone testing remains required. The preview workflow does not authorize publication.
 
 **Export APK** (debug-signed):
 ```bash

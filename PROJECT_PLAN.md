@@ -4,19 +4,19 @@ Updated: 2026-10-03. Status: approved Norbonics Games menu and splash branding p
 
 ## Goal and scope
 
-Prepare Ike Quest for Android distribution under the Norbonics brand. Gerald chose Android only because he and his close associates cannot test iOS. First establish a working phone build, then prepare Google Play enrollment and release. ChallengeBoard follows separately.
+Prepare Ike Quest for Android distribution under the Norbonics brand. Gerald chose Android only because he and his close associates cannot test iOS. Google Play enrollment is paid and verified; continue app build, testing and release preparation. ChallengeBoard follows separately.
 
 Gerald authorized starting account setup and release preparation on October 2, including tracking replacement of his picture with the approved Norbonics Games logo and an in-app Games URL. Canonical execution task: Hub #1511. Gerald subsequently reports account setup and all three verification steps complete; Console status has not been independently inspected. No app submission or public release is recorded. Preserve all six stories and the existing production package identifier. Story expansion and save/resume remain proposals pending a separate implementation decision.
 
 ## Account setup and release preparation
 
-**Latest status, October 2:** Gerald reports completing all three verification steps and account setup. This supersedes the outstanding enrollment/sign-in notes below, retained as historical context. It does not establish production access or app approval. Enrollment used geraldnorby@gmail.com, with hello@norbonics.com recommended for public contact and gerald@norbonics.com for Google's private contact; catch-all delivery to norbonics@outlook.com was verified earlier in this conversation.
+**Current status, October 3:** Account created and paid for, explicitly reconfirmed by Gerald; all three enrollment verifications completed October 2. Do not enroll or pay again. Owner: geraldnorby@gmail.com. Developer ID: `8341017993051504358`; Console: https://play.google.com/console/u/0/developers/8341017993051504358/. This establishes completed enrollment, not app approval or production access. Contact choices were hello@norbonics.com for public contact and gerald@norbonics.com for Google's private contact; catch-all delivery to norbonics@outlook.com was verified.
 
-Enrollment recommendation: personal account, developer display name **Norbonics** (covers games and future ChallengeBoard), studio website https://norbonics.com/, public developer/support email support@norbonics.com. Confirm the owner Google account with Gerald before registration; recommended geraldnorby@gmail.com. Google permits a separate developer display name but also displays legal name, country and developer email; monetization exposes the full legal address, with additional regional disclosures possible. Registration costs $25 once. Payment, identity checks and verification codes remain outstanding; no payment authorized or made.
+Enrollment followed the personal-account path for **Norbonics**, covering games and a possible future ChallengeBoard app, with studio website https://norbonics.com/. Earlier instructions to choose an owner, register, pay and complete verification are superseded by the completed enrollment above.
 
-Browser checks on October 2 reached the Google account chooser through the Play Console sign-in link. Both listed Google accounts are signed out, including geraldnorby@gmail.com. Existing developer-account status is therefore unknown; owner choice and interactive sign-in remain pending. No registration form has been submitted.
+Agent access limitation: Zo's remote browser first hung, then Google rejected sign-in with “This browser or app may not be secure.” Gerald accesses Play Console in his own browser. Agent sign-in remains unavailable; this is not an enrollment blocker. A separate support email was drafted for Gerald. App creation, testing-track state and production access have not been independently inspected.
 
-Release checklist: `docs/play-release-checklist.md`. Begin with enrollment and resolving the target-36 build installation issue, then signing/AAB and declarations, followed by internal/closed testing and a separately approved public launch. A new personal account requires 12 testers continuously opted in for 14 days before applying for production access.
+Release checklist: `docs/play-release-checklist.md`. Continue resolving the target-36 build installation issue, then signing/AAB and declarations, followed by internal/closed testing and a separately approved public launch. The October 2 requirements check recorded 12 testers continuously opted in for 14 days before applying for production access; recheck current requirements when configuring the test.
 
 Approved branding requirements (implemented October 3, Hub #1511):
 - Replace the menu portrait with the unchanged approved transparent master `../norbonics-games/assets/logo-clean.png` (1888x833); preserve its aspect ratio. Inspect launcher/store icons for the old portrait as part of the same pass.
@@ -42,6 +42,7 @@ Use Godot 4.6.1 with the existing portrait/tile UI. Distribute a separate debug-
 
 ## Implementation status
 
+- [x] PR #11 reviewed and merged October 3 as `3928042`: constrain story picker width, restart command delay on changed input, unlock hints after six commands without actual progress, and hide empty inventory. Independent Godot 4.6.1 validation passed all 34 regression checks and six-story/55-scene smoke coverage. Existing local account/history documentation preserved. No new APK built or phone validation performed for this merge.
 - [x] Pulled repository; baseline `6bf1101`, clean before work. Actual remote is `DlaregY/kid-text-adventure`.
 - [x] Confirmed and repaired parser-breaking indentation in `scripts/Game.gd` story validation. Godot previously reported an expected-indented-block error at line 326.
 - [x] Explicitly include `stories/*.json` and `version.txt` in exports; exclude development docs/tasks/tests.
