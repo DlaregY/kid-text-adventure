@@ -78,7 +78,7 @@ Each scene is an object inside `scenes` with a unique ID as its key.
 | `tiles` | Yes | Array of token strings available as tappable/draggable tiles |
 | `commands` | Yes | Array of command rules (evaluated in order) |
 | `default` | Yes | Array of fallback responses (one picked at random when no rule matches) |
-| `hints` | No | Array of 3 progressive hint strings (gentle → specific → direct). Shown after 6 failed commands. |
+| `hints` | No | Array of 3 progressive hint strings (gentle → specific → direct). Shown after 6 commands without progress, including blocked actions and repeated inspections. Inventory/flag changes or scene transitions reset hints. |
 
 ## Tiles
 
