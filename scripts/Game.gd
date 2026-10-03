@@ -132,8 +132,15 @@ var is_transitioning := false
 var fail_count: int = 0
 var hint_index: int = 0
 var action_fallback_map := {}
+var command_timer := Timer.new()
+var is_executing_command := false
 
 func _ready() -> void:
+	command_timer.one_shot = true
+	command_timer.wait_time = 0.5
+	command_timer.timeout.connect(_try_execute_command)
+	add_child(command_timer)
+
 	action_fallback_map = {
 		"look": LOOK_FALLBACKS, "talk": TALK_FALLBACKS, "open": OPEN_FALLBACKS,
 		"take": TAKE_FALLBACKS, "go": GO_FALLBACKS, "give": GIVE_FALLBACKS,
@@ -359,6 +366,7 @@ func _start_story() -> void:
 	await _render_scene()
 
 func _show_menu() -> void:
+	command_timer.stop()
 	has_active_story = false
 	menu_screen.visible = true
 	command_bar.visible = false
@@ -405,6 +413,7 @@ func _on_menu_pressed() -> void:
 	_show_menu()
 
 func _render_scene() -> void:
+	command_timer.stop()
 	var scene = scenes.get(current_scene_id, null)
 	if scene == null:
 		push_error("Scene not found: " + current_scene_id)
@@ -470,7 +479,8 @@ func _auto_fit_story_text() -> void:
 	scroll_container.scroll_vertical = 0
 
 func _update_inventory_ui() -> void:
-	var has_items: bool = inventory_tray.get_child_count() > 0
+	# Old tile nodes remain until queue_free() runs at the end of the frame.
+	var has_items: bool = not inventory.is_empty()
 	inventory_label.visible = has_items
 	inventory_tray.visible = has_items
 
@@ -500,7 +510,7 @@ func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835), ca
 	return tile
 
 func _on_tile_pressed(tile: Button) -> void:
-	if not has_active_story or is_transitioning:
+	if not has_active_story or is_transitioning or is_executing_command:
 		return
 
 	var cat: String = tile.category
@@ -517,21 +527,19 @@ func _on_tile_pressed(tile: Button) -> void:
 	_check_slots_and_execute()
 
 func _check_slots_and_execute() -> void:
-	if not has_active_story or is_transitioning:
+	# A new selection replaces the previous delay, including incomplete input.
+	command_timer.stop()
+	if not has_active_story or is_transitioning or is_executing_command:
 		return
 	# Check if all visible required slots are filled
 	if slot1.token == "" or slot2.token == "":
 		return
-	# All slots filled — brief delay then execute
-	var scene_before: String = current_scene_id
-	await get_tree().create_timer(0.5).timeout
-	if current_scene_id != scene_before:
-		return
-	if not has_active_story or is_transitioning:
-		return
-	await _try_execute_command()
+	command_timer.start()
 
 func _try_execute_command() -> void:
+	command_timer.stop()
+	if not has_active_story or is_transitioning or is_executing_command:
+		return
 	var first: String = slot1.token
 	var second: String = slot2.token
 
@@ -540,10 +548,12 @@ func _try_execute_command() -> void:
 
 	var cmd: Array[String] = [first, second]
 
+	is_executing_command = true
 	var transitioned := await _apply_command(cmd)
 	if not transitioned:
 		slot1.clear()
 		slot2.clear()
+	is_executing_command = false
 
 func _apply_command(cmd: Array[String]) -> bool:
 	var scene = scenes.get(current_scene_id, null)
@@ -570,27 +580,26 @@ func _apply_command(cmd: Array[String]) -> bool:
 			continue
 
 		# Matched
-		_reset_hints()
 		var response = str(rule.get("response", "OK."))
 		feedback_text.text = response
 
-		_apply_effects(rule.get("effects", {}))
+		var made_progress := _apply_effects(rule.get("effects", {}))
 
 		if rule.has("next"):
+			_reset_hints()
 			_transition_to_scene(str(rule["next"]))
 			return true
 		else:
-			# stay in same scene — re-render tiles so inventory moves between trays
-			await _render_scene()
+			if made_progress:
+				# Refresh inventory and reset hints only when the world changes.
+				await _render_scene()
+			else:
+				_record_no_progress()
 			feedback_text.text = response
 			return false
 
 	# No match — try smart fallback, then random default
-	fail_count += 1
-	if fail_count >= 6:
-		var scene_hints: Array = scene.get("hints", [])
-		if not scene_hints.is_empty():
-			hint_button.visible = true
+	_record_no_progress()
 	var smart: String = _get_smart_fallback(cmd)
 	if smart != "":
 		feedback_text.text = smart
@@ -679,7 +688,9 @@ func _requirements_pass(req: Dictionary) -> bool:
 
 	return true
 
-func _apply_effects(eff: Dictionary) -> void:
+func _apply_effects(eff: Dictionary) -> bool:
+	var inventory_before: Dictionary = inventory.duplicate()
+	var flags_before: Dictionary = flags.duplicate()
 	var inv_add: Array = eff.get("inventory_add", [])
 	for item in inv_add:
 		inventory[str(item)] = true
@@ -691,6 +702,14 @@ func _apply_effects(eff: Dictionary) -> void:
 	var flags_set: Dictionary = eff.get("flags_set", {})
 	for k in flags_set.keys():
 		flags[str(k)] = bool(flags_set[k])
+	return inventory != inventory_before or flags != flags_before
+
+func _record_no_progress() -> void:
+	fail_count += 1
+	var scene: Dictionary = scenes.get(current_scene_id, {})
+	var hints: Array = scene.get("hints", [])
+	if fail_count >= 6 and not hints.is_empty():
+		hint_button.visible = true
 
 func _reset_hints() -> void:
 	fail_count = 0

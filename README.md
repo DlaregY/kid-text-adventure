@@ -45,7 +45,7 @@ For the active scene, the controller:
 
 ### 4) Command resolution
 
-When both slots are filled, the game waits 0.5s (so the kid sees the tile land) then auto-executes.
+When both slots are filled, the game waits 0.5s (so the kid sees the tile land) then auto-executes. Changing either tile restarts that delay; returning to the menu or rendering a new scene cancels pending input.
 
 Rule evaluation is deterministic and simple:
 
@@ -57,7 +57,7 @@ Rule evaluation is deterministic and simple:
 4. On success:
    - show `response`
    - apply `effects` (inventory/flag changes)
-   - re-render tiles so inventory items move between trays immediately
+   - re-render tiles when inventory or flags change
    - optionally transition to `next` scene with fade effect
 5. If no rule matches, try smart fallback responses, then show a random scene `default` message.
 
@@ -93,7 +93,7 @@ Scene object keys:
 - `tiles`: list of tokens available as tiles in that scene
 - `commands`: list of rules
 - `default`: list of fallback responses (one picked at random)
-- `hints` (optional): array of 3 progressive hints (gentle → specific → direct), shown after 6 failed commands
+- `hints` (optional): array of 3 progressive hints (gentle → specific → direct), shown after 6 commands without progress. This includes blocked actions and repeated inspections. Changing inventory or flags, or moving to another scene, resets the hints.
 
 Command rule keys:
 
@@ -145,6 +145,18 @@ godot4 --path .
 ```
 
 ---
+
+## Automated checks
+
+Run from the project folder with Godot 4.6+:
+
+```bash
+godot4 --headless --path . --editor --import
+godot4 --headless --path . --script res://tests/story_smoke.gd
+godot4 --headless --path . --script res://tests/game_regressions.gd
+```
+
+The smoke test loads and renders all stories. The regression suite checks phone-width menu bounds, tap and drag command delays, cancellation when restarting a story, hints, and inventory visibility. Both exit with a nonzero status on failure. Device playtesting is still required for Android releases.
 
 ## Notes and limitations
 

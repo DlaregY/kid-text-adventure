@@ -13,7 +13,7 @@ Open in Godot 4.6+ editor and press F5, or from CLI:
 godot4 --path .
 ```
 
-There is no build step, test suite, or linter — verification is manual playtesting in the Godot editor.
+Run the headless smoke and regression suites with `godot4 --headless --path . --script res://tests/story_smoke.gd` and `godot4 --headless --path . --script res://tests/game_regressions.gd`. On a fresh checkout, import first with `godot4 --headless --path . --editor --import`. Also playtest in the Godot editor and on target devices.
 
 ## Export, Install & Release
 
@@ -60,11 +60,11 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Click-to-place:** Tapping a tile auto-routes it: action tiles → Slot1, thing tiles → Slot2, inventory tiles → first empty slot (Slot1 if empty, else Slot2). This lets inventory items act as verbs (e.g., "hammer chain", "key gate") or objects (e.g., "look hammer"). Drag-and-drop still works as fallback.
 
-**Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). When all visible slots are filled, waits 0.5s (so kid sees the tile land), then calls `_try_execute_command()`. Guards against stale execution with scene ID check across the await.
+**Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). It restarts a single one-shot `command_timer` when both slots are filled, giving each selection a full 0.5s before `_try_execute_command()`. Incomplete selections, `_show_menu()`, and `_render_scene()` stop the timer. `is_executing_command` guards input while command effects are being rendered.
 
 **Scene transitions:** `_transition_to_scene()` shows response text, pauses 1.0s, then displays a ▶ continue button. When the kid taps the button, it fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions (including while the continue button is visible).
 
-**Hint system:** After 6 consecutive failed commands (no rule match), a HINT button appears below the tile section. Each scene has an optional `"hints"` array in the JSON with 3 progressive hints (gentle nudge, more specific, nearly direct). `_on_hint_pressed()` shows the next hint in FeedbackText, advancing `hint_index` and clamping at the last entry. `_reset_hints()` zeroes `fail_count` and `hint_index`, hides the button. Called by `_render_scene()` (scene change), `_apply_command()` (successful match), and `_show_menu()` (return to menu).
+**Hint system:** After 6 commands without progress, a HINT button appears below the tile section. This includes matched blocked actions, repeated inspections, and unmatched commands. `_apply_effects()` reports whether inventory or flags actually changed; only those changes or a scene transition reset hints. Response-only commands do not re-render the scene or reset the hint index. Each scene has an optional `"hints"` array with 3 progressive hints. `_on_hint_pressed()` advances `hint_index`, clamping at the last hint. `_reset_hints()` zeroes `fail_count` and `hint_index` and hides the button; it runs on scene rendering, transitions, and return to the menu.
 
 **Auto-fit text:** `_auto_fit_story_text()` runs at the end of every `_render_scene()` call. It iteratively shrinks StoryText font size from `STORY_FONT_MAX` (32px) down to `STORY_FONT_MIN` (18px) in `STORY_FONT_STEP` (2px) increments until the layout fits the viewport without scrolling. Also scales `custom_minimum_size.y` proportionally (`font_size * 5`). Resets scroll position to top after fitting. `_render_scene()` is async due to the frame-wait loop. Font size resets to max in `_show_menu()`.
 
