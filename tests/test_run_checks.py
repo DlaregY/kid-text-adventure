@@ -5,6 +5,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 import run_checks as qa
+from contextlib import redirect_stdout
+import io
 
 NAME = "ike-quest-qa-" + "a" * 32
 
@@ -82,11 +84,36 @@ class IsolationTests(unittest.TestCase):
                                (0, "")]:
                 with self.subTest(code=code, text=text), patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], code, text)):
                     with self.assertRaises(RuntimeError):
-                        qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+                        with redirect_stdout(io.StringIO()):
+                            qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 
     def test_logged_checks_accept_verified_summary(self):
-        with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "Game regression checks=42; failures=0\n")):
-            qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+        complete = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nGame regression checks=42; failures=0\n"
+        with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, complete)):
+            with redirect_stdout(io.StringIO()):
+                qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+
+    def test_summary_alone_cannot_hide_skipped_safety_checks(self):
+        with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "Game regression checks=214; failures=0\n")):
+            with self.assertRaises(RuntimeError), redirect_stdout(io.StringIO()):
+                qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+
+    def test_known_recovery_diagnostics_are_narrowly_scoped(self):
+        save = ("ERROR: Parse JSON failed. Error at line 0: Expected key\n"
+                "   at: parse_string (core/io/json.cpp:624)\n"
+                "   GDScript backtrace (most recent call first):\n"
+                "       [0] _read_save (res://scripts/Game.gd:800)\n"
+                "       [3] test_save_resume (res://tests/game_regressions.gd:230)\n")
+        progress = save.replace("Expected key", "Expected ']' ".rstrip()).replace("_read_save", "_read_progress").replace("test_save_resume", "test_endings")
+        self.assertEqual(qa.unexpected_diagnostics(save + progress * 6, recovery_tests=True), [])
+        self.assertTrue(qa.unexpected_diagnostics(save, recovery_tests=False))
+        self.assertTrue(qa.unexpected_diagnostics(save.replace("test_save_resume", "test_menu"), recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(save.replace("_read_save", "_load_story"), recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(save * 2, recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(progress * 7, recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(save + "SCRIPT ERROR: something else\n", recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(save + "ERROR: missing resource\n", recovery_tests=True))
+        self.assertTrue(qa.unexpected_diagnostics(save.splitlines()[0], recovery_tests=True))
 
 
 if __name__ == "__main__":

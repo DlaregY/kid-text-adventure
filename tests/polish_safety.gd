@@ -7,7 +7,8 @@ func run(suite, game) -> void:
 	await suite.start_dragon(game)
 	game.current_scene_id = "hall"
 	await game._render_scene()
-	await suite.apply(game, ["open", "box"])
+	var open_box: Array[String] = ["open", "box"]
+	await suite.apply(game, open_box)
 	game._record_ending(game.loaded_story_path, "win")
 	game._save_settings()
 	var saved := FileAccess.get_file_as_string(game.SAVE_PATH)

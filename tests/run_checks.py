@@ -49,16 +49,59 @@ def cleanup_data(stage: Path, name: str) -> None:
     shutil.rmtree(data)
 
 
+def unexpected_diagnostics(text: str, *, recovery_tests: bool = False) -> list[str]:
+    """Keep all errors except the two intentional corrupt-file recovery cases.
+
+    Godot JSON.parse_string logs an engine error even when callers recover. Only
+    allow the exact diagnostics from the existing save/progress corruption tests,
+    identified by both engine call and test backtrace; no other JSON or script
+    error is waived. Retain the full original transcript on disk.
+    """
+    lines = re.sub(r"\x1b\[[0-9;]*m", "", text).splitlines()
+    unexpected: list[str] = []
+    allowed = {"test_save_resume": 1, "test_endings": 6}
+    for index, line in enumerate(lines):
+        if not re.search(r"SCRIPT ERROR:|Parse Error:|^ERROR:|^FAIL:", line):
+            continue
+        trace: list[str] = []
+        for following in lines[index + 1:]:
+            if following and not following[0].isspace():
+                break
+            trace.append(following)
+        backtrace = "\n".join(trace)
+        waived = False
+        if recovery_tests:
+            for test, reader, detail in [
+                ("test_save_resume", "_read_save", "Expected key"),
+                ("test_endings", "_read_progress", "Expected ']'"),
+            ]:
+                if (line == "ERROR: Parse JSON failed. Error at line 0: " + detail
+                        and "at: parse_string (core/io/json.cpp:" in backtrace
+                        and re.search(r"\[0\] " + reader + r" \(res://scripts/Game\.gd:\d+\)", backtrace)
+                        and re.search(r"\[\d+\] " + test + r" \(res://tests/game_regressions\.gd:\d+\)", backtrace)
+                        and allowed[test] > 0):
+                    allowed[test] -= 1
+                    waived = True
+                    break
+        if not waived:
+            unexpected.append(line)
+    return unexpected
+
+
 def run_logged(command: list[str], env: dict[str, str], log: Path, expected: str = "") -> None:
     result = subprocess.run(command, env=env, text=True, encoding="utf-8", errors="replace",
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=240, check=False)
     log.write_text(result.stdout, encoding="utf-8")
     print(result.stdout, end="", flush=True)
-    error = re.search(r"SCRIPT ERROR:|Parse Error:|^ERROR:|^FAIL:", result.stdout, re.MULTILINE)
-    if result.returncode or error or (expected and expected not in result.stdout):
+    regressions = expected == "Game regression checks="
+    errors = unexpected_diagnostics(result.stdout, recovery_tests=regressions)
+    if result.returncode or errors or (expected and expected not in result.stdout):
         raise RuntimeError(f"Godot check failed; see {log}")
-    if expected == "Game regression checks=" and not re.search(r"Game regression checks=\d+; failures=0", result.stdout):
-        raise RuntimeError(f"Regression summary did not report zero failures; see {log}")
+    if regressions:
+        completed = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help"
+        if (not re.search(r"Game regression checks=\d+; failures=0", result.stdout)
+                or completed not in result.stdout):
+            raise RuntimeError(f"Regression suite did not complete successfully; see {log}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -84,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
         # Ignore any environment-selected external override from the parent shell.
         env.pop("GODOT_OVERRIDE", None)
         try:
-            base = [binary, "--path", str(stage), "--rendering-method", "gl_compatibility"]
+            base = [binary, "--path", str(stage), "--rendering-method", "gl_compatibility", "--audio-driver", "Dummy"]
             run_logged(base + ["--headless", "--editor", "--import"], env, output / "import.log")
             for suite in names:
                 script, expected = SUITES[suite]
