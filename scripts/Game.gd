@@ -9,6 +9,15 @@ const STORIES_DIR := "res://stories"
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
 const PROGRESS_PATH := "user://progress.json"
+const SETTINGS_PATH := "user://settings.json"
+const SFX := {
+	"tap": preload("res://assets/sfx/tap.wav"),
+	"next": preload("res://assets/sfx/next.wav"),
+	"success": preload("res://assets/sfx/success.wav"),
+	"fail": preload("res://assets/sfx/fail.wav"),
+	"whoosh": preload("res://assets/sfx/whoosh.wav"),
+	"fanfare": preload("res://assets/sfx/fanfare.wav"),
+}
 const TOP_BAR_HEIGHT: float = 56.0
 const BOTTOM_BAR_HEIGHT: float = 184.0
 const CONTINUE_BAR_HEIGHT: float = 104.0
@@ -121,6 +130,10 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var about_version: Label = $AboutDialog/Center/Panel/Box/AboutVersion
 @onready var top_bar: HBoxContainer = $TopBar
 @onready var home_button: Button = $TopBar/HomeButton
+@onready var speak_button: Button = $TopBar/SpeakButton
+@onready var sfx_player: AudioStreamPlayer = $Sfx
+@onready var read_aloud_toggle: CheckButton = $AboutDialog/Center/Panel/Box/ReadAloudToggle
+@onready var sound_toggle: CheckButton = $AboutDialog/Center/Panel/Box/SoundToggle
 @onready var stop_dialog: Control = $StopDialog
 @onready var keep_button: Button = $StopDialog/Center/Panel/Box/KeepButton
 @onready var stop_menu_button: Button = $StopDialog/Center/Panel/Box/StopMenuButton
@@ -166,6 +179,9 @@ var command_timer := Timer.new()
 var is_executing_command := false
 var story_generation: int = 0 # bumped whenever a story starts or stops; stale coroutines check it
 var continue_pressed := false
+var settings := {"read_aloud": false, "sound": true}
+var last_sfx := "" # name of the most recent effect actually played (for tests)
+var tts_voice := "" # chosen system voice id, "" when the device has none
 var pending_scene_id := "" # destination of a transition whose Continue tap has not happened yet; saves point here
 
 func _ready() -> void:
@@ -194,6 +210,14 @@ func _ready() -> void:
 		about_version.text = version_label.text
 
 	about_button.pressed.connect(func() -> void: about_dialog.visible = true)
+	_load_settings()
+	read_aloud_toggle.button_pressed = bool(settings["read_aloud"])
+	sound_toggle.button_pressed = bool(settings["sound"])
+	read_aloud_toggle.toggled.connect(func(on: bool) -> void: settings["read_aloud"] = on; _save_settings())
+	sound_toggle.toggled.connect(func(on: bool) -> void: settings["sound"] = on; _save_settings())
+	speak_button.pressed.connect(_on_speak_pressed)
+	continue_button.pressed.connect(func() -> void: _play_sfx("next"))
+	_pick_tts_voice()
 	about_close.pressed.connect(func() -> void: about_dialog.visible = false)
 	play_button.pressed.connect(_on_start_pressed)
 	resume_button.pressed.connect(_on_resume_pressed)
@@ -210,6 +234,83 @@ func _ready() -> void:
 	feedback_text.add_theme_color_override("font_color", FEEDBACK_NEUTRAL)
 	_discover_stories()
 	_show_menu()
+
+# --- Settings, sound effects, and read-aloud.
+
+func _load_settings() -> void:
+	if not FileAccess.file_exists(SETTINGS_PATH):
+		return
+	var f := FileAccess.open(SETTINGS_PATH, FileAccess.READ)
+	if f == null:
+		return
+	var parsed = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return
+	for key in settings.keys():
+		if parsed.has(key) and typeof(parsed[key]) == TYPE_BOOL:
+			settings[key] = parsed[key]
+
+func _save_settings() -> void:
+	var f := FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
+	if f == null:
+		push_warning("Could not write settings file: " + SETTINGS_PATH)
+		return
+	f.store_string(JSON.stringify(settings))
+
+func _exit_tree() -> void:
+	# Release any in-flight playback so the audio server holds nothing after the game is freed.
+	sfx_player.stop()
+	if tts_voice != "":
+		DisplayServer.tts_stop()
+
+func _play_sfx(name: String) -> void:
+	if not bool(settings["sound"]) or not SFX.has(name):
+		return
+	last_sfx = name
+	if AudioServer.get_driver_name() == "Dummy":
+		return # headless/no-audio runs: record the trigger without starting a playback that never ends
+	sfx_player.stream = SFX[name]
+	sfx_player.play()
+
+func _pick_tts_voice() -> void:
+	tts_voice = ""
+	if not DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
+		return
+	var voices: PackedStringArray = DisplayServer.tts_get_voices_for_language("en")
+	if voices.is_empty():
+		var all_voices: Array = DisplayServer.tts_get_voices()
+		if not all_voices.is_empty():
+			voices.append(str(all_voices[0].get("id", "")))
+	if not voices.is_empty() and voices[0] != "":
+		tts_voice = voices[0]
+
+func _speak(text: String) -> bool:
+	if tts_voice == "" or text.strip_edges() == "":
+		return false
+	DisplayServer.tts_stop()
+	DisplayServer.tts_speak(text, tts_voice, 80, 1.0, 0.9)
+	return true
+
+func _on_speak_pressed() -> void:
+	if not has_active_story:
+		return
+	if tts_voice != "" and DisplayServer.tts_is_speaking():
+		DisplayServer.tts_stop()
+		return
+	var parts: Array[String] = []
+	if ending_badge.visible:
+		parts.append(ending_label.text)
+	parts.append(story_text.text)
+	if feedback_text.text != "":
+		parts.append(feedback_text.text)
+	if not _speak(". ".join(parts)):
+		_show_feedback("This phone has no reading voice.", "neutral")
+
+func _on_tile_long_pressed(tile: Button) -> void:
+	if _input_blocked():
+		return
+	_bounce_tile(tile)
+	_speak(_label_for(tile.token))
 
 func _process(_delta: float) -> void:
 	var running: bool = not command_timer.is_stopped()
@@ -516,6 +617,8 @@ func _start_story(resume: bool = false) -> void:
 
 func _show_menu() -> void:
 	command_timer.stop()
+	if tts_voice != "":
+		DisplayServer.tts_stop()
 	story_generation += 1
 	has_active_story = false
 	is_transitioning = false
@@ -813,6 +916,7 @@ func _render_scene() -> void:
 				else:
 					ending_label.text = "🏆 %s!" % title
 				ending_badge.visible = true
+				_play_sfx("fanfare")
 	await _auto_fit_story_text()
 
 func _refresh_tiles() -> void:
@@ -858,7 +962,15 @@ func _show_feedback(text: String, kind: String) -> void:
 	elif kind == "fail":
 		color = FEEDBACK_FAIL
 	feedback_text.add_theme_color_override("font_color", color)
-	if text == "" or kind == "neutral":
+	if text == "":
+		return
+	if bool(settings["read_aloud"]):
+		_speak(text)
+	if kind == "success":
+		_play_sfx("success")
+	elif kind == "fail":
+		_play_sfx("fail")
+	if kind == "neutral":
 		return
 	feedback_text.pivot_offset = feedback_text.size / 2.0
 	feedback_text.scale = Vector2.ONE
@@ -938,6 +1050,7 @@ func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thin
 		tile.add_theme_stylebox_override("hover", hover)
 		tile.add_theme_stylebox_override("pressed", pressed)
 	tile.pressed.connect(_on_tile_pressed.bind(tile))
+	tile.long_pressed.connect(_on_tile_long_pressed.bind(tile))
 	return tile
 
 func _input_blocked() -> bool:
@@ -946,8 +1059,12 @@ func _input_blocked() -> bool:
 func _on_tile_pressed(tile: Button) -> void:
 	if _input_blocked():
 		return
+	if tile.long_press_fired:
+		tile.long_press_fired = false
+		return
 
 	_bounce_tile(tile)
+	_play_sfx("tap")
 	var cat: String = tile.category
 	if cat == "action":
 		slot1.set_tile(tile.token, tile.text)
@@ -1112,6 +1229,7 @@ func _transition_to_scene(scene_id: String) -> void:
 		return
 
 	# Fade to black
+	_play_sfx("whoosh")
 	var tween := create_tween()
 	tween.tween_property(transition_overlay, "color:a", 1.0, 0.3)
 	await tween.finished

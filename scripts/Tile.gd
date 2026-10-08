@@ -1,14 +1,38 @@
 # res://scripts/Tile.gd
 extends Button
 
+signal long_pressed
+
+const LONG_PRESS_SECONDS: float = 0.5
+
 @export var token: String = ""
 var tile_color: Color = Color(0.357, 0.608, 0.835)
 var category: String = ""  # "action", "thing", or "inventory"
+var long_press_fired: bool = false # true when the current press became a long press; `pressed` is then ignored
+var _hold_timer: Timer
 
 func _ready() -> void:
 	# Only set text from token if it wasn't already set by the caller
 	if text == "" and token != "":
 		text = token
+	_hold_timer = Timer.new()
+	_hold_timer.one_shot = true
+	_hold_timer.wait_time = LONG_PRESS_SECONDS
+	_hold_timer.timeout.connect(_on_hold_timeout)
+	add_child(_hold_timer)
+	button_down.connect(_on_button_down)
+	button_up.connect(_on_button_up)
+
+func _on_button_down() -> void:
+	long_press_fired = false
+	_hold_timer.start()
+
+func _on_button_up() -> void:
+	_hold_timer.stop()
+
+func _on_hold_timeout() -> void:
+	long_press_fired = true
+	long_pressed.emit()
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	# Show a styled preview matching tile appearance while dragging

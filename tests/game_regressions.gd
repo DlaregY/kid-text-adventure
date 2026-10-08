@@ -489,6 +489,74 @@ func test_endings(game) -> void:
 	game._clear_save()
 	print("Checked ending badge, progress persistence, and card counts")
 
+func test_sound_and_speech(game) -> void:
+	# Settings round-trip through the parent corner toggles.
+	if FileAccess.file_exists(game.SETTINGS_PATH):
+		DirAccess.remove_absolute(game.SETTINGS_PATH)
+	game.sound_toggle.button_pressed = false
+	game.read_aloud_toggle.button_pressed = true
+	check(not game.settings["sound"] and game.settings["read_aloud"], "Toggles update settings")
+	game.settings = {"read_aloud": false, "sound": true}
+	game._load_settings()
+	check(not game.settings["sound"] and game.settings["read_aloud"], "Settings persist to disk")
+	# Sound off: nothing plays. Sound on: effects fire for tap, fail, success, next.
+	await start_dragon(game)
+	game.current_scene_id = "hall"
+	await game._render_scene()
+	game.last_sfx = ""
+	tap(game, "look")
+	check(game.last_sfx.is_empty(), "No tap sound while sound is off")
+	game.sound_toggle.button_pressed = true
+	tap(game, "box")
+	check(game.last_sfx == "tap", "Tap sound plays")
+	game.slot1.tapped.emit()
+	game.slot2.tapped.emit()
+	await apply(game, ["go", "key"])
+	check(game.last_sfx == "fail", "Fallback plays the fail sound")
+	await apply(game, ["open", "box"])
+	check(game.last_sfx == "success", "Progress plays the success sound")
+	game.last_sfx = ""
+	await apply(game, ["look", "door"])
+	check(game.last_sfx.is_empty(), "Plain responses are silent")
+	await apply(game, ["take", "key"])
+	while not game.continue_button.visible:
+		await process_frame
+	game.continue_button.pressed.emit()
+	check(game.last_sfx == "next", "NEXT plays its sound")
+	while game.is_transitioning:
+		await process_frame
+	game.current_scene_id = "win"
+	await game._render_scene()
+	check(game.last_sfx == "fanfare", "Ending plays the fanfare")
+	# Long press reads the word instead of placing the tile.
+	game._show_menu()
+	await start_dragon(game)
+	var look_tile: Button = null
+	for tile in game.action_tray.get_children():
+		if tile.token == "look":
+			look_tile = tile
+	look_tile.button_down.emit()
+	await create_timer(0.6).timeout
+	check(look_tile.long_press_fired, "Holding a tile fires a long press")
+	look_tile.button_up.emit()
+	look_tile.pressed.emit()
+	check(game.slot1.token.is_empty(), "A long press does not place the tile")
+	look_tile.pressed.emit()
+	check(game.slot1.token == "look", "The next normal tap places it")
+	# Speaking with no voice is a quiet no-op with a friendly message.
+	check(not game._speak("hello") or game.tts_voice != "", "Speak reports whether a voice exists")
+	game._on_speak_pressed()
+	if game.tts_voice == "":
+		check(game.feedback_text.text.contains("no reading voice"), "Speak button explains a missing voice")
+	game.read_aloud_toggle.button_pressed = false
+	game.sound_toggle.button_pressed = true
+	game._show_menu()
+	game._clear_save()
+	game._clear_progress()
+	if FileAccess.file_exists(game.SETTINGS_PATH):
+		DirAccess.remove_absolute(game.SETTINGS_PATH)
+	print("Checked settings, sound effects, long-press, and speech guards")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -511,6 +579,7 @@ func run() -> void:
 	await test_command_bar_feel(game)
 	await test_labels(game)
 	await test_endings(game)
+	await test_sound_and_speech(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

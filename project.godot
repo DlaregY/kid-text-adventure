@@ -18,6 +18,10 @@ config/icon="res://assets/icons/android/launcher_main_192.svg"
 boot_splash/image="res://assets/branding/norbonics-games.png"
 boot_splash/fullsize=true
 
+[audio]
+
+general/text_to_speech=true
+
 [display]
 
 window/size/viewport_width=540

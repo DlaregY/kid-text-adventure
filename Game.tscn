@@ -345,6 +345,12 @@ offset_right = -16.0
 offset_bottom = 48.0
 grow_horizontal = 2
 
+[node name="SpeakButton" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(56, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "🔊"
+
 [node name="TopSpacer" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -478,6 +484,25 @@ Privacy policy: see the Google Play listing.
 games.norbonics.com"
 autowrap_mode = 3
 
+[node name="ReadAloudToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.15, 0.1, 1)
+text = "Read responses aloud automatically"
+
+[node name="SoundToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.15, 0.1, 1)
+button_pressed = true
+text = "Sound effects"
+
 [node name="AboutVersion" type="Label" parent="AboutDialog/Center/Panel/Box"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
@@ -494,6 +519,8 @@ theme_override_styles/normal = SubResource("play_normal")
 theme_override_styles/hover = SubResource("play_hover")
 theme_override_styles/pressed = SubResource("play_pressed")
 text = "CLOSE"
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
 
 [node name="TransitionOverlay" type="ColorRect" parent="."]
 layout_mode = 1

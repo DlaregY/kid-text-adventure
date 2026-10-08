@@ -84,6 +84,8 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Endings collection:** A terminal scene may carry `ending: {id, title}`. Rendering it calls `_record_ending()` (appends the id to `user://progress.json`, keyed by story file basename) and shows the gold `EndingBadge` above the story text: "🏆 {title} ending!  (N of M found)" for multi-ending stories, "🏆 {title}!" otherwise. `_story_info()` collects `ending_ids` per story; `_refresh_card_badges()` (run by `_show_menu()`) appends "⭐ N of M endings" or "⭐ Finished" to each card. Ending scene text should not repeat the title. `_validate_story()` rejects an `ending` without an `id`.
 
+**Sound and read-aloud:** Six generated WAV effects live in `assets/sfx/` and are preloaded in the `SFX` dict; `_play_sfx(name)` plays them through the `Sfx` AudioStreamPlayer when `settings.sound` is on (tap on tile tap, success/fail from `_show_feedback()`, whoosh on fade, fanfare on an ending scene, next on NEXT). It records `last_sfx` and skips actual playback on the Dummy audio driver so headless runs leave nothing alive. `project.godot` enables `audio/general/text_to_speech`; `_pick_tts_voice()` picks the first English system voice (empty on devices without one). The 🔊 SpeakButton in the TopBar reads the ending badge, story text and current response, or stops speech if already speaking; with no voice it shows "This phone has no reading voice." Long-pressing a tile (`Tile.long_pressed`, 0.5 s via `button_down`/`button_up`) bounces it and speaks its label without placing it (`long_press_fired` makes the following `pressed` a no-op). Settings `{read_aloud, sound}` persist in `user://settings.json` and are toggled by two CheckButtons in the Parent corner; `read_aloud` speaks every response automatically. `_exit_tree()` stops playback and speech.
+
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
 
 **Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_refresh_tiles()` (called by `_render_scene()` and after any command that changes inventory/flags) computes the wanted token list per tray and rebuilds only trays whose contents changed, freeing old tiles immediately rather than with `queue_free()` so nothing double-renders. Progress-only commands no longer re-render the story text; they call `_auto_fit_story_text(false)`, which only shrinks from the current size. It sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
@@ -124,7 +126,7 @@ Command rules: `pattern` (2 token array), `response`, optional `requirements` (i
 ## Known Limitations
 
 - Scene `image` fields in JSON are parsed but not rendered.
-- No sound/animation feedback, no JSON validation.
+- Emoji icons, sound effects and TTS voices all depend on what the device provides.
 - Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS). Bundled CBDT-format emoji fonts (e.g. NotoColorEmoji.ttf) do not render in Godot.
 
 ## Deferred Features

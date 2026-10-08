@@ -54,9 +54,10 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: badge legibility; NEXT bar placement with gesture navigation.
 
 ## Phase 6 — Read-aloud and sound [C24, C26]
-- [ ] 🔊 button reads story text; tap feedback reads it; long-press a tile reads the word (DisplayServer TTS).
-- [ ] Six short OGG effects + mute toggle persisted in settings.
-- [ ] Phone: TTS voice available on Gerald's moto g; mute persists across launches.
+- [x] 🔊 button reads badge + story text + response (tap again to stop); optional auto-read of responses; long-press a tile reads the word without placing it.
+- [x] Six generated WAV effects (tap, next, success, fail, whoosh, fanfare) + Sound effects / Read aloud switches in the Parent corner, persisted in `user://settings.json`.
+- [x] Tests: settings round-trip, sound-off silence, each trigger's effect, long-press suppression, no-voice guard (182 checks).
+- [ ] Phone: TTS voice available on Gerald's moto g; volume/rate feel right; mute persists across launches; long-press timing on touch.
 
 ## Phase 7 — Text and typography [B16, B17, B22, B23, C27]
 - [ ] Early-reader font bundled with looser line spacing; story min height reduced.
