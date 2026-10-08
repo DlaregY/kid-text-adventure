@@ -39,10 +39,12 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: slot tap-to-clear works with touch; bar/pop/shake feel right; no flicker on TAKE SNACK.
 
 ## Phase 4 — Menu as story cards [B18, B19, B20, C29]
-- [ ] Replace OptionButton with a scrollable list of cards (cover emoji, title, teaser, length badge).
-- [ ] Use `vocab` labels for tile text; add `meta.cover` and `meta.order` to story JSON.
-- [ ] Parent corner / About screen (version, privacy text, no-ads statement, Games URL).
-- [ ] Tests: cards fit 540 px; selecting a card updates the selected path; labels render.
+- [x] Replace OptionButton with a scrollable list of cards (cover emoji, title, teaser, length badge); PLAY/CONTINUE in a fixed bottom bar.
+- [x] Use `vocab` labels for tile text; add `meta.cover` and `meta.order` to story JSON; lowercase verb labels in Phone Trap and Shake Escape.
+- [x] Parent corner / About screen (version, offline/no-data statement, Games URL).
+- [x] Tests: cards fit 540 px and contain their text; selecting a card updates the selected path; labels render; Back closes the Parent corner (148 checks).
+- [x] Visual check via `tests/screenshots.gd` under Xvfb (found and fixed card overflow and low-contrast feedback colors).
+- [ ] Phone: card taps, scrolling the list above the fixed PLAY bar, Parent corner text size.
 
 ## Phase 5 — Endings collection and ending presentation [C25]
 - [ ] `ending` field on terminal scenes (`{"id","title"}`); render title as a small gold badge, not line one.

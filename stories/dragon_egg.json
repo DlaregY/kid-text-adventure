@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Lost Dragon Egg", "version": 3, "teaser": "Find the lost dragon egg and bring it home!" },
+  "meta": { "title": "The Lost Dragon Egg", "version": 3, "teaser": "Find the lost dragon egg and bring it home!", "cover": "🐉", "order": 1 },
   "vocab": {
 	"go": { "label": "go" },
 	"open": { "label": "open" },

@@ -40,14 +40,54 @@ func continue_story(game) -> void:
 		await process_frame
 
 func test_menu(game) -> void:
-	for i in range(game.story_picker.item_count):
-		game.story_picker.select(i)
-		game._on_story_selected(i)
+	check(game.story_cards.size() == game.discovered_stories.size() and game.story_cards.size() == 6, "One card per story")
+	check(game.discovered_stories[0].display_name == "The Lost Dragon Egg", "Cards follow meta.order")
+	check(game.bottom_bar.visible and game.play_button.visible, "PLAY lives in the fixed bottom bar on the menu")
+	for i in range(game.story_cards.size()):
+		game.card_buttons[i].pressed.emit()
 		await settle()
-		var rect: Rect2 = game.story_picker.get_global_rect()
+		var rect: Rect2 = game.story_cards[i].get_global_rect()
 		check(rect.position.x >= 0 and rect.end.x <= root.size.x,
-			"Story picker must fit the 540px viewport: " + game.story_picker.get_item_text(i))
-	print("Checked menu bounds for every story")
+			"Story card must fit the 540px viewport: " + game.discovered_stories[i].display_name)
+		check(game.selected_story_path == game.discovered_stories[i].path, "Tapping a card selects its story")
+		check(game.story_cards[i].get_theme_stylebox("panel").border_width_left == 4, "Selected card is highlighted")
+		var inner: Control = game.story_cards[i].get_child(0)
+		check(inner.get_global_rect().end.y <= rect.end.y + 0.5, "Card content stays inside the card: " + game.discovered_stories[i].display_name)
+		check(game.card_buttons[i].get_global_rect().encloses(inner.get_global_rect()), "Tap target covers the card content")
+	var bar_rect: Rect2 = game.bottom_bar.get_global_rect()
+	check(bar_rect.end.y <= root.size.y and game.scroll_container.get_global_rect().end.y <= bar_rect.position.y,
+		"Bottom bar is on screen and the menu scrolls above it")
+	game.card_buttons[2].pressed.emit()
+	game._on_start_pressed()
+	await settle()
+	check(game.has_active_story and game.loaded_story_path == game.discovered_stories[2].path, "PLAY starts the selected card")
+	check(not game.bottom_bar.visible and game.scroll_container.offset_bottom == 0.0, "Bottom bar hides during a story")
+	game._show_menu()
+	game.about_button.pressed.emit()
+	check(game.about_dialog.visible, "Parent corner opens")
+	game.card_buttons[0].pressed.emit()
+	check(game.selected_story_index == 2, "Cards ignore taps under the Parent corner")
+	game._notification(game.NOTIFICATION_WM_GO_BACK_REQUEST)
+	check(not game.about_dialog.visible and game.menu_screen.visible, "Back closes the Parent corner without quitting")
+	game.about_button.pressed.emit()
+	game.about_close.pressed.emit()
+	check(not game.about_dialog.visible, "CLOSE closes the Parent corner")
+	check(game.about_version.text == game.version_label.text and game.version_label.text.begins_with("v0."), "About shows the version")
+	game._clear_save()
+	print("Checked story cards, bottom bar, and parent corner")
+
+func test_labels(game) -> void:
+	await start_bigfoot_meeting(game, false)
+	var found := ""
+	for tile in game.thing_tray.get_children():
+		if tile.token == "bigfoot":
+			found = tile.text
+	check(found == "🦶 Bigfoot", "Tiles use vocab labels: " + found)
+	await apply(game, ["talk", "camp"])
+	check(game.feedback_text.text.contains("camp"), "Fallbacks still name the thing")
+	game._show_menu()
+	game._clear_save()
+	print("Checked vocab labels on tiles")
 
 func test_command_delay(game) -> void:
 	await start_dragon(game)
@@ -416,6 +456,7 @@ func run() -> void:
 	await test_pending_transition_save(game)
 	await test_home_button_fixed(game)
 	await test_command_bar_feel(game)
+	await test_labels(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

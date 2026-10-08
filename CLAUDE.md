@@ -15,7 +15,7 @@ Open in Godot 4.6+ editor and press F5, or from CLI:
 godot4 --path .
 ```
 
-Run the headless smoke and regression suites with `godot4 --headless --path . --script res://tests/story_smoke.gd` and `godot4 --headless --path . --script res://tests/game_regressions.gd`. On a fresh checkout, import first with `godot4 --headless --path . --editor --import`. Also playtest in the Godot editor and on target devices.
+Run the headless smoke and regression suites with `godot4 --headless --path . --script res://tests/story_smoke.gd` and `godot4 --headless --path . --script res://tests/game_regressions.gd`. On a fresh checkout, import first with `godot4 --headless --path . --editor --import`. For visual review without a phone, `tests/screenshots.gd` walks the menu, Parent corner, a scene, a failed and a successful command, the stop dialog and the CONTINUE menu, saving PNGs to `exports/shots/`; it needs a display, e.g. `LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 540x960x24" godot4 --path . --rendering-method gl_compatibility --rendering-driver opengl3 --resolution 540x960 --script res://tests/screenshots.gd`. Also playtest in the Godot editor and on target devices.
 
 ## Export, Install & Release
 
@@ -56,7 +56,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - `ui/Tile.tscn` — Reusable tile button component (72px min height, 32px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
-**Story selection:** MenuScreen is a centered VBoxContainer with Ike's logo (220x220 icon.png), "Ike Quest" title (40px), "A Text Adventure" subtitle (20px gray), story picker dropdown (24px), teaser label (18px gray), green PLAY button (80px tall, 36px font, rounded corners), and version label (14px gray, pushed to bottom via flex spacer). The picker shows `"Title (N scenes)"` and stories are sorted by ascending scene count. Selecting a story displays its `meta.teaser` from the JSON. Version is read from `version.txt` at startup. It hides game UI (CommandBar, TileSection, FeedbackText, StoryText). On start, game UI is shown and MenuScreen is hidden. On terminal scenes (no outgoing transitions), a "NEW GAME" button appears inline at the bottom, returning to the menu.
+**Story selection:** MenuScreen is a VBoxContainer with the Norbonics Games logo, Games URL, "Ike Quest" title, "Pick a story!" subtitle, a `StoryList` of story cards built at runtime by `_make_story_card()` (PanelContainer with cover emoji from `meta.cover`, title, teaser, and a `Short/Medium/Long · N scenes` badge; an invisible full-card `Tap` Button selects it; the selected card gets an orange 4px border via `_card_style()`), a flat "ⓘ Parent corner" button, and the version label. Stories sort by `meta.order`, then scene count. PLAY and the orange CONTINUE button live in a fixed `BottomBar` overlay (the ScrollContainer's `offset_bottom` is `-BOTTOM_BAR_HEIGHT` on the menu, 0 in a story). `AboutDialog` ("Parent corner") shows an offline/no-data statement, the Games URL, and the version; Back or CLOSE dismisses it. Version is read from `version.txt` at startup. On terminal scenes (no outgoing transitions), a "NEW GAME" button appears inline at the bottom, returning to the menu.
 
 **Game loop:** Story picker → select story → load JSON → render scene (text + tiles) → player taps tiles (auto-placed into correct slot by category) → when all visible slots filled, 0.5s delay then auto-execute → match command pattern against scene rules → check requirements (inventory/flags) → apply effects → show response → optionally transition scene with fade.
 
@@ -80,6 +80,8 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Stop dialog and Android Back:** `project.godot` sets `quit_on_go_back=false`. `_notification(NOTIFICATION_WM_GO_BACK_REQUEST)` dismisses the StopDialog if open, otherwise opens it during a story, otherwise quits from the menu. The ⌂ HomeButton in the TopBar (visible only during a story) opens the same dialog. Opening the dialog stops `command_timer`, and `_input_blocked()` (story inactive, transitioning, executing, or dialog visible) gates tile taps, drops, and execution. KEEP PLAYING hides it and re-arms the debounce if both slots are still filled; GO TO MENU calls `_show_menu()`, which keeps the save so CONTINUE is offered. `_transition_to_scene()` polls frames for its pause and the ▶ press (via `continue_pressed`) rather than awaiting signals or timers, so a stopped story releases the coroutine.
 
+**Tile labels:** `_label_for(token)` returns the story's `vocab[token].label` (or a plain string value) and falls back to the token; tiles show `emoji + label` and the smart fallbacks substitute labels into their `{thing}`/`{item}` placeholders. Verb labels are lowercase in every story; nouns may be capitalized (e.g. "Bigfoot", "Skull Rider").
+
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
 
 **Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_refresh_tiles()` (called by `_render_scene()` and after any command that changes inventory/flags) computes the wanted token list per tray and rebuilds only trays whose contents changed, freeing old tiles immediately rather than with `queue_free()` so nothing double-renders. Progress-only commands no longer re-render the story text; they call `_auto_fit_story_text(false)`, which only shrinks from the current size. It sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
@@ -96,8 +98,8 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 ## Story JSON Format
 
 ```
-meta.title / meta.version / meta.teaser
-vocab: { token: label }          # label mapping exists but tiles use EMOJI dict + raw token instead
+meta.title / meta.version / meta.teaser / meta.cover (emoji) / meta.order (int, menu sort)
+vocab: { token: { label } }     # tile text = EMOJI[token] + label (token if absent)
 start_scene: scene_id
 scenes.{id}.text: [lines]        # displayed to player
 scenes.{id}.tiles: [tokens]      # available drag tiles
@@ -118,7 +120,6 @@ Command rules: `pattern` (2 token array), `response`, optional `requirements` (i
 
 ## Known Limitations
 
-- `vocab` labels defined but not yet used for tile rendering (tiles show emoji + raw token text via the `EMOJI` dict instead).
 - Scene `image` fields in JSON are parsed but not rendered.
 - No sound/animation feedback, no JSON validation.
 - Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS). Bundled CBDT-format emoji fonts (e.g. NotoColorEmoji.ttf) do not render in Godot.

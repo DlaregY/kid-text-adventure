@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Crystal Cave", "version": 2, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!" },
+  "meta": { "title": "The Crystal Cave", "version": 2, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!", "cover": "🔮", "order": 2 },
   "vocab": {
     "go": { "label": "go" },
     "open": { "label": "open" },

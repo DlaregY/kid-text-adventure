@@ -2,7 +2,9 @@
   "meta": {
     "title": "The Bigfoot Campout",
     "version": 2,
-    "teaser": "Follow giant footprints and discover who is hiding in the woods!"
+    "teaser": "Follow giant footprints and discover who is hiding in the woods!",
+    "cover": "🏕️",
+    "order": 3
   },
   "vocab": {
     "go": { "label": "go" },

@@ -2,7 +2,9 @@
   "meta": {
     "title": "Spiderdude and the Ghost Chain",
     "version": 3,
-    "teaser": "Help Spiderdude stop Skull Rider and save the city!"
+    "teaser": "Help Spiderdude stop Skull Rider and save the city!",
+    "cover": "🕷️",
+    "order": 6
   },
   "vocab": {
     "look": { "label": "look" },

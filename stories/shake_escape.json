@@ -2,15 +2,17 @@
   "meta": {
     "title": "Shake Escape",
     "version": 3,
-    "teaser": "Your eggs need salt. But the saltshaker has other plans!"
+    "teaser": "Your eggs need salt. But the saltshaker has other plans!",
+    "cover": "🧂",
+    "order": 4
   },
   "vocab": {
-    "look": {"label": "Look"},
-    "go": {"label": "Go"},
-    "take": {"label": "Take"},
-    "open": {"label": "Open"},
-    "talk": {"label": "Talk"},
-    "climb": {"label": "Climb"},
+    "look": {"label": "look"},
+    "go": {"label": "go"},
+    "take": {"label": "take"},
+    "open": {"label": "open"},
+    "talk": {"label": "talk"},
+    "climb": {"label": "climb"},
     "eggs": {"label": "Eggs"},
     "salt": {"label": "Salt"},
     "plate": {"label": "Plate"},

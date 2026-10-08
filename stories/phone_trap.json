@@ -2,16 +2,18 @@
   "meta": {
     "title": "Phone Trap",
     "version": 2,
-    "teaser": "You sneak Dad's phone at night. The screen pulls you in!"
+    "teaser": "You sneak Dad's phone at night. The screen pulls you in!",
+    "cover": "📱",
+    "order": 5
   },
   "vocab": {
-    "look": {"label": "Look"},
-    "go": {"label": "Go"},
-    "take": {"label": "Take"},
-    "open": {"label": "Open"},
-    "talk": {"label": "Talk"},
-    "give": {"label": "Give"},
-    "climb": {"label": "Climb"},
+    "look": {"label": "look"},
+    "go": {"label": "go"},
+    "take": {"label": "take"},
+    "open": {"label": "open"},
+    "talk": {"label": "talk"},
+    "give": {"label": "give"},
+    "climb": {"label": "climb"},
     "phone": {"label": "Phone"},
     "robot": {"label": "Robot"},
     "bug": {"label": "Bug"},

@@ -9,11 +9,13 @@ const STORIES_DIR := "res://stories"
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
 const TOP_BAR_HEIGHT: float = 56.0
+const BOTTOM_BAR_HEIGHT: float = 184.0
 const TILE_BLUE := Color(0.357, 0.608, 0.835)
 const TILE_GOLD := Color(0.85, 0.65, 0.13)
-const FEEDBACK_NEUTRAL := Color(0.2, 0.15, 0.1)
-const FEEDBACK_SUCCESS := Color(0.1, 0.5, 0.2)
-const FEEDBACK_FAIL := Color(0.6, 0.25, 0.2)
+# Feedback sits on the dark gray game background, so these are light tints.
+const FEEDBACK_NEUTRAL := Color(0.95, 0.92, 0.85)
+const FEEDBACK_SUCCESS := Color(0.55, 0.95, 0.55)
+const FEEDBACK_FAIL := Color(1.0, 0.6, 0.5)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
@@ -107,9 +109,14 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 ]
 
 @onready var menu_screen: VBoxContainer = $ScrollContainer/Layout/MenuScreen
-@onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuScreen/StoryPicker
-@onready var play_button: Button = $ScrollContainer/Layout/MenuScreen/PlayButton
-@onready var resume_button: Button = $ScrollContainer/Layout/MenuScreen/ResumeButton
+@onready var story_list: VBoxContainer = $ScrollContainer/Layout/MenuScreen/StoryList
+@onready var bottom_bar: VBoxContainer = $BottomBar
+@onready var play_button: Button = $BottomBar/PlayButton
+@onready var resume_button: Button = $BottomBar/ResumeButton
+@onready var about_button: Button = $ScrollContainer/Layout/MenuScreen/AboutButton
+@onready var about_dialog: Control = $AboutDialog
+@onready var about_close: Button = $AboutDialog/Center/Panel/Box/AboutClose
+@onready var about_version: Label = $AboutDialog/Center/Panel/Box/AboutVersion
 @onready var top_bar: HBoxContainer = $TopBar
 @onready var home_button: Button = $TopBar/HomeButton
 @onready var stop_dialog: Control = $StopDialog
@@ -129,7 +136,6 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var transition_overlay: ColorRect = $TransitionOverlay
 @onready var continue_button: Button = $ScrollContainer/Layout/ContinueButton
 @onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
-@onready var teaser_label: Label = $ScrollContainer/Layout/MenuScreen/TeaserLabel
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var layout: VBoxContainer = $ScrollContainer/Layout
@@ -142,6 +148,9 @@ var inventory = {} # token -> true
 var flags = {}     # flag -> true/false
 var discovered_stories: Array[Dictionary] = []
 var selected_story_path := ""
+var selected_story_index: int = -1
+var story_cards: Array[PanelContainer] = [] # visual card; sizes to its content
+var card_buttons: Array[Button] = [] # invisible full-card tap target, parallel to story_cards
 var loaded_story_path := "" # path of the story currently in `story`; the save keys off this, not the picker
 var has_active_story := false
 var is_transitioning := false
@@ -177,8 +186,10 @@ func _ready() -> void:
 	var vf := FileAccess.open("res://version.txt", FileAccess.READ)
 	if vf:
 		version_label.text = "v" + vf.get_as_text().strip_edges()
+		about_version.text = version_label.text
 
-	story_picker.item_selected.connect(_on_story_selected)
+	about_button.pressed.connect(func() -> void: about_dialog.visible = true)
+	about_close.pressed.connect(func() -> void: about_dialog.visible = false)
 	play_button.pressed.connect(_on_start_pressed)
 	resume_button.pressed.connect(_on_resume_pressed)
 	home_button.pressed.connect(_show_stop_dialog)
@@ -209,7 +220,11 @@ func _on_slot_tapped(slot: PanelContainer) -> void:
 
 func _discover_stories() -> void:
 	discovered_stories.clear()
-	story_picker.clear()
+	for card in story_cards:
+		story_list.remove_child(card)
+		card.free()
+	story_cards.clear()
+	card_buttons.clear()
 
 	var dir := DirAccess.open(STORIES_DIR)
 	if dir == null:
@@ -235,12 +250,16 @@ func _discover_stories() -> void:
 	dir.list_dir_end()
 
 	discovered_stories.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		if int(a.get("order", 0)) != int(b.get("order", 0)):
+			return int(a.get("order", 0)) < int(b.get("order", 0))
 		return int(a.get("scene_count", 0)) < int(b.get("scene_count", 0))
 	)
 
-	for entry in discovered_stories:
-		var label := "%s (%d scenes)" % [entry["display_name"], entry["scene_count"]]
-		story_picker.add_item(label)
+	for i in range(discovered_stories.size()):
+		var card := _make_story_card(discovered_stories[i], i)
+		story_list.add_child(card)
+		story_cards.append(card)
+		card_buttons.append(card.get_node("Tap") as Button)
 
 	if discovered_stories.is_empty():
 		selected_story_path = ""
@@ -249,12 +268,11 @@ func _discover_stories() -> void:
 		return
 
 	play_button.disabled = false
-	story_picker.select(0)
 	_set_selected_story(0)
 
 func _story_info(path: String, file_name: String) -> Dictionary:
 	var fallback := file_name.get_basename()
-	var info := {"path": path, "display_name": fallback, "teaser": "", "scene_count": 0}
+	var info := {"path": path, "display_name": fallback, "teaser": "", "scene_count": 0, "cover": "📖", "order": 999}
 
 	var f = FileAccess.open(path, FileAccess.READ)
 	if f == null:
@@ -270,6 +288,11 @@ func _story_info(path: String, file_name: String) -> Dictionary:
 		if title != "":
 			info["display_name"] = title
 		info["teaser"] = str(meta.get("teaser", ""))
+		var cover := str(meta.get("cover", "")).strip_edges()
+		if cover != "":
+			info["cover"] = cover
+		if meta.has("order"):
+			info["order"] = int(meta.get("order"))
 
 	var story_scenes = parsed.get("scenes", {})
 	if typeof(story_scenes) == TYPE_DICTIONARY:
@@ -402,8 +425,11 @@ func _start_story(resume: bool = false) -> void:
 	has_active_story = true
 	pending_scene_id = ""
 	menu_screen.visible = false
+	about_dialog.visible = false
+	bottom_bar.visible = false
 	top_bar.visible = true
 	scroll_container.offset_top = TOP_BAR_HEIGHT
+	scroll_container.offset_bottom = 0.0
 	command_bar.visible = true
 	tile_section.visible = true
 	feedback_text.visible = true
@@ -419,7 +445,9 @@ func _show_menu() -> void:
 	is_executing_command = false
 	stop_dialog.visible = false
 	top_bar.visible = false
+	bottom_bar.visible = true
 	scroll_container.offset_top = 0.0
+	scroll_container.offset_bottom = -BOTTOM_BAR_HEIGHT
 	pending_scene_id = ""
 	menu_screen.visible = true
 	command_bar.visible = false
@@ -446,7 +474,6 @@ func _refresh_resume_button() -> void:
 	var index: int = _story_index_for_path(str(save.get("story_path", "")))
 	resume_button.visible = index >= 0
 	if index >= 0:
-		story_picker.select(index)
 		_set_selected_story(index)
 
 func _story_index_for_path(path: String) -> int:
@@ -498,7 +525,6 @@ func _on_resume_pressed() -> void:
 	if index < 0:
 		_refresh_resume_button()
 		return
-	story_picker.select(index)
 	_set_selected_story(index)
 	if not _load_story(str(discovered_stories[index].get("path", ""))):
 		_clear_save()
@@ -538,7 +564,9 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if not is_node_ready():
 			return
-		if stop_dialog.visible:
+		if about_dialog.visible:
+			about_dialog.visible = false
+		elif stop_dialog.visible:
 			_hide_stop_dialog()
 		elif has_active_story:
 			_show_stop_dialog()
@@ -548,14 +576,96 @@ func _notification(what: int) -> void:
 func _set_selected_story(index: int) -> void:
 	if index < 0 or index >= discovered_stories.size():
 		selected_story_path = ""
-		teaser_label.text = ""
+		selected_story_index = -1
 		return
 
 	var entry: Dictionary = discovered_stories[index]
 	selected_story_path = str(entry.get("path", ""))
-	teaser_label.text = str(entry.get("teaser", ""))
+	selected_story_index = index
+	for i in range(story_cards.size()):
+		story_cards[i].add_theme_stylebox_override("panel", _card_style(i == index))
 
-func _on_story_selected(index: int) -> void:
+func _card_style(selected: bool) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.set_corner_radius_all(14)
+	if selected:
+		style.bg_color = Color(1.0, 0.953, 0.878)
+		style.border_color = Color(1.0, 0.718, 0.302)
+		style.set_border_width_all(4)
+		style.set_content_margin_all(10)
+	else:
+		style.bg_color = Color(1.0, 0.98, 0.94)
+		style.border_color = Color(0.85, 0.82, 0.76)
+		style.set_border_width_all(2)
+		style.set_content_margin_all(12)
+	return style
+
+func _length_badge(scene_count: int) -> String:
+	if scene_count <= 8:
+		return "Short"
+	if scene_count <= 11:
+		return "Medium"
+	return "Long"
+
+func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
+	# A PanelContainer grows with its wrapped text; an invisible Button laid over
+	# the whole card is the tap target.
+	var card := PanelContainer.new()
+	card.custom_minimum_size = Vector2(0, 88)
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var cover := Label.new()
+	cover.text = str(entry.get("cover", "📖"))
+	cover.add_theme_font_size_override("font_size", 44)
+	cover.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	cover.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	cover.custom_minimum_size = Vector2(64, 0)
+	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(cover)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	col.add_theme_constant_override("separation", 2)
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var title := Label.new()
+	title.text = str(entry.get("display_name", ""))
+	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_color_override("font_color", Color(0.2, 0.15, 0.1))
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(title)
+	var teaser := Label.new()
+	teaser.text = str(entry.get("teaser", ""))
+	teaser.add_theme_font_size_override("font_size", 15)
+	teaser.add_theme_color_override("font_color", Color(0.45, 0.4, 0.35))
+	teaser.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	teaser.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(teaser)
+	var badge := Label.new()
+	var count: int = int(entry.get("scene_count", 0))
+	badge.text = "%s · %d scenes" % [_length_badge(count), count]
+	badge.add_theme_font_size_override("font_size", 13)
+	badge.add_theme_color_override("font_color", Color(0.6, 0.55, 0.5))
+	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(badge)
+	row.add_child(col)
+	card.add_child(row)
+	var tap := Button.new()
+	tap.name = "Tap"
+	tap.flat = true
+	tap.focus_mode = Control.FOCUS_NONE
+	var clear := StyleBoxEmpty.new()
+	for state in ["normal", "hover", "pressed", "focus"]:
+		tap.add_theme_stylebox_override(state, clear)
+	tap.pressed.connect(_on_story_card_pressed.bind(index))
+	card.add_child(tap)
+	return card
+
+func _on_story_card_pressed(index: int) -> void:
+	if has_active_story or about_dialog.visible:
+		return
 	_set_selected_story(index)
 
 func _on_start_pressed() -> void:
@@ -689,12 +799,25 @@ func _update_inventory_ui() -> void:
 	inventory_label.visible = has_items
 	inventory_tray.visible = has_items
 
+func _label_for(token: String) -> String:
+	var vocab = story.get("vocab", {})
+	if typeof(vocab) == TYPE_DICTIONARY and vocab.has(token):
+		var entry = vocab[token]
+		if typeof(entry) == TYPE_DICTIONARY:
+			var label := str(entry.get("label", "")).strip_edges()
+			if label != "":
+				return label
+		elif typeof(entry) == TYPE_STRING and str(entry).strip_edges() != "":
+			return str(entry).strip_edges()
+	return token
+
 func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thing") -> Button:
 	var tile = TILE_SCENE.instantiate()
 	tile.token = token_str
 	tile.category = cat
 	var icon: String = EMOJI.get(token_str, "")
-	tile.text = (icon + " " + token_str) if icon != "" else token_str
+	var label: String = _label_for(token_str)
+	tile.text = (icon + " " + label) if icon != "" else label
 	if color != TILE_BLUE:
 		tile.tile_color = color
 		var normal := StyleBoxFlat.new()
@@ -845,7 +968,7 @@ func _get_smart_fallback(cmd: Array[String]) -> String:
 	# Same token in both slots
 	if t1 == t2:
 		var msg: String = _pick_random_text(SAME_TOKEN_FALLBACKS, "Nothing happens.")
-		return msg.replace("{thing}", t1)
+		return msg.replace("{thing}", _label_for(t1))
 
 	var cat1: String = _classify_token(t1)
 
@@ -853,12 +976,12 @@ func _get_smart_fallback(cmd: Array[String]) -> String:
 	if cat1 == "action" and action_fallback_map.has(t1):
 		var templates: Array = action_fallback_map[t1]
 		var msg: String = _pick_random_text(templates, "Nothing happens.")
-		return msg.replace("{action}", t1).replace("{thing}", t2)
+		return msg.replace("{action}", _label_for(t1)).replace("{thing}", _label_for(t2))
 
 	# Inventory item used as verb in slot1
 	if cat1 == "inventory":
 		var msg: String = _pick_random_text(ITEM_AS_VERB_FALLBACKS, "Nothing happens.")
-		return msg.replace("{item}", t1).replace("{thing}", t2)
+		return msg.replace("{item}", _label_for(t1)).replace("{thing}", _label_for(t2))
 
 	return ""
 
