@@ -28,6 +28,7 @@ const FEEDBACK_NEUTRAL := Color(0.95, 0.92, 0.85)
 const FEEDBACK_SUCCESS := Color(0.55, 0.95, 0.55)
 const FEEDBACK_FAIL := Color(1.0, 0.6, 0.5)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
+const NEW_STORY_DIALOG_SCENE := preload("res://ui/NewStoryDialog.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
 const STORY_FONT_MIN: int = 22
@@ -201,6 +202,8 @@ var settings := {"read_aloud": false, "sound": true}
 var last_sfx := "" # name of the most recent effect actually played (for tests)
 var tts_voice := "" # chosen system voice id, "" when the device has none
 var pending_scene_id := "" # destination of a transition whose Continue tap has not happened yet; saves point here
+var new_story_dialog: Control
+var pending_new_story_path := "" # frozen when the replace-save confirmation opens
 
 func _ready() -> void:
 	command_timer.one_shot = true
@@ -227,7 +230,7 @@ func _ready() -> void:
 		version_label.text = "v" + vf.get_as_text().strip_edges()
 		about_version.text = version_label.text
 
-	about_button.pressed.connect(func() -> void: about_dialog.visible = true)
+	about_button.pressed.connect(_on_about_pressed)
 	_load_settings()
 	read_aloud_toggle.button_pressed = bool(settings["read_aloud"])
 	sound_toggle.button_pressed = bool(settings["sound"])
@@ -249,6 +252,17 @@ func _ready() -> void:
 	slot2.tile_dropped.connect(_check_slots_and_execute)
 	slot1.tapped.connect(_on_slot_tapped.bind(slot1))
 	slot2.tapped.connect(_on_slot_tapped.bind(slot2))
+	slot1.input_allowed = func() -> bool: return not _input_blocked()
+	slot2.input_allowed = func() -> bool: return not _input_blocked()
+	new_story_dialog = NEW_STORY_DIALOG_SCENE.instantiate()
+	add_child(new_story_dialog)
+	var keep_save: Button = new_story_dialog.get_node("Center/Panel/Box/KeepSave")
+	var start_new: Button = new_story_dialog.get_node("Center/Panel/Box/StartNew")
+	keep_save.pressed.connect(_cancel_new_story)
+	start_new.pressed.connect(_confirm_new_story)
+	play_button.text = "START NEW"
+	resume_button.add_theme_font_size_override("font_size", 22)
+	resume_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	feedback_text.add_theme_color_override("font_color", FEEDBACK_NEUTRAL)
 	_discover_stories()
 	_show_menu()
@@ -706,6 +720,9 @@ func _show_menu() -> void:
 	is_transitioning = false
 	is_executing_command = false
 	stop_dialog.visible = false
+	_cancel_new_story()
+	ending_badge.visible = false
+	ending_label.text = ""
 	continue_bar.visible = false
 	top_bar.visible = false
 	bottom_bar.visible = true
@@ -741,7 +758,10 @@ func _refresh_resume_button() -> void:
 	var index: int = _story_index_for_path(str(save.get("story_path", "")))
 	resume_button.visible = index >= 0
 	if index >= 0:
+		resume_button.text = "CONTINUE\n" + str(discovered_stories[index].get("display_name", "your story"))
 		_set_selected_story(index)
+	else:
+		resume_button.text = "CONTINUE"
 
 func _story_index_for_path(path: String) -> int:
 	if path == "":
@@ -787,6 +807,8 @@ func _read_save() -> Dictionary:
 	return parsed
 
 func _on_resume_pressed() -> void:
+	if has_active_story or about_dialog.visible or new_story_dialog.visible:
+		return
 	var save: Dictionary = _read_save()
 	var index: int = _story_index_for_path(str(save.get("story_path", "")))
 	if index < 0:
@@ -823,10 +845,12 @@ func _show_stop_dialog() -> void:
 		return
 	# Freeze any command that is still in its debounce window; the slots keep their tiles.
 	command_timer.stop()
+	idle_timer.stop()
 	stop_dialog.visible = true
 
 func _hide_stop_dialog() -> void:
 	stop_dialog.visible = false
+	_restart_idle_timer()
 	# Give a command that was waiting a fresh delay instead of firing instantly.
 	_check_slots_and_execute()
 
@@ -837,7 +861,9 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if not is_node_ready():
 			return
-		if about_dialog.visible:
+		if new_story_dialog.visible:
+			_cancel_new_story()
+		elif about_dialog.visible:
 			about_dialog.visible = false
 		elif stop_dialog.visible:
 			_hide_stop_dialog()
@@ -940,19 +966,59 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	return card
 
 func _on_story_card_pressed(index: int) -> void:
-	if has_active_story or about_dialog.visible:
+	if has_active_story or about_dialog.visible or new_story_dialog.visible:
 		return
 	_set_selected_story(index)
 
+func _on_about_pressed() -> void:
+	if not has_active_story and not new_story_dialog.visible:
+		about_dialog.visible = true
+
 func _on_start_pressed() -> void:
-	if selected_story_path == "":
+	if has_active_story or about_dialog.visible or new_story_dialog.visible:
+		return
+	var new_index := _story_index_for_path(selected_story_path)
+	if new_index < 0:
 		feedback_text.text = "Please choose a story first."
 		return
 
-	if not _load_story(selected_story_path):
+	# Reading the saved run must not load a story or write a new checkpoint.
+	var save: Dictionary = _read_save()
+	var saved_index := _story_index_for_path(str(save.get("story_path", "")))
+	if saved_index >= 0:
+		pending_new_story_path = selected_story_path
+		var saved_title := str(discovered_stories[saved_index].get("display_name", "your story"))
+		var new_title := str(discovered_stories[new_index].get("display_name", "a new story"))
+		var message: Label = new_story_dialog.get_node("Center/Panel/Box/Message")
+		message.text = "Starting %s will replace your saved adventure in %s.\n\nYour found endings will be kept." % [new_title, saved_title]
+		new_story_dialog.visible = true
+		var keep_save: Button = new_story_dialog.get_node("Center/Panel/Box/KeepSave")
+		keep_save.grab_focus()
 		return
 
+	_start_new_story(selected_story_path)
+
+func _start_new_story(path: String) -> void:
+	# A failed story load must leave the previous save intact.
+	if not _load_story(path):
+		return
 	_start_story()
+
+func _cancel_new_story() -> void:
+	if is_instance_valid(new_story_dialog):
+		new_story_dialog.visible = false
+	pending_new_story_path = ""
+
+func _confirm_new_story() -> void:
+	if not new_story_dialog.visible or has_active_story or pending_new_story_path == "":
+		return
+	var path := pending_new_story_path
+	_cancel_new_story()
+	var index := _story_index_for_path(path)
+	if index < 0:
+		return
+	_set_selected_story(index)
+	_start_new_story(path)
 
 func _on_menu_pressed() -> void:
 	_show_menu()
@@ -1383,7 +1449,7 @@ func _reset_hints() -> void:
 	hint_button.visible = false
 
 func _on_hint_pressed() -> void:
-	if not has_active_story or is_transitioning:
+	if _input_blocked():
 		return
 	var scene = scenes.get(current_scene_id, null)
 	if scene == null:

@@ -4,6 +4,9 @@ var failures: Array[String] = []
 var checks: int = 0
 
 func _initialize() -> void:
+	if not preload("res://tests/qa_guard.gd").enter():
+		quit(2)
+		return
 	call_deferred("run")
 
 func check(condition: bool, message: String) -> void:
@@ -207,11 +210,13 @@ func test_save_resume(game) -> void:
 	check(game.has_active_story and game.current_scene_id == "gate", "Resume lands on the saved scene")
 	check(game.inventory.has("key") and game.flags.get("box_open", false), "Resume restores inventory and flags")
 	check(game.inventory_tray.get_child_count() == 1, "Resumed inventory renders a tile")
-	# PLAY always starts fresh.
+	# START NEW only starts fresh after explicit confirmation.
 	game._show_menu()
 	game._on_start_pressed()
+	check(game.new_story_dialog.visible, "Starting over must confirm replacement")
+	game._confirm_new_story()
 	await settle()
-	check(game.current_scene_id == "room" and game.inventory.is_empty(), "PLAY starts from the beginning")
+	check(game.current_scene_id == "room" and game.inventory.is_empty(), "Confirmed START NEW starts from the beginning")
 	# Reaching an ending clears the save.
 	game.current_scene_id = "win"
 	await game._render_scene()
@@ -371,7 +376,7 @@ func test_stop_dialog_suspends_commands(game) -> void:
 	check(game.slot1.token == "talk", "Tiles cannot be placed while the dialog is open")
 	game.slot1._drop_data(Vector2.ZERO, {"token": "look", "label": "look"})
 	check(game.command_timer.is_stopped(), "Dropping a tile while the dialog is open must not arm the timer")
-	game.slot1.set_tile("talk", "talk")
+	check(game.slot1.token == "talk", "A blocked drop must not mutate the slot")
 	game.keep_button.pressed.emit()
 	await create_timer(0.3).timeout
 	check(game.feedback_text.text.is_empty(), "KEEP PLAYING restarts the full delay")
@@ -644,7 +649,7 @@ func test_text_and_mood(game) -> void:
 	print("Checked reader font, typewriter reveal, mood tint, idle hint, and the Phone Trap split")
 
 func run() -> void:
-	create_timer(60).timeout.connect(func():
+	create_timer(120).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
 		quit(1)
 	)
@@ -667,6 +672,8 @@ func run() -> void:
 	await test_endings(game)
 	await test_sound_and_speech(game)
 	await test_text_and_mood(game)
+	var polish = preload("res://tests/polish_safety.gd").new()
+	await polish.run(self, game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame
