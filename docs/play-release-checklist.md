@@ -12,7 +12,7 @@ Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-
 - [ ] Resolve target-36 preview installation rejection; target-34 diagnostic works on Gerald's Android 13 phone but is not a store release candidate.
 - [x] Replace menu and splash portraits with the unchanged approved Norbonics Games master; preserve proportions. Project/Android icons use existing K artwork without portraits; old portrait sources are excluded from exports. Store imagery remains to prepare.
 - [x] Include `games.norbonics.com` as visible plain menu text without analytics or automatic browser navigation.
-- [ ] Finalize release signing, secure key backup, version metadata and Android App Bundle; preserve the production application ID.
+- [ ] Finalize release signing and secure key backup; the "Ike Quest" preset now exports an App Bundle at version 0.7.0 / code 700 with the production application ID preserved.
 - [ ] Run internal testing, then required closed testing and production-access application. Recruit at least 12 active testers for a new personal account and keep them opted in continuously for at least 14 days.
 - [ ] Obtain Gerald's release decision after addressing story/content feedback and reviewing the final listing.
 

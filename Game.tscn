@@ -49,6 +49,80 @@ content_margin_top = 8
 content_margin_right = 24
 content_margin_bottom = 8
 
+[sub_resource type="StyleBoxFlat" id="resume_normal"]
+bg_color = Color(0.95, 0.6, 0.15, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="resume_hover"]
+bg_color = Color(1.0, 0.68, 0.25, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="resume_pressed"]
+bg_color = Color(0.75, 0.45, 0.1, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+content_margin_left = 24
+content_margin_top = 8
+content_margin_right = 24
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="timer_bg"]
+bg_color = Color(1.0, 0.953, 0.878, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="timer_fill"]
+bg_color = Color(1.0, 0.718, 0.302, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="ending_badge"]
+bg_color = Color(1.0, 0.85, 0.4, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14
+content_margin_top = 8
+content_margin_right = 14
+content_margin_bottom = 8
+
+[sub_resource type="StyleBoxFlat" id="dialog_panel"]
+bg_color = Color(1.0, 0.98, 0.94, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1.0, 0.718, 0.302, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+content_margin_left = 24
+content_margin_top = 24
+content_margin_right = 24
+content_margin_bottom = 24
+
 [node name="Game" type="Control" unique_id=1650470966]
 layout_mode = 3
 anchors_preset = 15
@@ -57,6 +131,16 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_xkndl")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.3, 0.3, 0.3, 1)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 1
@@ -77,15 +161,15 @@ theme_override_constants/separation = 12
 [node name="MenuScreen" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 20
+theme_override_constants/separation = 12
 alignment = 1
 
 [node name="Spacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(460, 203)
+custom_minimum_size = Vector2(320, 141)
 layout_mode = 2
 size_flags_horizontal = 3
 expand_mode = 1
@@ -94,7 +178,7 @@ stretch_mode = 5
 
 [node name="GamesURL" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.65, 0.65, 0.65, 1)
 text = "games.norbonics.com"
 horizontal_alignment = 1
@@ -109,47 +193,21 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
-text = "A Text Adventure"
+text = "Pick a story!"
 horizontal_alignment = 1
 
-[node name="Spacer2" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-
-[node name="StoryPicker" type="OptionButton" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 56)
+[node name="StoryList" type="VBoxContainer" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
-fit_to_longest_item = false
-clip_text = true
+theme_override_constants/separation = 10
 
-[node name="TeaserLabel" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
+[node name="AboutButton" type="Button" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
+theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
-horizontal_alignment = 1
-autowrap_mode = 3
-text = ""
-
-[node name="Spacer3" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 12)
-layout_mode = 2
-
-[node name="PlayButton" type="Button" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(0, 80)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 36
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_styles/normal = SubResource("play_normal")
-theme_override_styles/hover = SubResource("play_hover")
-theme_override_styles/pressed = SubResource("play_pressed")
-text = "PLAY"
-
-[node name="FlexSpacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
-layout_mode = 2
-size_flags_vertical = 3
+flat = true
+text = "ⓘ Parent corner"
 
 [node name="VersionLabel" type="Label" parent="ScrollContainer/Layout/MenuScreen"]
 layout_mode = 2
@@ -158,9 +216,28 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 horizontal_alignment = 1
 text = "v0.2.1"
 
-[node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
-custom_minimum_size = Vector2(0, 160)
+[node name="BottomSpacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
+custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
+
+[node name="EndingBadge" type="PanelContainer" parent="ScrollContainer/Layout"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("ending_badge")
+
+[node name="EndingLabel" type="Label" parent="ScrollContainer/Layout/EndingBadge"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.25, 0.18, 0.05, 1)
+text = "🏆 Ending"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/line_spacing = 8
 theme_override_font_sizes/font_size = 32
 text = "Story text…"
 autowrap_mode = 3
@@ -168,6 +245,7 @@ autowrap_mode = 3
 [node name="FeedbackText" type="Label" parent="ScrollContainer/Layout" unique_id=342467871]
 custom_minimum_size = Vector2(0, 80)
 layout_mode = 2
+theme_override_constants/line_spacing = 4
 theme_override_font_sizes/font_size = 22
 text = "...
 "
@@ -213,6 +291,17 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 
+[node name="TimerBar" type="ProgressBar" parent="ScrollContainer/Layout"]
+visible = false
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+theme_override_styles/background = SubResource("timer_bg")
+theme_override_styles/fill = SubResource("timer_fill")
+max_value = 1.0
+step = 0.001
+value = 1.0
+show_percentage = false
+
 [node name="TileSection" type="VBoxContainer" parent="ScrollContainer/Layout"]
 layout_mode = 2
 theme_override_constants/separation = 8
@@ -253,18 +342,198 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "💡 HINT"
 
-[node name="ContinueButton" type="Button" parent="ScrollContainer/Layout"]
-visible = false
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "▶"
-
 [node name="NewGameButton" type="Button" parent="ScrollContainer/Layout"]
 visible = false
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 text = "NEW GAME"
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_right = -16.0
+offset_bottom = 48.0
+grow_horizontal = 2
+
+[node name="SpeakButton" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(56, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "🔊"
+
+[node name="TopSpacer" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HomeButton" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(56, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "⌂"
+
+[node name="BottomBar" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -176.0
+offset_right = -16.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 8
+
+[node name="ResumeButton" type="Button" parent="BottomBar"]
+visible = false
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("resume_normal")
+theme_override_styles/hover = SubResource("resume_hover")
+theme_override_styles/pressed = SubResource("resume_pressed")
+text = "▶ CONTINUE"
+
+[node name="PlayButton" type="Button" parent="BottomBar"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
+text = "PLAY"
+
+[node name="ContinueBar" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -96.0
+offset_right = -16.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ContinueButton" type="Button" parent="ContinueBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
+text = "NEXT  ▶"
+
+[node name="AboutDialog" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="AboutDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Center" type="CenterContainer" parent="AboutDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="AboutDialog/Center"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("dialog_panel")
+
+[node name="Box" type="VBoxContainer" parent="AboutDialog/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="AboutTitle" type="Label" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+text = "Parent corner"
+horizontal_alignment = 1
+
+[node name="AboutBody" type="Label" parent="AboutDialog/Center/Panel/Box"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+text = "Ike Quest is a tap-to-read adventure for early readers, made by Norbonics Games.
+
+It runs completely offline. No ads, no accounts, no in-app purchases, and no internet connection.
+
+It does not collect, store, or share any personal information. Story progress is saved only on this device.
+
+Privacy policy: see the Google Play listing.
+games.norbonics.com"
+autowrap_mode = 3
+
+[node name="ReadAloudToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.15, 0.1, 1)
+text = "Read responses aloud automatically"
+
+[node name="SoundToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_pressed_color = Color(0.2, 0.15, 0.1, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.2, 0.15, 0.1, 1)
+button_pressed = true
+text = "Sound effects"
+
+[node name="AboutVersion" type="Label" parent="AboutDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
+text = "v"
+horizontal_alignment = 1
+
+[node name="AboutClose" type="Button" parent="AboutDialog/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
+text = "CLOSE"
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
 
 [node name="TransitionOverlay" type="ColorRect" parent="."]
 layout_mode = 1
@@ -275,3 +544,62 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
+
+[node name="StopDialog" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="StopDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Center" type="CenterContainer" parent="StopDialog"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="StopDialog/Center"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("dialog_panel")
+
+[node name="Box" type="VBoxContainer" parent="StopDialog/Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Question" type="Label" parent="StopDialog/Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+text = "Stop playing?"
+horizontal_alignment = 1
+
+[node name="KeepButton" type="Button" parent="StopDialog/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
+text = "KEEP PLAYING"
+
+[node name="StopMenuButton" type="Button" parent="StopDialog/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Go to menu"

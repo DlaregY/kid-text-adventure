@@ -11,3 +11,9 @@ Every scene should have `["look", <item>]` handlers for items the player is carr
 
 ## Guard repeatable state-changing actions
 Commands like "open box" or "climb tree" that set flags need a guarded version that checks if the flag is already set. Otherwise the player sees "The lid pops open!" repeatedly.
+
+## Test interruptions against every in-flight state
+Any new way to interrupt play (menu/home button, Back, dialogs, resume) must be
+exercised while a command is in its debounce window, while a transition is
+waiting for Continue, and on a scene long enough to scroll — not only from an
+idle scene. PR #12's review found all three gaps after the idle-state tests passed.

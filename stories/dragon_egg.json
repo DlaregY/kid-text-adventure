@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Lost Dragon Egg", "version": 3, "teaser": "Find the lost dragon egg and bring it home!" },
+  "meta": { "title": "The Lost Dragon Egg", "version": 3, "teaser": "Find the lost dragon egg and bring it home!", "cover": "🐉", "order": 1 },
   "vocab": {
 	"go": { "label": "go" },
 	"open": { "label": "open" },
@@ -26,6 +26,7 @@
   "start_scene": "room",
   "scenes": {
 	"room": {
+		"mood": "cave",
 	  "text": ["You wake up in a small stone room.", "A big wooden door stands in front of you."],
 	  "tiles": ["open", "take", "go", "look", "door", "key"],
 	  "commands": [
@@ -60,6 +61,8 @@
 	},
 
 	"hall": {
+
+		"mood": "cave",
 	  "text": ["You step into a dusty hall.", "A wooden box sits on the floor."],
 	  "tiles": ["open", "take", "look", "box", "key", "door"],
 	  "commands": [
@@ -124,6 +127,8 @@
 	},
 
 	"gate": {
+
+		"mood": "day",
 	  "text": ["You find a tall iron gate.", "A big lock holds it shut."],
 	  "tiles": ["open", "look", "go", "key", "gate"],
 	  "commands": [
@@ -160,6 +165,8 @@
 	},
 
 	"forest": {
+
+		"mood": "forest",
 	  "text": ["You step into a sunny forest.", "A little dog sits by an apple tree.", "The dog looks sad and hungry."],
 	  "tiles": ["talk", "give", "look", "go", "dog", "apple", "forest"],
 	  "commands": [
@@ -256,6 +263,8 @@
 	},
 
 	"tree": {
+
+		"mood": "forest",
 	  "text": ["You find a very tall tree.", "Something shiny glows way up at the top!"],
 	  "tiles": ["climb", "take", "look", "tree", "egg", "go"],
 	  "commands": [
@@ -323,6 +332,8 @@
 	},
 
 	"bridge": {
+
+		"mood": "day",
 	  "text": ["A bridge stretches across a deep canyon.", "But the middle is broken!", "You can see a cave on the other side."],
 	  "tiles": ["go", "look", "bridge", "cave"],
 	  "commands": [
@@ -396,6 +407,8 @@
 	},
 
 	"cave": {
+
+		"mood": "cave",
 	  "text": ["You stand at the mouth of a dark cave.", "You hear deep breathing inside..."],
 	  "tiles": ["go", "look", "talk", "give", "cave", "dragon", "egg"],
 	  "commands": [
@@ -451,6 +464,8 @@
 	},
 
 	"dragon": {
+
+		"mood": "fire",
 	  "text": ["A big dragon sits in the cave.", "She looks at you with sad eyes.", "She is searching for something."],
 	  "tiles": ["give", "talk", "look", "dragon", "egg", "go"],
 	  "commands": [
@@ -503,6 +518,8 @@
 	},
 
 	"treasure": {
+
+		"mood": "win",
 	  "text": ["The dragon roars with joy!", "A treasure chest appears before you.", "Thank you, brave hero!"],
 	  "tiles": ["take", "open", "look", "treasure", "go"],
 	  "commands": [
@@ -529,6 +546,10 @@
 	},
 
 	"win": {
+
+		"mood": "win",
+
+		"ending": { "id": "win", "title": "Hero of the Land" },
 	  "text": ["YOU DID IT!", "The dragon roars so loud the whole mountain shakes!", "Gold and gems rain down from the ceiling!", "The dragon puts the tiny crown on your head.", "You are the HERO of the land!"],
 	  "tiles": ["look", "talk", "dragon", "treasure"],
 	  "commands": [

@@ -1,5 +1,5 @@
 {
-  "meta": { "title": "The Crystal Cave", "version": 2, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!" },
+  "meta": { "title": "The Crystal Cave", "version": 2, "teaser": "Explore a secret cave full of glowing crystals and hidden treasure!", "cover": "🔮", "order": 2 },
   "vocab": {
     "go": { "label": "go" },
     "open": { "label": "open" },
@@ -24,6 +24,7 @@
   "start_scene": "shore",
   "scenes": {
     "shore": {
+      "mood": "day",
       "text": ["You stand by a big blue lake.", "Behind a waterfall, you see a dark cave!", "The rocks around it glow a little bit."],
       "tiles": ["go", "look", "talk", "take", "cave", "lake", "rock"],
       "commands": [
@@ -82,6 +83,8 @@
     },
 
     "dark_cave": {
+
+    	"mood": "cave",
       "text": ["The cave is very dark!", "You can barely see your own hands.", "Wait... is that a light on the ground?"],
       "tiles": ["go", "look", "talk", "take", "torch", "cave", "rock"],
       "commands": [
@@ -141,6 +144,8 @@
     },
 
     "crystal_hall": {
+
+    	"mood": "crystal",
       "text": ["WOW! A giant hall of crystals!", "Pink, blue, and green crystals grow from every wall!", "One big crystal glows brighter than the rest."],
       "tiles": ["go", "look", "talk", "take", "climb", "crystal", "rock", "cliff", "torch"],
       "commands": [
@@ -204,6 +209,8 @@
     },
 
     "underground_cliff": {
+
+    	"mood": "cave",
       "text": ["You stand at the edge of an underground cliff.", "Way down below, you see a river and a rope bridge.", "It is a long way down!"],
       "tiles": ["go", "look", "take", "climb", "cliff", "bridge", "rope", "rock", "torch", "crystal"],
       "commands": [
@@ -311,6 +318,8 @@
     },
 
     "rope_bridge": {
+
+    	"mood": "cave",
       "text": ["You stand at a wobbly rope bridge.", "It stretches across an underground river.", "The water rushes fast below!"],
       "tiles": ["go", "look", "talk", "take", "bridge", "river", "rock", "torch", "crystal"],
       "commands": [
@@ -365,6 +374,8 @@
     },
 
     "locked_door": {
+
+    	"mood": "cave",
       "text": ["You find a huge stone door carved with crystals.", "A keyhole glows in the center.", "A dusty box sits in the corner."],
       "tiles": ["open", "look", "take", "key", "door", "box", "torch", "crystal"],
       "commands": [
@@ -469,6 +480,8 @@
     },
 
     "treasure_room": {
+
+    	"mood": "crystal",
       "text": ["The door opens to a magical room!", "Crystals cover every wall like a rainbow!", "In the center sits a glowing treasure chest!"],
       "tiles": ["open", "look", "take", "treasure", "crystal", "torch"],
       "commands": [
@@ -528,6 +541,10 @@
     },
 
     "win": {
+
+    	"mood": "win",
+
+    	"ending": { "id": "win", "title": "Crystal Explorer" },
       "text": ["YOU FOUND THE TREASURE!", "Rainbow light fills the cave!", "The crystals carry you up, up, up!", "You burst out of the cave into the sunshine!", "You are the CRYSTAL EXPLORER!"],
       "tiles": ["look", "talk", "crystal", "treasure", "lake"],
       "commands": [

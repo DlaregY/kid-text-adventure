@@ -65,7 +65,11 @@ Rule evaluation is deterministic and simple:
 
 When a rule has `next`, the game shows the response text, pauses briefly, then displays a continue button (▶). When tapped, it fades to black, swaps scene content, and fades back in.
 
-### 6) State tracking
+### 6) Save, resume, and stopping
+
+Progress (story, scene, inventory, flags) is written to `user://save.json` on start, on every state change, and on every scene transition, and cleared when an ending scene renders. The menu shows an orange **CONTINUE** button when a save exists; **PLAY** always starts fresh. During a story a ⌂ button (and the Android Back button) opens a "Stop playing?" dialog with KEEP PLAYING / GO TO MENU. On the menu, Back exits the app.
+
+### 7) State tracking
 
 - `inventory`: dictionary acting like a set (`item -> true`)
 - `flags`: dictionary for boolean state (`flag -> true/false`)
@@ -123,6 +127,14 @@ Command rule keys:
 ### Phone Trap (`phone_trap.json`)
 
 8 scenes. You sneak Dad's phone at night and get sucked into the screen. Navigate a digital world, defeat bugs and a firewall, and battle the Phone Boss to escape.
+
+### The Crystal Cave (`crystal_cave.json`)
+
+8 scenes. Explore a glowing cave behind a waterfall, find crystals, cross a rope bridge, and unlock hidden treasure.
+
+### The Bigfoot Campout (`bigfoot_campout.json`)
+
+11 scenes, five endings. Camping with Dad, you follow giant footprints past a hollow log and across a creek to a berry patch where Bigfoot is snacking. Pack a lantern and a snack (and maybe the camera) at camp; how you treat Bigfoot at the meeting decides which ending you get. Found endings are collected on the story card.
 
 ### Shake Escape (`shake_escape.json`)
 

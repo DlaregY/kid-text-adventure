@@ -11,11 +11,16 @@ config_version=5
 [application]
 
 config/name="Ike Quest"
+config/quit_on_go_back=false
 run/main_scene="uid://da2g8wy6g4fky"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://assets/icons/android/launcher_main_192.svg"
 boot_splash/image="res://assets/branding/norbonics-games.png"
 boot_splash/fullsize=true
+
+[audio]
+
+general/text_to_speech=true
 
 [display]
 

@@ -2,16 +2,18 @@
   "meta": {
     "title": "Phone Trap",
     "version": 2,
-    "teaser": "You sneak Dad's phone at night. The screen pulls you in!"
+    "teaser": "You sneak Dad's phone at night. The screen pulls you in!",
+    "cover": "📱",
+    "order": 5
   },
   "vocab": {
-    "look": {"label": "Look"},
-    "go": {"label": "Go"},
-    "take": {"label": "Take"},
-    "open": {"label": "Open"},
-    "talk": {"label": "Talk"},
-    "give": {"label": "Give"},
-    "climb": {"label": "Climb"},
+    "look": {"label": "look"},
+    "go": {"label": "go"},
+    "take": {"label": "take"},
+    "open": {"label": "open"},
+    "talk": {"label": "talk"},
+    "give": {"label": "give"},
+    "climb": {"label": "climb"},
     "phone": {"label": "Phone"},
     "robot": {"label": "Robot"},
     "bug": {"label": "Bug"},
@@ -34,6 +36,7 @@
   "start_scene": "bedroom",
   "scenes": {
     "bedroom": {
+      "mood": "night",
       "text": [
         "It is late at night.",
         "Everyone is sleeping.",
@@ -122,6 +125,8 @@
     },
 
     "pixel_plaza": {
+
+    	"mood": "digital",
       "text": [
         "WHOMP!",
         "You land on a glowing floor!",
@@ -212,6 +217,8 @@
     },
 
     "bug_den": {
+
+    	"mood": "digital",
       "text": [
         "You walk into a dark room.",
         "Broken bits of code float in the air!",
@@ -292,6 +299,8 @@
     },
 
     "data_tower": {
+
+    	"mood": "digital",
       "text": [
         "WOW!",
         "Huge towers of blinking lights stretch way up!",
@@ -384,6 +393,8 @@
     },
 
     "firewall": {
+
+    	"mood": "fire",
       "text": [
         "WHOOSH!",
         "A HUGE wall of FIRE blocks the path!",
@@ -468,6 +479,8 @@
     },
 
     "dark_tunnel": {
+
+    	"mood": "cave",
       "text": [
         "You made it through the fire!",
         "But now it is REALLY dark in here.",
@@ -553,6 +566,8 @@
     },
 
     "boss_room": {
+
+    	"mood": "fire",
       "text": [
         "A HUGE room glows red!",
         "In the middle floats a BIG scary thing!",
@@ -608,7 +623,7 @@
           "response": "You SLAM the Power Chip into the Phone Boss! BZZZZZT! CRACKLE! ZAP! Sparks fly everywhere! 'NOOOOOO!' it screams! The Phone Boss shakes and wobbles and... CRASH! It powers down! The door behind it swings open! A bright swirling PORTAL appears!",
           "requirements": {"inventory_has": ["chip"]},
           "effects": {"inventory_remove": ["chip"]},
-          "next": "home"
+          "next": "landing"
         },
         {
           "pattern": ["chip", "door"],
@@ -626,7 +641,8 @@
       "hints": ["The Phone Boss runs on POWER. Maybe you can overload it!", "Use something POWERFUL from your inventory on the Boss!", "Use the CHIP on the BOSS!"]
     },
 
-    "home": {
+    "landing": {
+      "mood": "night",
       "text": [
         "FLASH! WHOOOOSH!",
         "",
@@ -635,13 +651,85 @@
         "",
         "The phone is on the table.",
         "The screen is dark and quiet.",
-        "Your door is still shut. The window glows pink.",
+        "Your door is still shut. The window glows pink."
+      ],
+      "tiles": [
+        "look",
+        "open",
+        "phone",
+        "window",
+        "bed"
+      ],
+      "commands": [
+        {
+          "pattern": [
+            "look",
+            "phone"
+          ],
+          "response": "The screen is dark. Wait... for one second you see Byte waving! BEEP BOOP! Then it's dark again."
+        },
+        {
+          "pattern": [
+            "look",
+            "window"
+          ],
+          "response": "The sky is turning pink. Morning is coming! You should get some sleep."
+        },
+        {
+          "pattern": [
+            "look",
+            "bed"
+          ],
+          "response": "Your cozy bed. After all that, it looks AMAZING."
+        },
+        {
+          "pattern": [
+            "open",
+            "phone"
+          ],
+          "response": "NO WAY! You are NOT going back in there!"
+        },
+        {
+          "pattern": [
+            "open",
+            "window"
+          ],
+          "response": "You crack the window open. Cool morning air. Ahhh!"
+        },
+        {
+          "pattern": [
+            "open",
+            "bed"
+          ],
+          "response": "You pull back the covers and climb in. So cozy...",
+          "next": "home"
+        }
+      ],
+      "default": [
+        "You yawn really big. YAAAWN!",
+        "Your legs feel wobbly after Phone World.",
+        "Everything is quiet. Everyone is still asleep.",
+        "You rub your eyes. Was that real?",
+        "Zzz... no, not yet!"
+      ],
+      "hints": [
+        "You made it home! Time to rest.",
+        "Get into BED.",
+        "Use OPEN BED to climb under the covers."
+      ]
+    },
+    "home": {
+
+    	"mood": "day",
+
+    	"ending": { "id": "win", "title": "Escaped the Phone" },
+      "text": [
+        "You pull the covers up tight.",
         "",
         "Was it all a dream?",
         "You smile really big. Nope!",
         "It was REAL!",
         "",
-        "You pull up the covers.",
         "That was the BEST adventure EVER!",
         "Good night!"
       ],

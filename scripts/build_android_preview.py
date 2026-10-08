@@ -34,6 +34,8 @@ def main():
         'package/unique_name="com.ike.textadventure"': 'package/unique_name="com.ike.textadventure.preview"',
         'package/name="Ike Quest"': 'package/name="Ike Quest Preview"',
         'gradle_build/android_source_template=""': f'gradle_build/android_source_template="{templates / "android_source.zip"}"',
+        # The production preset emits an App Bundle for Play; sideload previews need an APK.
+        'gradle_build/export_format=1': 'gradle_build/export_format=0',
     }
     for old, new in replacements.items():
         if preset.count(old) != 1:
@@ -88,7 +90,7 @@ def main():
     apk = output / ("ike-quest-preview-target34.apk" if args.diagnostic_target_34 else "ike-quest-preview.apk")
     subprocess.run([str(godot), "--headless", "--path", str(stage),
                     "--export-debug",
-                    "Ike's Adventures", str(apk)], env=env, check=True)
+                    "Ike Quest", str(apk)], env=env, check=True)
     print(apk)
 
 

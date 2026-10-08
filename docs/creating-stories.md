@@ -54,10 +54,10 @@ Every story JSON has these top-level fields:
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `meta` | Yes | Story metadata (`title`, `version`, and `teaser`) |
+| `meta` | Yes | Story metadata: `title`, `version`, `teaser`, plus `cover` (one emoji for the story card) and `order` (integer; cards sort by it, then by scene count) |
 | `start_scene` | Yes | ID of the first scene to show |
 | `scenes` | Yes | Object containing all scenes, keyed by scene ID |
-| `vocab` | No | Token-to-label mapping (not currently used for rendering) |
+| `vocab` | No | `{ token: { "label": "Text" } }`. Tiles show the emoji plus this label, so use it for capitalised names ("Bigfoot", "Skull Rider"). Keep verb labels lowercase. |
 
 ## Scenes
 
@@ -375,16 +375,28 @@ When a command changes state (opens a box, climbs a tree), add a guarded rule be
 
 The last scene in a story typically has no `next` transitions. A "NEW GAME" button appears automatically in scenes where no rule has a `next` field.
 
+Give every ending an `ending` object. The engine shows its `title` in a gold badge above the text ("🏆 Hero of the Land!" or, for stories with several endings, "🏆 Bigfoot Friend ending!  (1 of 5 found)") and records the `id` in the player's endings collection, which the story card displays as "⭐ N of M endings". Do not repeat the title as the first line of `text`.
+
 ```json
 "win": {
-  "text": ["YOU WIN!", "Great job, hero!"],
-  "tiles": ["look", "treasure"],
+  "mood": "win",
+  "ending": { "id": "win", "title": "Hero of the Land" },
+  "text": ["The dragon roars with joy!", "Great job, hero!"],
+  "tiles": ["look", "talk", "dragon", "treasure"],
   "commands": [
     { "pattern": ["look", "treasure"], "response": "So shiny!" }
   ],
   "default": ["You already won!"]
 }
 ```
+
+### Mood (background colour)
+
+Each scene may set `"mood"` to tint the background: `night`, `forest`, `cave`, `fire`, `day`, `digital`, `kitchen`, `salt`, `crystal`, `win`, or a `"#rrggbb"` colour. The tint fades in with the scene and the menu restores the default grey.
+
+### Length budgets
+
+Keep scene `text` to 3–6 short lines and every `response`/`default` under about 120 characters. Longer text shrinks the story font (floor 22 px) and pushes the tiles below the fold. Scenes with more than ~10 tiles also force scrolling; prefer fewer, more meaningful tiles.
 
 ## Tips for Writing Good Stories
 
@@ -415,11 +427,19 @@ The included stories demonstrate all features:
 - Boss battle with multi-flag gating: must find weakness AND coordinate with Spiderdude
 - Extensive inventory acknowledgment: `["look", <item>]` in every scene
 
-### `phone_trap.json` (8 scenes)
+### `phone_trap.json` (9 scenes)
 - Inventory items: `phone`, `torch`, `key`, `shield`, `chip` (all consumed after use)
 - Inventory-as-verb: `["torch", "bug"]`, `["shield", "fire"]`, `["chip", "boss"]`, `["key", "gate"]`
 - Multi-step bedroom: take phone then look at it to get sucked in
 - Progressive item chain: each item unlocks the next obstacle
+
+### `bigfoot_campout.json` (11 scenes, 5 endings)
+
+Camping with Dad: pack the lantern and snack (camera optional), follow tracks past a hollow log and across a creek to a berry patch, calm Bigfoot with a quiet LOOK, then choose how the meeting ends. Reference story for `ending`, `mood`, vocab labels, and optional collectibles (pinecone, berries).
+
+### `crystal_cave.json` (8 scenes)
+
+Waterfall cave with torch, crystal, rope bridge and a key-locked treasure room.
 
 ### `shake_escape.json` (8 scenes)
 - Inventory items: `crystal` (consumed climbing cliffs)

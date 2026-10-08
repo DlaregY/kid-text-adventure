@@ -2,7 +2,9 @@
   "meta": {
     "title": "Spiderdude and the Ghost Chain",
     "version": 3,
-    "teaser": "Help Spiderdude stop Skull Rider and save the city!"
+    "teaser": "Help Spiderdude stop Skull Rider and save the city!",
+    "cover": "🕷️",
+    "order": 6
   },
   "vocab": {
     "look": { "label": "look" },
@@ -45,6 +47,7 @@
   "start_scene": "bedroom",
   "scenes": {
     "bedroom": {
+      "mood": "night",
       "text": [
         "You are in your bedroom reading a comic book.",
         "CRASH! Something hits your window!",
@@ -216,6 +219,8 @@
     },
 
     "street": {
+
+    	"mood": "fire",
       "text": [
         "You run outside into the street!",
         "Fire trails cover the ground. The air smells like smoke.",
@@ -281,6 +286,8 @@
     },
 
     "rooftop": {
+
+    	"mood": "night",
       "text": [
         "Spiderdude is on the rooftop! He looks worried.",
         "The city glows orange with Skull Rider's fire below."
@@ -417,6 +424,8 @@
     },
 
     "park": {
+
+    	"mood": "night",
       "text": [
         "The park is smoky. Burnt grass everywhere.",
         "An old lady sits on a bench looking scared."
@@ -568,6 +577,8 @@
     },
 
     "library": {
+
+    	"mood": "cave",
       "text": [
         "The old library is quiet and dusty.",
         "One shelf in the back glows with a strange light!"
@@ -853,6 +864,8 @@
     },
 
     "basement": {
+
+    	"mood": "cave",
       "text": [
         "A secret basement under the library!",
         "Old bottles and tools line the walls.",
@@ -1076,6 +1089,8 @@
     },
 
     "tunnel": {
+
+    	"mood": "cave",
       "text": [
         "A dark underground tunnel. You can barely see!",
         "You hear water dripping somewhere.",
@@ -1220,6 +1235,8 @@
     },
 
     "bridge": {
+
+    	"mood": "cave",
       "text": [
         "An old stone bridge over an underground river!",
         "Skull Rider's fire marks cover the walls."
@@ -1352,6 +1369,8 @@
     },
 
     "tower": {
+
+    	"mood": "fire",
       "text": [
         "A dark tower rises above you!",
         "Skull Rider's bike is parked by the door.",
@@ -1486,6 +1505,8 @@
     },
 
     "stairs": {
+
+    	"mood": "fire",
       "text": [
         "Spiral stairs going up!",
         "You hear chains rattling above!",
@@ -1621,6 +1642,8 @@
     },
 
     "battle": {
+
+    	"mood": "fire",
       "text": [
         "You reach the top of the tower!",
         "Skull Rider swings his fire chain! WHOOSH!",
@@ -1858,6 +1881,8 @@
     },
 
     "victory": {
+
+    	"mood": "day",
       "text": [
         "The fire goes out! Skull Rider's flames disappear!",
         "A confused man stands where Skull Rider was.",
@@ -1970,6 +1995,10 @@
     },
 
     "win": {
+
+    	"mood": "win",
+
+    	"ending": { "id": "win", "title": "True Hero" },
       "text": [
         "You walk home as the sun rises over the city.",
         "Spiderdude swings by and waves at you!",
@@ -1979,9 +2008,56 @@
         "THE END"
       ],
       "tiles": [
-        "look"
+        "look",
+        "talk",
+        "go",
+        "spiderdude",
+        "city",
+        "home"
       ],
       "commands": [
+        {
+          "pattern": [
+            "look",
+            "spiderdude"
+          ],
+          "response": "Spiderdude flips off a lamppost and sticks the landing. Show-off!"
+        },
+        {
+          "pattern": [
+            "talk",
+            "spiderdude"
+          ],
+          "response": "Spiderdude says, 'Thanks, partner. The city owes you one!'"
+        },
+        {
+          "pattern": [
+            "look",
+            "city"
+          ],
+          "response": "No more fire. Just pink sky, chirping birds, and a bakery that smells amazing."
+        },
+        {
+          "pattern": [
+            "talk",
+            "city"
+          ],
+          "response": "You shout, 'GOOD MORNING, CITY!' Somewhere, a window slams. Oops."
+        },
+        {
+          "pattern": [
+            "look",
+            "home"
+          ],
+          "response": "Your house is right there. Mom has NO idea what you did tonight."
+        },
+        {
+          "pattern": [
+            "go",
+            "home"
+          ],
+          "response": "Almost! Just enjoy the sunrise a little longer."
+        },
         {
           "pattern": [
             "look",
