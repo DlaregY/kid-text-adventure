@@ -3,6 +3,9 @@ extends SceneTree
 var failures: Array[String] = []
 
 func _initialize() -> void:
+	if not preload("res://tests/qa_guard.gd").enter():
+		quit(2)
+		return
 	call_deferred("run")
 
 func check(condition: bool, message: String) -> void:

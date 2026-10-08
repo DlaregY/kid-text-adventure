@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[sub_resource type="StyleBoxFlat" id="panel"]
+bg_color = Color(1.0, 0.98, 0.94, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1.0, 0.718, 0.302, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_left = 16
+corner_radius_bottom_right = 16
+content_margin_left = 24
+content_margin_top = 24
+content_margin_right = 24
+content_margin_bottom = 24
+
+[sub_resource type="StyleBoxFlat" id="keep"]
+bg_color = Color(0.2, 0.7, 0.3, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="StyleBoxFlat" id="keep_hover"]
+bg_color = Color(0.25, 0.8, 0.35, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="StyleBoxFlat" id="keep_pressed"]
+bg_color = Color(0.15, 0.55, 0.22, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[node name="NewStoryDialog" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(448, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("panel")
+
+[node name="Box" type="VBoxContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Center/Panel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+text = "Start a new story?"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="Center/Panel/Box"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
+text = "This will replace your saved adventure."
+autowrap_mode = 3
+
+[node name="KeepSave" type="Button" parent="Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("keep")
+theme_override_styles/hover = SubResource("keep_hover")
+theme_override_styles/pressed = SubResource("keep_pressed")
+focus_neighbor_top = NodePath("../StartNew")
+focus_neighbor_bottom = NodePath("../StartNew")
+focus_next = NodePath("../StartNew")
+focus_previous = NodePath("../StartNew")
+text = "KEEP MY SAVE"
+
+[node name="StartNew" type="Button" parent="Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+focus_neighbor_top = NodePath("../KeepSave")
+focus_neighbor_bottom = NodePath("../KeepSave")
+focus_next = NodePath("../KeepSave")
+focus_previous = NodePath("../KeepSave")
+text = "START NEW"

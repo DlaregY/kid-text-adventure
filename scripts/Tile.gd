@@ -35,6 +35,9 @@ func _on_hold_timeout() -> void:
 	long_pressed.emit()
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
+	# Dragging is not a read-aloud hold or a second click on release.
+	_hold_timer.stop()
+	long_press_fired = true
 	# Show a styled preview matching tile appearance while dragging
 	var panel := PanelContainer.new()
 	var stylebox := StyleBoxFlat.new()

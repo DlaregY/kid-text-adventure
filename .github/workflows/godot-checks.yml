@@ -1,0 +1,40 @@
+name: Godot checks
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  godot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install desktop test dependencies
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri fonts-noto-color-emoji libspeechd2 speech-dispatcher speech-dispatcher-espeak-ng
+      - name: Start local speech discovery service
+        run: speech-dispatcher --spawn
+      - name: Download and verify Godot 4.6.1
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl --fail --location --retry 3 -o godot.zip https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable/Godot_v4.6.1-stable_linux.x86_64.zip
+          echo 'cecd0cb6b55e931318a9d7237dc4197d69ea914966787a454808523626e2789f  godot.zip' | sha256sum --check --strict
+          unzip -q godot.zip
+          chmod +x Godot_v4.6.1-stable_linux.x86_64
+          echo "GODOT_BIN=$RUNNER_TEMP/Godot_v4.6.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Test the isolation runner
+        run: python3 -m unittest discover -s tests -p 'test_*.py' -v
+      - name: Smoke, regressions, and desktop captures
+        run: python3 tests/run_checks.py --suite all
+      - name: Keep QA logs and desktop captures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-qa-${{ github.sha }}
+          path: exports/qa/
+          if-no-files-found: ignore
+          retention-days: 7

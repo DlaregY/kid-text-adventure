@@ -9,11 +9,18 @@ signal tapped
 @onready var label: Label = get_child(0)
 
 var token: String = ""
+# The controller supplies the same input gate used by tapping and execution.
+var input_allowed: Callable
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
-	return typeof(data) == TYPE_DICTIONARY and data.has("token")
+	if input_allowed.is_valid() and not bool(input_allowed.call()):
+		return false
+	return typeof(data) == TYPE_DICTIONARY and typeof(data.get("token")) == TYPE_STRING and not str(data["token"]).is_empty()
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	# Recheck here: a dialog/transition can start after the drag was accepted.
+	if not _can_drop_data(_at_position, data):
+		return
 	token = str(data["token"])
 	label.text = str(data.get("label", token))
 	tile_dropped.emit()
