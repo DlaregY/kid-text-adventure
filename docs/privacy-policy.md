@@ -1,45 +1,45 @@
-# Privacy Policy
+# Privacy Policy — Ike Quest
 
-_Last updated: 2026-03-26_
+_Last updated: 2026-10-08_
 
 ## Overview
 
-This game is designed to run offline. In its current version:
+Ike Quest is an offline text adventure for early readers, published by Norbonics Games.
 
-- It does not require account creation or sign-in.
-- It does not connect to external servers during normal gameplay.
-- It does not intentionally collect personal data from users.
+- It does not require an account or sign-in.
+- It does not connect to the internet during normal use.
+- It contains no advertising, analytics, or in-app purchases.
+- It does not collect, store, or share personal information.
 
-## Data collection and use
+## Data stored on your device
 
-As of this version, we do **not** collect, store, or share personal information such as:
+The app keeps a few small files on the device only, so that play can resume:
 
-- Name
-- Email address
-- Phone number
-- Precise location
-- Contacts
-- Payment details
-- User-generated personal profile data
+- Story progress (which story and scene you are on, and the items collected).
+- Which story endings have been found.
+- Settings: whether sound effects and automatic read-aloud are on.
 
-If future versions add online features, analytics, ads, accounts, cloud saves, or third-party services, this policy will be updated before those changes are released.
+None of this is personal information, and none of it leaves the device. Uninstalling the app removes it.
+
+## Read-aloud
+
+The optional read-aloud feature uses the text-to-speech voice already installed on your phone. Text is spoken on the device; nothing is sent to a server.
 
 ## Children’s privacy
 
-This game is intended to be family-friendly. In the current offline-only version, no personal data is collected from children or other users.
+Ike Quest is designed for young children and their families. Because the app collects no personal data, no personal data is collected from children.
 
-## Security
+## Permissions
 
-Because the app currently operates without backend services and without personal data collection, there is no server-side personal data storage in normal use.
+The app requests no Android permissions.
 
 ## Changes to this policy
 
-We may update this Privacy Policy if app functionality changes. When we do, we will revise the “Last updated” date above and publish the latest version at the policy URL listed in the app store.
+If a future version adds online features, this policy will be updated before that version is released, and the “Last updated” date above will change.
 
 ## Contact
 
-For privacy questions, contact:
-
-- Developer/Studio name: Norbonics Industries
-- Email: gerald@geraldnorby.com
+- Studio: Norbonics Games
+- Email: hello@norbonics.com
+- Website: https://games.norbonics.com/
 - Country/Region: United States

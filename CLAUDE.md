@@ -21,9 +21,11 @@ Run the headless smoke and regression suites with `godot4 --headless --path . --
 
 Android-only release preparation is tracked in `PROJECT_PLAN.md`; read `AGENTS.md` for account continuity. Google Play enrollment is already paid and all three account verifications are complete, per Gerald (October 2–3, 2026). Owner: geraldnorby@gmail.com; developer ID `8341017993051504358`. Do not enroll or pay again. Zo browser access is blocked; app approval and production access remain unverified. Zo's local preview builder is `scripts/build_android_preview.py`; it uses a separate `.preview` application ID. Run `tests/story_smoke.gd` with headless Godot for story loading, validation, scene-layout and state-helper regression checks. Real phone testing remains required. The preview workflow does not authorize publication.
 
-**Export APK** (debug-signed):
+The production preset is named **"Ike Quest"** and exports an Android App Bundle (`gradle_build/export_format=1`, `exports/ike-quest.aab`), which Google Play requires. For a sideload/debug APK, export with an explicit `.apk` path (Godot picks the format from the extension) or use `scripts/build_android_preview.py`, which forces APK output for the `.preview` package.
+
+**Export APK** (debug-signed, for phone sideloading):
 ```bash
-"/c/Users/geral/Downloads/Godot_v4.6.1-stable_win64.exe/Godot_v4.6.1-stable_win64_console.exe" --headless --export-debug "Ike's Adventures" exports/ike-adventure.apk
+"/c/Users/geral/Downloads/Godot_v4.6.1-stable_win64.exe/Godot_v4.6.1-stable_win64_console.exe" --headless --export-debug "Ike Quest" exports/ike-adventure.apk
 ```
 
 **Install on phone** (device must be connected via USB with ADB debugging enabled):
@@ -41,9 +43,10 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 **Release version source of truth:** `version.txt` is the canonical release version. During release/export, read `version.txt` first, then update Android export metadata so `export_presets.cfg` stays in sync.
 
 **Pre-Play export checklist (required):**
-- [ ] Bump `version.txt` to the intended release version.
-- [ ] Bump Android `version/name` in `export_presets.cfg` to match `version.txt`.
-- [ ] Bump Android `version/code` in `export_presets.cfg` (must be a monotonically increasing integer for Play).
+- [x] Bump `version.txt` to the intended release version (0.7.0 as of 2026-10-08).
+- [x] Bump Android `version/name` in `export_presets.cfg` to match `version.txt`.
+- [x] Bump Android `version/code` in `export_presets.cfg` (700; must be a monotonically increasing integer for Play).
+- [ ] Re-bump all three for every later release.
 
 ## Architecture
 

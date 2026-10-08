@@ -73,7 +73,8 @@ cannot see touch, safe areas, or TTS.
 - [x] Structural QA (schema, reachability, budgets) run on Bigfoot, Phone Trap, Shake Escape; manual phone playtest still owed.
 
 ## Phase 9 — Release hygiene [A8, A11, A12]
-- [ ] Production preset exports AAB; preset renamed to match the app.
-- [ ] Privacy policy reconciled and published; About screen shows the same text.
-- [ ] Bump `version.txt`, `version/name`, `version/code`.
-- [ ] Update CLAUDE.md, README and `docs/creating-stories.md` for new JSON fields and UI.
+- [x] Production preset exports AAB (`exports/ike-quest.aab`); preset renamed "Ike Quest"; preview builder forces APK.
+- [x] Privacy policy reconciled with the app (local progress/settings files, on-device TTS, no permissions, Norbonics Games / hello@norbonics.com). Publishing it at a public URL is still Gerald's step; the Parent corner text matches.
+- [x] Bumped `version.txt` 0.7.0, `version/name` 0.7.0, `version/code` 700.
+- [x] CLAUDE.md, README and `docs/creating-stories.md` updated for cover/order/mood/ending/vocab labels and the new UI.
+- [ ] Gerald: build the AAB, upload to internal testing, publish the policy URL, decide Spiderdude naming.
