@@ -249,9 +249,12 @@ func test_stop_dialog(game) -> void:
 	await apply(game, ["take", "key"])
 	while not game.continue_button.visible:
 		await process_frame
+	var bar_rect: Rect2 = game.continue_bar.get_global_rect()
+	check(game.continue_bar.visible and bar_rect.end.y <= root.size.y and game.scroll_container.get_global_rect().end.y <= bar_rect.position.y,
+		"Continue button is a fixed bar above the scrolling content")
 	game.home_button.pressed.emit()
 	game.stop_menu_button.pressed.emit()
-	check(not game.is_transitioning and not game.continue_button.visible, "Menu cancels a pending transition")
+	check(not game.is_transitioning and not game.continue_button.visible and not game.continue_bar.visible, "Menu cancels a pending transition")
 	await start_dragon(game)
 	game.continue_button.pressed.emit()
 	await settle()
@@ -430,11 +433,61 @@ func test_command_bar_feel(game) -> void:
 	var things_before: int = game.thing_tray.get_child_count()
 	await apply(game, ["take", "key"])
 	await continue_story(game)
-	check(game.current_scene_id == "gate", "Transition still works after refresh changes")
+	check(game.current_scene_id == "gate" and game.scroll_container.offset_bottom == 0.0, "Transition still works after refresh changes and releases the continue bar space")
 	game._show_menu()
 	check(game.action_tray.get_child_count() == 0 and game.thing_tray.get_child_count() == 0, "Menu frees tiles immediately")
 	game._clear_save()
 	print("Checked timer bar, slot clearing, feedback styling, and incremental tile refresh")
+
+func test_endings(game) -> void:
+	game._clear_progress()
+	game._show_menu()
+	var bigfoot_index: int = -1
+	for i in range(game.discovered_stories.size()):
+		if game.discovered_stories[i].path.ends_with("bigfoot_campout.json"):
+			bigfoot_index = i
+	check(bigfoot_index >= 0 and game.discovered_stories[bigfoot_index].ending_ids.size() == 4, "Bigfoot declares four endings")
+	var badge: Label = game.story_cards[bigfoot_index].get_node("Row/Col/Badge")
+	check(badge.text.contains("0 of 4 endings"), "Card shows no endings found yet: " + badge.text)
+	await start_bigfoot_meeting(game, true)
+	await apply(game, ["give", "bigfoot"])
+	await continue_story(game)
+	check(game.ending_badge.visible and game.ending_label.text.contains("Bigfoot Friend") and game.ending_label.text.contains("1 of 4"), "Ending badge names the ending and the count: " + game.ending_label.text)
+	check(not game.story_text.text.begins_with("THE "), "Ending scene text no longer shouts its title")
+	game._show_menu()
+	check(badge.text.contains("1 of 4 endings"), "Card counts the found ending: " + badge.text)
+	# Reaching the same ending again does not double count; a second ending does.
+	await start_bigfoot_meeting(game, true)
+	await apply(game, ["give", "bigfoot"])
+	await continue_story(game)
+	check(game.ending_label.text.contains("1 of 4"), "Repeat ending is not counted twice")
+	game._show_menu()
+	await start_bigfoot_meeting(game, true)
+	await apply(game, ["go", "camp"])
+	await continue_story(game)
+	check(game.ending_label.text.contains("2 of 4"), "Second ending counts")
+	game._show_menu()
+	check(badge.text.contains("2 of 4 endings"), "Card updates after the second ending")
+	# Single-ending stories show Finished.
+	await start_dragon(game)
+	game.current_scene_id = "win"
+	await game._render_scene()
+	check(game.ending_badge.visible and game.ending_label.text.contains("Hero of the Land"), "Single ending shows its title")
+	game._show_menu()
+	var dragon_badge: Label = game.story_cards[0].get_node("Row/Col/Badge")
+	check(dragon_badge.text.contains("Finished"), "Single-ending story shows Finished: " + dragon_badge.text)
+	# Non-terminal scenes never show the badge; corrupt progress is ignored.
+	await start_dragon(game)
+	check(not game.ending_badge.visible, "No badge on a normal scene")
+	game._show_menu()
+	var f := FileAccess.open(game.PROGRESS_PATH, FileAccess.WRITE)
+	f.store_string("[1,2")
+	f.close()
+	game._show_menu()
+	check(badge.text.contains("0 of 4 endings"), "Corrupt progress file reads as nothing found")
+	game._clear_progress()
+	game._clear_save()
+	print("Checked ending badge, progress persistence, and card counts")
 
 func run() -> void:
 	create_timer(60).timeout.connect(func():
@@ -457,6 +510,7 @@ func run() -> void:
 	await test_home_button_fixed(game)
 	await test_command_bar_feel(game)
 	await test_labels(game)
+	await test_endings(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

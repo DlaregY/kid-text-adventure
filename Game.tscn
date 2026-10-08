@@ -96,6 +96,17 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="ending_badge"]
+bg_color = Color(1.0, 0.85, 0.4, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 14
+content_margin_top = 8
+content_margin_right = 14
+content_margin_bottom = 8
+
 [sub_resource type="StyleBoxFlat" id="dialog_panel"]
 bg_color = Color(1.0, 0.98, 0.94, 1)
 border_width_left = 3
@@ -198,6 +209,19 @@ text = "v0.2.1"
 [node name="BottomSpacer" type="Control" parent="ScrollContainer/Layout/MenuScreen"]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
+
+[node name="EndingBadge" type="PanelContainer" parent="ScrollContainer/Layout"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("ending_badge")
+
+[node name="EndingLabel" type="Label" parent="ScrollContainer/Layout/EndingBadge"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.25, 0.18, 0.05, 1)
+text = "🏆 Ending"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
 custom_minimum_size = Vector2(0, 160)
@@ -305,13 +329,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "💡 HINT"
 
-[node name="ContinueButton" type="Button" parent="ScrollContainer/Layout"]
-visible = false
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "▶"
-
 [node name="NewGameButton" type="Button" parent="ScrollContainer/Layout"]
 visible = false
 custom_minimum_size = Vector2(0, 56)
@@ -374,6 +391,34 @@ theme_override_styles/normal = SubResource("play_normal")
 theme_override_styles/hover = SubResource("play_hover")
 theme_override_styles/pressed = SubResource("play_pressed")
 text = "PLAY"
+
+[node name="ContinueBar" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = -96.0
+offset_right = -16.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ContinueButton" type="Button" parent="ContinueBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 34
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("play_normal")
+theme_override_styles/hover = SubResource("play_hover")
+theme_override_styles/pressed = SubResource("play_pressed")
+text = "NEXT  ▶"
 
 [node name="AboutDialog" type="Control" parent="."]
 visible = false

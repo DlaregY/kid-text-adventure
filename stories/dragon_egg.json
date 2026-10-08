@@ -529,6 +529,8 @@
 	},
 
 	"win": {
+
+		"ending": { "id": "win", "title": "Hero of the Land" },
 	  "text": ["YOU DID IT!", "The dragon roars so loud the whole mountain shakes!", "Gold and gems rain down from the ceiling!", "The dragon puts the tiny crown on your head.", "You are the HERO of the land!"],
 	  "tiles": ["look", "talk", "dragon", "treasure"],
 	  "commands": [

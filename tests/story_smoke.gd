@@ -25,6 +25,9 @@ func run() -> void:
 			var bad: Dictionary = valid.duplicate(true)
 			bad.scenes[start].commands[0][field] = "invalid"
 			check(not game._validate_story(bad).ok, "Accepted invalid " + field)
+		var bad_ending: Dictionary = valid.duplicate(true)
+		bad_ending.scenes[start]["ending"] = {"title": "no id"}
+		check(not game._validate_story(bad_ending).ok, "Accepted ending without id")
 		for scene_id in game.scenes:
 			game.current_scene_id = scene_id
 			await game._render_scene()

@@ -53,4 +53,26 @@ func run() -> void:
 	await settle(10)
 	await shot("9_menu_continue")
 	game._clear_save()
+	game._clear_progress()
+	game._show_menu()
+	game.card_buttons[2].pressed.emit()
+	game._on_start_pressed()
+	await settle(8)
+	game.current_scene_id = "bigfoot_meeting"
+	game.inventory["snack"] = true
+	await game._render_scene()
+	var give: Array[String] = ["give", "bigfoot"]
+	await game._apply_command(give)
+	while not game.continue_button.visible:
+		await process_frame
+	await shot("10_transition_continue")
+	game.continue_button.pressed.emit()
+	while game.is_transitioning:
+		await process_frame
+	await settle(8)
+	await shot("11_ending_badge")
+	game._show_menu()
+	await settle(8)
+	await shot("12_menu_endings")
+	game._clear_progress()
 	quit(0)

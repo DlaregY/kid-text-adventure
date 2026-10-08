@@ -560,6 +560,8 @@
     },
 
     "home": {
+
+    	"ending": { "id": "win", "title": "Perfectly Salty" },
       "text": [
         "You fly out through a hole!",
         "POP! You are big again!",

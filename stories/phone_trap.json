@@ -629,6 +629,8 @@
     },
 
     "home": {
+
+    	"ending": { "id": "win", "title": "Escaped the Phone" },
       "text": [
         "FLASH! WHOOOOSH!",
         "",

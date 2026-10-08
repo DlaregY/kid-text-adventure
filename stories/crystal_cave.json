@@ -528,6 +528,8 @@
     },
 
     "win": {
+
+    	"ending": { "id": "win", "title": "Crystal Explorer" },
       "text": ["YOU FOUND THE TREASURE!", "Rainbow light fills the cave!", "The crystals carry you up, up, up!", "You burst out of the cave into the sunshine!", "You are the CRYSTAL EXPLORER!"],
       "tiles": ["look", "talk", "crystal", "treasure", "lake"],
       "commands": [

@@ -1972,6 +1972,8 @@
     },
 
     "win": {
+
+    	"ending": { "id": "win", "title": "True Hero" },
       "text": [
         "You walk home as the sun rises over the city.",
         "Spiderdude swings by and waves at you!",

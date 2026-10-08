@@ -47,9 +47,11 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: card taps, scrolling the list above the fixed PLAY bar, Parent corner text size.
 
 ## Phase 5 — Endings collection and ending presentation [C25]
-- [ ] `ending` field on terminal scenes (`{"id","title"}`); render title as a small gold badge, not line one.
-- [ ] Persist found endings per story in `user://progress.json`; show "N of M endings" on cards and at the ending.
-- [ ] Tests: reaching an ending records it; menu counts match.
+- [x] `ending` field on terminal scenes (`{"id","title"}`); rendered as a gold badge; Bigfoot's shouted first lines removed; every story's ending titled.
+- [x] Persist found endings per story in `user://progress.json`; cards show "⭐ N of M endings" / "⭐ Finished"; badge shows "N of M found".
+- [x] NEXT ▶ moved to a fixed bottom bar so it is never below the fold (found via screenshots).
+- [x] Tests: ending recorded once, second ending counts, single-ending Finished, corrupt progress ignored, continue bar on screen (166 checks).
+- [ ] Phone: badge legibility; NEXT bar placement with gesture navigation.
 
 ## Phase 6 — Read-aloud and sound [C24, C26]
 - [ ] 🔊 button reads story text; tap feedback reads it; long-press a tile reads the word (DisplayServer TTS).

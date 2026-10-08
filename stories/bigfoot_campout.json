@@ -323,8 +323,8 @@
       ]
     },
     "ending_cautious": {
+      "ending": { "id": "quiet", "title": "The Quiet Secret" },
       "text": [
-        "THE QUIET SECRET ENDING",
         "You watch quietly as Bigfoot crosses the creek and vanishes into the trees.",
         "Back at camp, you and Dad keep his secret and draw one enormous footprint in your notebook."
       ],
@@ -355,8 +355,8 @@
       ]
     },
     "ending_friend": {
+      "ending": { "id": "friend", "title": "Bigfoot Friend" },
       "text": [
-        "THE BIGFOOT FRIEND ENDING",
         "Bigfoot shares the snack with you and Dad, then shows you his hidden berry patch.",
         "Before sunrise, your new friend gives you a pinecone the size of a football."
       ],
@@ -386,8 +386,8 @@
       ]
     },
     "ending_goofy": {
+      "ending": { "id": "goofy", "title": "Mixed-Up Message" },
       "text": [
-        "THE MIXED-UP MESSAGE ENDING",
         "You meant to say hello in Bigfoot language.",
         "Instead, you said, 'My socks taste like pinecones!' Bigfoot laughs so hard that owls fly away."
       ],
@@ -418,8 +418,8 @@
       ]
     },
     "ending_missed": {
+      "ending": { "id": "missed", "title": "The Giant Footprint" },
       "text": [
-        "THE GIANT FOOTPRINT ENDING",
         "When you and Dad return with the camera, Bigfoot has disappeared.",
         "All you find is one giant footprint and a soft brown hair on a branch."
       ],

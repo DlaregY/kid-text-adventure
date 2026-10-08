@@ -8,8 +8,10 @@ extends Control
 const STORIES_DIR := "res://stories"
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
+const PROGRESS_PATH := "user://progress.json"
 const TOP_BAR_HEIGHT: float = 56.0
 const BOTTOM_BAR_HEIGHT: float = 184.0
+const CONTINUE_BAR_HEIGHT: float = 104.0
 const TILE_BLUE := Color(0.357, 0.608, 0.835)
 const TILE_GOLD := Color(0.85, 0.65, 0.13)
 # Feedback sits on the dark gray game background, so these are light tints.
@@ -134,12 +136,15 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var inventory_label: Label = $ScrollContainer/Layout/TileSection/InventoryLabel
 @onready var inventory_tray: FlowContainer = $ScrollContainer/Layout/TileSection/InventoryTray
 @onready var transition_overlay: ColorRect = $TransitionOverlay
-@onready var continue_button: Button = $ScrollContainer/Layout/ContinueButton
+@onready var continue_bar: Control = $ContinueBar
+@onready var continue_button: Button = $ContinueBar/ContinueButton
 @onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var layout: VBoxContainer = $ScrollContainer/Layout
 @onready var timer_bar: ProgressBar = $ScrollContainer/Layout/TimerBar
+@onready var ending_badge: PanelContainer = $ScrollContainer/Layout/EndingBadge
+@onready var ending_label: Label = $ScrollContainer/Layout/EndingBadge/EndingLabel
 
 var story = {}
 var scenes = {}
@@ -297,8 +302,76 @@ func _story_info(path: String, file_name: String) -> Dictionary:
 	var story_scenes = parsed.get("scenes", {})
 	if typeof(story_scenes) == TYPE_DICTIONARY:
 		info["scene_count"] = story_scenes.size()
+		var ending_ids: Array[String] = []
+		for scene in story_scenes.values():
+			if typeof(scene) == TYPE_DICTIONARY and typeof(scene.get("ending", null)) == TYPE_DICTIONARY:
+				var eid := str(scene["ending"].get("id", "")).strip_edges()
+				if eid != "" and eid not in ending_ids:
+					ending_ids.append(eid)
+		info["ending_ids"] = ending_ids
 
 	return info
+
+# --- Endings collection: which endings each story has reached, kept across sessions.
+
+func _story_key(path: String) -> String:
+	return path.get_file().get_basename()
+
+func _read_progress() -> Dictionary:
+	if not FileAccess.file_exists(PROGRESS_PATH):
+		return {}
+	var f := FileAccess.open(PROGRESS_PATH, FileAccess.READ)
+	if f == null:
+		return {}
+	var parsed = JSON.parse_string(f.get_as_text())
+	return parsed if typeof(parsed) == TYPE_DICTIONARY else {}
+
+func _found_endings(path: String) -> Array:
+	var found = _read_progress().get(_story_key(path), [])
+	return found if typeof(found) == TYPE_ARRAY else []
+
+func _record_ending(path: String, ending_id: String) -> void:
+	var progress: Dictionary = _read_progress()
+	var key := _story_key(path)
+	var found: Array = progress.get(key, []) if typeof(progress.get(key, [])) == TYPE_ARRAY else []
+	if ending_id in found:
+		return
+	found.append(ending_id)
+	progress[key] = found
+	var f := FileAccess.open(PROGRESS_PATH, FileAccess.WRITE)
+	if f == null:
+		push_warning("Could not write progress file: " + PROGRESS_PATH)
+		return
+	f.store_string(JSON.stringify(progress))
+
+func _clear_progress() -> void:
+	if FileAccess.file_exists(PROGRESS_PATH):
+		DirAccess.remove_absolute(PROGRESS_PATH)
+
+func _endings_badge_text(entry: Dictionary) -> String:
+	var ids: Array = entry.get("ending_ids", [])
+	if ids.is_empty():
+		return ""
+	var found: int = 0
+	for eid in _found_endings(str(entry.get("path", ""))):
+		if str(eid) in ids:
+			found += 1
+	if ids.size() == 1:
+		return "⭐ Finished" if found == 1 else ""
+	return "⭐ %d of %d endings" % [found, ids.size()]
+
+func _refresh_card_badges() -> void:
+	for i in range(story_cards.size()):
+		var badge: Label = story_cards[i].get_node_or_null("Row/Col/Badge")
+		if badge == null:
+			continue
+		var entry: Dictionary = discovered_stories[i]
+		var count: int = int(entry.get("scene_count", 0))
+		var text := "%s · %d scenes" % [_length_badge(count), count]
+		var endings := _endings_badge_text(entry)
+		if endings != "":
+			text += "   " + endings
+		badge.text = text
 
 func _load_story(path: String) -> bool:
 	var f = FileAccess.open(path, FileAccess.READ)
@@ -365,6 +438,10 @@ func _validate_story(story_data: Dictionary) -> Dictionary:
 
 		if scene.has("hints") and typeof(scene.get("hints", null)) != TYPE_ARRAY:
 			errors.append("Scene `%s` has invalid `hints` (expected array when present)." % scene_name)
+		if scene.has("ending"):
+			var ending = scene.get("ending", null)
+			if typeof(ending) != TYPE_DICTIONARY or str(ending.get("id", "")).strip_edges() == "":
+				errors.append("Scene `%s` has invalid `ending` (expected {id, title})." % scene_name)
 
 		var commands = scene.get("commands", [])
 		if typeof(commands) == TYPE_ARRAY:
@@ -444,12 +521,14 @@ func _show_menu() -> void:
 	is_transitioning = false
 	is_executing_command = false
 	stop_dialog.visible = false
+	continue_bar.visible = false
 	top_bar.visible = false
 	bottom_bar.visible = true
 	scroll_container.offset_top = 0.0
 	scroll_container.offset_bottom = -BOTTOM_BAR_HEIGHT
 	pending_scene_id = ""
 	menu_screen.visible = true
+	_refresh_card_badges()
 	command_bar.visible = false
 	tile_section.visible = false
 	feedback_text.visible = false
@@ -545,6 +624,12 @@ func _on_resume_pressed() -> void:
 		flags[str(k)] = bool(saved_flags[k])
 	_start_story(true)
 
+func _set_continue_visible(shown: bool) -> void:
+	continue_bar.visible = shown
+	continue_button.visible = shown
+	if has_active_story:
+		scroll_container.offset_bottom = -CONTINUE_BAR_HEIGHT if shown else 0.0
+
 func _show_stop_dialog() -> void:
 	if not has_active_story:
 		return
@@ -614,6 +699,7 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	card.custom_minimum_size = Vector2(0, 88)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var row := HBoxContainer.new()
+	row.name = "Row"
 	row.add_theme_constant_override("separation", 12)
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var cover := Label.new()
@@ -625,6 +711,7 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(cover)
 	var col := VBoxContainer.new()
+	col.name = "Col"
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	col.add_theme_constant_override("separation", 2)
@@ -644,6 +731,7 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	teaser.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	col.add_child(teaser)
 	var badge := Label.new()
+	badge.name = "Badge"
 	var count: int = int(entry.get("scene_count", 0))
 	badge.text = "%s · %d scenes" % [_length_badge(count), count]
 	badge.add_theme_font_size_override("font_size", 13)
@@ -708,8 +796,23 @@ func _render_scene() -> void:
 			has_next = true
 			break
 	new_game_button.visible = not has_next
+	ending_badge.visible = false
 	if not has_next:
 		_clear_save()
+		var ending = scene.get("ending", null)
+		if typeof(ending) == TYPE_DICTIONARY:
+			var eid := str(ending.get("id", "")).strip_edges()
+			var title := str(ending.get("title", eid)).strip_edges()
+			if eid != "":
+				_record_ending(loaded_story_path, eid)
+				var index := _story_index_for_path(loaded_story_path)
+				var total: int = discovered_stories[index].get("ending_ids", []).size() if index >= 0 else 1
+				var found: int = _found_endings(loaded_story_path).size()
+				if total > 1:
+					ending_label.text = "🏆 %s ending!  (%d of %d found)" % [title, found, total]
+				else:
+					ending_label.text = "🏆 %s!" % title
+				ending_badge.visible = true
 	await _auto_fit_story_text()
 
 func _refresh_tiles() -> void:
@@ -1000,11 +1103,11 @@ func _transition_to_scene(scene_id: String) -> void:
 
 	# Show continue button and wait for kid to tap it. Poll instead of awaiting the
 	# signal so a story stopped from the menu releases this coroutine on its own.
-	continue_button.visible = true
+	_set_continue_visible(true)
 	continue_pressed = false
 	while not continue_pressed and generation == story_generation:
 		await get_tree().process_frame
-	continue_button.visible = false
+	_set_continue_visible(false)
 	if generation != story_generation:
 		return
 
