@@ -30,12 +30,13 @@ cannot see touch, safe areas, or TTS.
 - [x] Tests: smoke renders 55 scenes; regression covers safe LOOK/TALK, snack→Bigfoot tap routing, all four endings, and the camp gate.
 
 ## Phase 3 — Command bar feel [B13, B14, B15, B21]
-- [ ] Tap a filled slot to clear it.
-- [ ] Visible countdown bar on the command bar during the 0.5 s delay.
-- [ ] Feedback label tinted/animated differently for matched rules vs fallbacks; shake on fallback.
-- [ ] Incremental tile updates instead of a full rebuild on state change.
-- [ ] Tile tap bounce tween.
-- [ ] Tests: slot clear cancels timer; progress vs fallback sets the expected feedback style.
+- [x] Tap a filled slot to clear it.
+- [x] Visible countdown bar on the command bar during the 0.5 s delay.
+- [x] Feedback label tinted/animated differently for matched rules vs fallbacks; shake on fallback.
+- [x] Incremental tile updates instead of a full rebuild on state change (story text/font no longer reset on progress).
+- [x] Tile tap bounce tween.
+- [x] Tests: slot clear cancels timer; timer bar visibility; progress vs fallback feedback color; unchanged trays keep nodes (110 checks).
+- [ ] Phone: slot tap-to-clear works with touch; bar/pop/shake feel right; no flicker on TAKE SNACK.
 
 ## Phase 4 — Menu as story cards [B18, B19, B20, C29]
 - [ ] Replace OptionButton with a scrollable list of cards (cover emoji, title, teaser, length badge).

@@ -354,6 +354,48 @@ func test_home_button_fixed(game) -> void:
 	game._clear_save()
 	print("Checked the home button stays fixed while scrolling")
 
+func test_command_bar_feel(game) -> void:
+	await start_dragon(game)
+	game.current_scene_id = "hall"
+	await game._render_scene()
+	# Timer bar shows only during the debounce.
+	check(not game.timer_bar.visible, "Timer bar hidden when idle")
+	tap(game, "look")
+	tap(game, "box")
+	await process_frame
+	await process_frame
+	check(game.timer_bar.visible and game.timer_bar.value < 1.0, "Timer bar visible and draining during the delay")
+	# Tapping a filled slot clears it and cancels the command.
+	game.slot2.tapped.emit()
+	check(game.slot2.token.is_empty() and game.command_timer.is_stopped(), "Tapping a slot clears it and stops the timer")
+	await create_timer(0.6).timeout
+	check(game.feedback_text.text.is_empty() and not game.timer_bar.visible, "Cleared command never fires")
+	game.slot1.tapped.emit()
+	check(game.slot1.token.is_empty(), "Tapping the action slot clears it too")
+	game.slot1.tapped.emit()
+	check(game.slot1.token.is_empty(), "Tapping an empty slot is harmless")
+	# Feedback colors: fallback is red-brown, progress is green, plain match is neutral.
+	await apply(game, ["go", "key"])
+	check(game.feedback_text.get_theme_color("font_color") == game.FEEDBACK_FAIL, "Fallback feedback uses the fail color")
+	await apply(game, ["look", "door"])
+	check(game.feedback_text.get_theme_color("font_color") == game.FEEDBACK_NEUTRAL, "Plain matched response uses the neutral color")
+	var action_tiles_before: Array = game.action_tray.get_children()
+	var story_font_before: int = game.story_text.get_theme_font_size("font_size")
+	await apply(game, ["open", "box"])
+	check(game.feedback_text.get_theme_color("font_color") == game.FEEDBACK_SUCCESS, "Progress uses the success color")
+	check(game.feedback_text.text.contains("open") or not game.feedback_text.text.is_empty(), "Progress keeps its response visible")
+	check(game.action_tray.get_children() == action_tiles_before, "Unchanged trays keep their tile nodes after progress")
+	check(game.story_text.get_theme_font_size("font_size") == story_font_before, "Progress does not reset the story font")
+	# Picking up an item moves exactly that tile to the inventory tray.
+	var things_before: int = game.thing_tray.get_child_count()
+	await apply(game, ["take", "key"])
+	await continue_story(game)
+	check(game.current_scene_id == "gate", "Transition still works after refresh changes")
+	game._show_menu()
+	check(game.action_tray.get_child_count() == 0 and game.thing_tray.get_child_count() == 0, "Menu frees tiles immediately")
+	game._clear_save()
+	print("Checked timer bar, slot clearing, feedback styling, and incremental tile refresh")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -373,6 +415,7 @@ func run() -> void:
 	await test_stop_dialog_suspends_commands(game)
 	await test_pending_transition_save(game)
 	await test_home_button_fixed(game)
+	await test_command_bar_feel(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

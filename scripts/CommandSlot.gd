@@ -2,6 +2,7 @@
 extends PanelContainer
 
 signal tile_dropped
+signal tapped
 
 @export var slot_index: int = 0
 @export var placeholder_text: String = "(drop here)"
@@ -16,6 +17,11 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	token = str(data["token"])
 	label.text = str(data.get("label", token))
 	tile_dropped.emit()
+
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		tapped.emit()
+		accept_event()
 
 func set_tile(new_token: String, display_text: String) -> void:
 	token = new_token

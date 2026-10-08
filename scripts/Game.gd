@@ -9,6 +9,11 @@ const STORIES_DIR := "res://stories"
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
 const TOP_BAR_HEIGHT: float = 56.0
+const TILE_BLUE := Color(0.357, 0.608, 0.835)
+const TILE_GOLD := Color(0.85, 0.65, 0.13)
+const FEEDBACK_NEUTRAL := Color(0.2, 0.15, 0.1)
+const FEEDBACK_SUCCESS := Color(0.1, 0.5, 0.2)
+const FEEDBACK_FAIL := Color(0.6, 0.25, 0.2)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
@@ -128,6 +133,7 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var layout: VBoxContainer = $ScrollContainer/Layout
+@onready var timer_bar: ProgressBar = $ScrollContainer/Layout/TimerBar
 
 var story = {}
 var scenes = {}
@@ -183,8 +189,23 @@ func _ready() -> void:
 	continue_button.pressed.connect(func() -> void: continue_pressed = true)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
+	slot1.tapped.connect(_on_slot_tapped.bind(slot1))
+	slot2.tapped.connect(_on_slot_tapped.bind(slot2))
+	feedback_text.add_theme_color_override("font_color", FEEDBACK_NEUTRAL)
 	_discover_stories()
 	_show_menu()
+
+func _process(_delta: float) -> void:
+	var running: bool = not command_timer.is_stopped()
+	timer_bar.visible = running
+	if running:
+		timer_bar.value = command_timer.time_left / command_timer.wait_time
+
+func _on_slot_tapped(slot: PanelContainer) -> void:
+	if _input_blocked() or slot.token == "":
+		return
+	slot.clear()
+	command_timer.stop()
 
 func _discover_stories() -> void:
 	discovered_stories.clear()
@@ -412,7 +433,8 @@ func _show_menu() -> void:
 	story_text.custom_minimum_size.y = STORY_FONT_MAX * 5
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
-			child.queue_free()
+			tray.remove_child(child)
+			child.free()
 	slot1.clear()
 	slot2.clear()
 	inventory.clear()
@@ -563,32 +585,11 @@ func _render_scene() -> void:
 	story_text.text = "\n".join(lines)
 
 	# clear feedback + command slots
-	feedback_text.text = ""
+	_show_feedback("", "neutral")
 	slot1.clear()
 	slot2.clear()
 
-	# tiles — split into actions, things, and inventory
-	for tray in [action_tray, thing_tray, inventory_tray]:
-		for child in tray.get_children():
-			child.queue_free()
-
-	var tiles: Array = scene.get("tiles", [])
-	for t in tiles:
-		var token_str: String = str(t)
-		if token_str in ACTION_TOKENS:
-			action_tray.add_child(_make_tile(token_str, Color(0.357, 0.608, 0.835), "action"))
-		elif inventory.has(token_str):
-			inventory_tray.add_child(_make_tile(token_str, Color(0.85, 0.65, 0.13), "inventory"))
-		else:
-			thing_tray.add_child(_make_tile(token_str, Color(0.357, 0.608, 0.835), "thing"))
-
-	# Add inventory items not in this scene's tile list
-	for item in inventory.keys():
-		var item_str: String = str(item)
-		if item_str not in tiles:
-			inventory_tray.add_child(_make_tile(item_str, Color(0.85, 0.65, 0.13), "inventory"))
-
-	_update_inventory_ui()
+	_refresh_tiles()
 
 	# Show "New Game" button only on terminal scenes (no outgoing transitions)
 	var has_next := false
@@ -601,10 +602,76 @@ func _render_scene() -> void:
 		_clear_save()
 	await _auto_fit_story_text()
 
-func _auto_fit_story_text() -> void:
+func _refresh_tiles() -> void:
+	# Rebuild only the trays whose contents changed, and free old tiles immediately,
+	# so a state change (e.g. picking up an item) does not flash every tile.
+	var scene: Dictionary = scenes.get(current_scene_id, {})
+	var tiles: Array = scene.get("tiles", [])
+	var wanted := {action_tray: [], thing_tray: [], inventory_tray: []}
+	for t in tiles:
+		var token_str: String = str(t)
+		if token_str in ACTION_TOKENS:
+			wanted[action_tray].append(token_str)
+		elif inventory.has(token_str):
+			wanted[inventory_tray].append(token_str)
+		else:
+			wanted[thing_tray].append(token_str)
+	for item in inventory.keys():
+		var item_str: String = str(item)
+		if item_str not in tiles:
+			wanted[inventory_tray].append(item_str)
+
+	for tray in wanted.keys():
+		var current: Array = []
+		for child in tray.get_children():
+			current.append(child.token)
+		if current == wanted[tray]:
+			continue
+		for child in tray.get_children():
+			tray.remove_child(child)
+			child.free()
+		var cat: String = "action" if tray == action_tray else ("inventory" if tray == inventory_tray else "thing")
+		var color: Color = TILE_GOLD if tray == inventory_tray else TILE_BLUE
+		for token_str in wanted[tray]:
+			tray.add_child(_make_tile(token_str, color, cat))
+
+	_update_inventory_ui()
+
+func _show_feedback(text: String, kind: String) -> void:
+	feedback_text.text = text
+	var color: Color = FEEDBACK_NEUTRAL
+	if kind == "success":
+		color = FEEDBACK_SUCCESS
+	elif kind == "fail":
+		color = FEEDBACK_FAIL
+	feedback_text.add_theme_color_override("font_color", color)
+	if text == "" or kind == "neutral":
+		return
+	feedback_text.pivot_offset = feedback_text.size / 2.0
+	feedback_text.scale = Vector2.ONE
+	feedback_text.rotation_degrees = 0.0
+	var tween := create_tween()
+	if kind == "success":
+		tween.tween_property(feedback_text, "scale", Vector2(1.05, 1.05), 0.08)
+		tween.tween_property(feedback_text, "scale", Vector2.ONE, 0.12)
+	else:
+		for angle in [2.0, -2.0, 1.0, 0.0]:
+			tween.tween_property(feedback_text, "rotation_degrees", angle, 0.06)
+
+func _bounce_tile(tile: Control) -> void:
+	tile.pivot_offset = tile.size / 2.0
+	tile.scale = Vector2.ONE
+	var tween := create_tween()
+	tween.tween_property(tile, "scale", Vector2(1.12, 1.12), 0.07)
+	tween.tween_property(tile, "scale", Vector2.ONE, 0.1)
+
+func _auto_fit_story_text(reset: bool = true) -> void:
 	var font_size: int = STORY_FONT_MAX
-	story_text.add_theme_font_size_override("font_size", font_size)
-	story_text.custom_minimum_size.y = font_size * 5
+	if reset:
+		story_text.add_theme_font_size_override("font_size", font_size)
+		story_text.custom_minimum_size.y = font_size * 5
+	else:
+		font_size = story_text.get_theme_font_size("font_size")
 	await get_tree().process_frame
 
 	while font_size > STORY_FONT_MIN:
@@ -618,18 +685,17 @@ func _auto_fit_story_text() -> void:
 	scroll_container.scroll_vertical = 0
 
 func _update_inventory_ui() -> void:
-	# Old tile nodes remain until queue_free() runs at the end of the frame.
 	var has_items: bool = not inventory.is_empty()
 	inventory_label.visible = has_items
 	inventory_tray.visible = has_items
 
-func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835), cat: String = "thing") -> Button:
+func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thing") -> Button:
 	var tile = TILE_SCENE.instantiate()
 	tile.token = token_str
 	tile.category = cat
 	var icon: String = EMOJI.get(token_str, "")
 	tile.text = (icon + " " + token_str) if icon != "" else token_str
-	if color != Color(0.357, 0.608, 0.835):
+	if color != TILE_BLUE:
 		tile.tile_color = color
 		var normal := StyleBoxFlat.new()
 		normal.bg_color = color
@@ -655,6 +721,7 @@ func _on_tile_pressed(tile: Button) -> void:
 	if _input_blocked():
 		return
 
+	_bounce_tile(tile)
 	var cat: String = tile.category
 	if cat == "action":
 		slot1.set_tile(tile.token, tile.text)
@@ -723,9 +790,8 @@ func _apply_command(cmd: Array[String]) -> bool:
 
 		# Matched
 		var response = str(rule.get("response", "OK."))
-		feedback_text.text = response
-
 		var made_progress := _apply_effects(rule.get("effects", {}))
+		_show_feedback(response, "success" if (made_progress or rule.has("next")) else "neutral")
 
 		if rule.has("next"):
 			_reset_hints()
@@ -737,24 +803,26 @@ func _apply_command(cmd: Array[String]) -> bool:
 			return true
 		else:
 			if made_progress:
-				# Refresh inventory and reset hints only when the world changes.
+				# Refresh trays and reset hints only when the world changes; keep the
+				# story text and feedback in place so nothing flashes.
 				var generation: int = story_generation
 				_save_progress()
-				await _render_scene()
+				_reset_hints()
+				_refresh_tiles()
+				await _auto_fit_story_text(false)
 				if generation != story_generation:
 					return false
 			else:
 				_record_no_progress()
-			feedback_text.text = response
 			return false
 
 	# No match — try smart fallback, then random default
 	_record_no_progress()
 	var smart: String = _get_smart_fallback(cmd)
 	if smart != "":
-		feedback_text.text = smart
+		_show_feedback(smart, "fail")
 	else:
-		feedback_text.text = _pick_random_text(default_responses, "Nothing happens.")
+		_show_feedback(_pick_random_text(default_responses, "Nothing happens."), "fail")
 	return false
 
 
@@ -890,6 +958,6 @@ func _on_hint_pressed() -> void:
 	var hints: Array = scene.get("hints", [])
 	if hints.is_empty():
 		return
-	feedback_text.text = str(hints[hint_index])
+	_show_feedback(str(hints[hint_index]), "neutral")
 	if hint_index < hints.size() - 1:
 		hint_index += 1

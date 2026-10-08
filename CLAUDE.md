@@ -64,7 +64,9 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Click-to-place:** Tapping a tile auto-routes it: action tiles → Slot1, thing tiles → Slot2, inventory tiles → first empty slot (Slot1 if empty, else Slot2). This lets inventory items act as verbs (e.g., "hammer chain", "key gate") or objects (e.g., "look hammer"). Drag-and-drop still works as fallback.
 
-**Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). It restarts a single one-shot `command_timer` when both slots are filled, giving each selection a full 0.5s before `_try_execute_command()`. Incomplete selections, `_show_menu()`, and `_render_scene()` stop the timer. `is_executing_command` guards input while command effects are being rendered.
+**Auto-execution:** `_check_slots_and_execute()` fires after any tile placement (click or drag). It restarts a single one-shot `command_timer` when both slots are filled, giving each selection a full 0.5s before `_try_execute_command()`. Incomplete selections, `_show_menu()`, and `_render_scene()` stop the timer. `is_executing_command` guards input while command effects are being rendered. While the timer runs, `_process()` shows the orange `TimerBar` ProgressBar under the command bar draining from full to empty. Tapping a filled slot (`CommandSlot.tapped`, from `_gui_input`) clears that slot and stops the timer.
+
+**Feedback styling:** `_show_feedback(text, kind)` sets the FeedbackText color and a short tween: `success` (green, scale pop) when a matched rule changed state or transitions, `fail` (red-brown, small rotation shake) for fallbacks, `neutral` (dark) for plain matched responses and hints. Tile taps run `_bounce_tile()` (scale 1→1.12→1).
 
 **Scene transitions:** `_transition_to_scene()` shows response text, pauses 1.0s, then displays a ▶ continue button. When the kid taps the button, it fades to black over 0.3s via `TransitionOverlay` ColorRect tween, swaps scene content, fades back in over 0.3s. `is_transitioning` flag prevents input during transitions (including while the continue button is visible).
 
@@ -80,7 +82,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
 
-**Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_render_scene()` sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
+**Tile categorization:** `ACTION_TOKENS` const lists verb tokens. `_refresh_tiles()` (called by `_render_scene()` and after any command that changes inventory/flags) computes the wanted token list per tray and rebuilds only trays whose contents changed, freeing old tiles immediately rather than with `queue_free()` so nothing double-renders. Progress-only commands no longer re-render the story text; they call `_auto_fit_story_text(false)`, which only shrinks from the current size. It sorts tiles into `ActionTray` (verbs), `ThingTray` (nouns), and `InventoryTray` (items in inventory) FlowContainers under a `TileSection` VBoxContainer. Inventory tiles are gold/amber colored and include items carried from other scenes. `_make_tile()` helper creates tiles with color styling and category, connects `pressed` signal.
 
 ## Stories
 
