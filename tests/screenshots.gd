@@ -102,6 +102,7 @@ func run() -> void:
 	check(not game.ending_badge.visible, "Menu capture has no leftover ending badge")
 	await shot("12_menu_endings")
 	game._clear_progress()
+	await preload("res://tests/story_captures.gd").new().run(self, game)
 	print("Screenshot checks; failures=", failures.size())
 	game.queue_free()
 	await process_frame

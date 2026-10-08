@@ -23,3 +23,10 @@ Seven Python isolation-runner unit tests were executed successfully in the imple
 - Other nice-to-have and later recommendations remain separate work.
 
 All six story files, the production application ID, version metadata, speech configuration, and Android permissions are unchanged in this batch. No Android artifact was built, no main-branch merge or Play change was performed, and live Zo Hub #1511 was not accessed or updated.
+
+## Continuation: batch 2
+
+After PR #13 merged as `82edf765`, the next content-focused batch is documented in
+[`polish-story-batch.md`](polish-story-batch.md). It covers M05, the Bigfoot part of
+M06, and targeted regression/path/capture evidence. The older pending-CI status
+above is historical; each PR's verification section records its tested commit.

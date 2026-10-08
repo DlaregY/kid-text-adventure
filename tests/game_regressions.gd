@@ -297,7 +297,7 @@ func test_bigfoot_meeting(game) -> void:
 	game._show_menu()
 	# Every other ending is a deliberate choice.
 	var routes := {
-		"ending_goofy": [["talk", "bigfoot"], ["talk", "bigfoot"]],
+		"ending_goofy": [["tell", "joke"]],
 		"ending_quiet": [["go", "forest"]],
 		"ending_missed": [["go", "camp"]],
 		"ending_friend": [["give", "bigfoot"]],
@@ -674,6 +674,8 @@ func run() -> void:
 	await test_text_and_mood(game)
 	var polish = preload("res://tests/polish_safety.gd").new()
 	await polish.run(self, game)
+	var stories = preload("res://tests/polish_stories.gd").new()
+	await stories.run(self, game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

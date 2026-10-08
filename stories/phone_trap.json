@@ -31,7 +31,8 @@
     "key": {"label": "Key"},
     "fire": {"label": "Fire"},
     "wall": {"label": "Wall"},
-    "tunnel": {"label": "Tunnel"}
+    "tunnel": {"label": "Tunnel"},
+    "bed": {"label": "Bed"}
   },
   "start_scene": "bedroom",
   "scenes": {
@@ -655,6 +656,7 @@
       ],
       "tiles": [
         "look",
+        "go",
         "open",
         "phone",
         "window",
@@ -698,6 +700,14 @@
         },
         {
           "pattern": [
+            "go",
+            "bed"
+          ],
+          "response": "You pull back the covers and climb in. So cozy...",
+          "next": "home"
+        },
+        {
+          "pattern": [
             "open",
             "bed"
           ],
@@ -714,8 +724,8 @@
       ],
       "hints": [
         "You made it home! Time to rest.",
-        "Get into BED.",
-        "Use OPEN BED to climb under the covers."
+        "GO to your BED for some sleep.",
+        "Use GO BED to climb under the covers."
       ]
     },
     "home": {

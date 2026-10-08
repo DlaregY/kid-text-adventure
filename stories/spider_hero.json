@@ -860,7 +860,7 @@
         "A book falls off a shelf. It was NOT a ghost. Probably.",
         "You sneeze from all the dust. ACHOO! Books fly everywhere!"
       ],
-      "hints": ["Something on the shelf is glowing! Check it out!", "LOOK at the SHELF, TAKE the BOOK, then try the DOOR!", "LOOK SHELF, TAKE BOOK, then OPEN DOOR!"]
+      "hints": ["Something on the shelf is glowing. What could you learn from it?", "LOOK at the SHELF, TAKE the BOOK, then OPEN the BOOK before trying the door.", "LOOK SHELF, TAKE BOOK, OPEN BOOK, then OPEN DOOR!"]
     },
 
     "basement": {

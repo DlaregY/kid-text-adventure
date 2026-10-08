@@ -88,13 +88,19 @@ class IsolationTests(unittest.TestCase):
                             qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 
     def test_logged_checks_accept_verified_summary(self):
-        complete = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nGame regression checks=42; failures=0\n"
+        complete = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nChecked library hint, bed aliases, and deliberate Bigfoot goodbye\nGame regression checks=42; failures=0\n"
         with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, complete)):
             with redirect_stdout(io.StringIO()):
                 qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 
     def test_summary_alone_cannot_hide_skipped_safety_checks(self):
         with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "Game regression checks=214; failures=0\n")):
+            with self.assertRaises(RuntimeError), redirect_stdout(io.StringIO()):
+                qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+
+    def test_skipped_story_suite_cannot_pass_with_a_summary(self):
+        partial = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nGame regression checks=276; failures=0\n"
+        with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, partial)):
             with self.assertRaises(RuntimeError), redirect_stdout(io.StringIO()):
                 qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 

@@ -22,3 +22,22 @@ The smoke suite renders all six stories / 59 scenes. The regression suite covers
 The GitHub workflow downloads the official desktop Godot 4.6.1 binary and checks its SHA-256 against the release asset digest. It runs tests and uploads only logs/desktop PNG captures. It does **not** export APKs or AABs, sign anything, release anything, or access Play Console.
 
 Desktop captures are not phone/store screenshots and do not prove physical touch, Android Back integration, process-death resume, target-36 installation, or safe-area behavior. Gerald's phone pass remains required.
+
+## Story polish acceptance (batch 2)
+
+`tests/test_story_paths.py` is included by the Python unittest command above. It
+walks the six story graphs with first-eligible-rule semantics, available tiles,
+inventory, and true flags (false and missing flags are equivalent in this schema).
+It checks all 59 scenes / ten endings and backward reachability from every state
+to an ending. Unknown condition/effect types fail rather than being ignored.
+This is a finite-state audit, not every possible repeated command sequence or a
+physical gesture test. `python3 tests/story_paths.py` prints counts and shortest
+witnesses; it never opens player data.
+
+`tests/polish_stories.gd` also exercises the real tile routing/debounce for the
+library hint (including both door aliases), GO BED / legacy OPEN BED, and repeated
+Bigfoot chat after resuming a checkpoint with the older `said_hello` flag. TELL JOKE
+is the deliberate goofy ending. The wrapper requires this suite's completion
+marker as well as the earlier safety marker; a partial pass cannot hide an abort.
+`tests/story_captures.gd` adds focused library, bed, and full-inventory Bigfoot
+captures to the existing screenshot run. Full-inventory scenes scroll by design.
