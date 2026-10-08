@@ -219,20 +219,6 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 horizontal_alignment = 1
 text = "v0.2.1"
 
-[node name="TopBar" type="HBoxContainer" parent="ScrollContainer/Layout"]
-visible = false
-layout_mode = 2
-
-[node name="TopSpacer" type="Control" parent="ScrollContainer/Layout/TopBar"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HomeButton" type="Button" parent="ScrollContainer/Layout/TopBar"]
-custom_minimum_size = Vector2(56, 48)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "⌂"
-
 [node name="StoryText" type="Label" parent="ScrollContainer/Layout" unique_id=2087282049]
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
@@ -340,6 +326,26 @@ visible = false
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 text = "NEW GAME"
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_right = -16.0
+offset_bottom = 48.0
+grow_horizontal = 2
+
+[node name="TopSpacer" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HomeButton" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(56, 48)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "⌂"
 
 [node name="TransitionOverlay" type="ColorRect" parent="."]
 layout_mode = 1

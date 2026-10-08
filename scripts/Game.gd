@@ -8,6 +8,7 @@ extends Control
 const STORIES_DIR := "res://stories"
 const SAVE_PATH := "user://save.json"
 const SAVE_VERSION := 1
+const TOP_BAR_HEIGHT: float = 56.0
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
@@ -104,8 +105,8 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuScreen/StoryPicker
 @onready var play_button: Button = $ScrollContainer/Layout/MenuScreen/PlayButton
 @onready var resume_button: Button = $ScrollContainer/Layout/MenuScreen/ResumeButton
-@onready var top_bar: HBoxContainer = $ScrollContainer/Layout/TopBar
-@onready var home_button: Button = $ScrollContainer/Layout/TopBar/HomeButton
+@onready var top_bar: HBoxContainer = $TopBar
+@onready var home_button: Button = $TopBar/HomeButton
 @onready var stop_dialog: Control = $StopDialog
 @onready var keep_button: Button = $StopDialog/Center/Panel/Box/KeepButton
 @onready var stop_menu_button: Button = $StopDialog/Center/Panel/Box/StopMenuButton
@@ -144,6 +145,8 @@ var action_fallback_map := {}
 var command_timer := Timer.new()
 var is_executing_command := false
 var story_generation: int = 0 # bumped whenever a story starts or stops; stale coroutines check it
+var continue_pressed := false
+var pending_scene_id := "" # destination of a transition whose Continue tap has not happened yet; saves point here
 
 func _ready() -> void:
 	command_timer.one_shot = true
@@ -177,6 +180,7 @@ func _ready() -> void:
 	stop_menu_button.pressed.connect(_on_stop_confirmed)
 	new_game_button.pressed.connect(_on_menu_pressed)
 	hint_button.pressed.connect(_on_hint_pressed)
+	continue_button.pressed.connect(func() -> void: continue_pressed = true)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
 	slot2.tile_dropped.connect(_check_slots_and_execute)
 	_discover_stories()
@@ -375,8 +379,10 @@ func _start_story(resume: bool = false) -> void:
 		flags.clear()
 	story_generation += 1
 	has_active_story = true
+	pending_scene_id = ""
 	menu_screen.visible = false
 	top_bar.visible = true
+	scroll_container.offset_top = TOP_BAR_HEIGHT
 	command_bar.visible = true
 	tile_section.visible = true
 	feedback_text.visible = true
@@ -392,6 +398,8 @@ func _show_menu() -> void:
 	is_executing_command = false
 	stop_dialog.visible = false
 	top_bar.visible = false
+	scroll_container.offset_top = 0.0
+	pending_scene_id = ""
 	menu_screen.visible = true
 	command_bar.visible = false
 	tile_section.visible = false
@@ -433,7 +441,7 @@ func _save_progress() -> void:
 	var data := {
 		"version": SAVE_VERSION,
 		"story_path": loaded_story_path,
-		"scene": current_scene_id,
+		"scene": pending_scene_id if pending_scene_id != "" else current_scene_id,
 		"inventory": inventory.keys(),
 		"flags": flags.duplicate(),
 	}
@@ -492,10 +500,14 @@ func _on_resume_pressed() -> void:
 func _show_stop_dialog() -> void:
 	if not has_active_story:
 		return
+	# Freeze any command that is still in its debounce window; the slots keep their tiles.
+	command_timer.stop()
 	stop_dialog.visible = true
 
 func _hide_stop_dialog() -> void:
 	stop_dialog.visible = false
+	# Give a command that was waiting a fresh delay instead of firing instantly.
+	_check_slots_and_execute()
 
 func _on_stop_confirmed() -> void:
 	_show_menu()
@@ -636,8 +648,11 @@ func _make_tile(token_str: String, color: Color = Color(0.357, 0.608, 0.835), ca
 	tile.pressed.connect(_on_tile_pressed.bind(tile))
 	return tile
 
+func _input_blocked() -> bool:
+	return not has_active_story or is_transitioning or is_executing_command or stop_dialog.visible
+
 func _on_tile_pressed(tile: Button) -> void:
-	if not has_active_story or is_transitioning or is_executing_command:
+	if _input_blocked():
 		return
 
 	var cat: String = tile.category
@@ -656,7 +671,7 @@ func _on_tile_pressed(tile: Button) -> void:
 func _check_slots_and_execute() -> void:
 	# A new selection replaces the previous delay, including incomplete input.
 	command_timer.stop()
-	if not has_active_story or is_transitioning or is_executing_command:
+	if _input_blocked():
 		return
 	# Check if all visible required slots are filled
 	if slot1.token == "" or slot2.token == "":
@@ -665,7 +680,7 @@ func _check_slots_and_execute() -> void:
 
 func _try_execute_command() -> void:
 	command_timer.stop()
-	if not has_active_story or is_transitioning or is_executing_command:
+	if _input_blocked():
 		return
 	var first: String = slot1.token
 	var second: String = slot2.token
@@ -714,7 +729,11 @@ func _apply_command(cmd: Array[String]) -> bool:
 
 		if rule.has("next"):
 			_reset_hints()
-			_transition_to_scene(str(rule["next"]))
+			# Effects are already applied; checkpoint the destination now so stopping
+			# before the Continue tap resumes past this command, not before it.
+			pending_scene_id = str(rule["next"])
+			_save_progress()
+			_transition_to_scene(pending_scene_id)
 			return true
 		else:
 			if made_progress:
@@ -781,14 +800,19 @@ func _transition_to_scene(scene_id: String) -> void:
 	is_transitioning = true
 	var generation: int = story_generation
 
-	# Brief pause so kid notices the response text
-	await get_tree().create_timer(1.0).timeout
+	# Brief pause so kid notices the response text (polled so a stopped story releases it)
+	var pause_until: int = Time.get_ticks_msec() + 1000
+	while Time.get_ticks_msec() < pause_until and generation == story_generation:
+		await get_tree().process_frame
 	if generation != story_generation:
 		return
 
-	# Show continue button and wait for kid to tap it
+	# Show continue button and wait for kid to tap it. Poll instead of awaiting the
+	# signal so a story stopped from the menu releases this coroutine on its own.
 	continue_button.visible = true
-	await continue_button.pressed
+	continue_pressed = false
+	while not continue_pressed and generation == story_generation:
+		await get_tree().process_frame
 	continue_button.visible = false
 	if generation != story_generation:
 		return
@@ -803,6 +827,7 @@ func _transition_to_scene(scene_id: String) -> void:
 
 	# Change scene content
 	current_scene_id = scene_id
+	pending_scene_id = ""
 	_save_progress()
 	await _render_scene()
 

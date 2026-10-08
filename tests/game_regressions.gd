@@ -280,6 +280,80 @@ func test_bigfoot_meeting(game) -> void:
 	game._clear_save()
 	print("Checked Bigfoot meeting safety, routing, and endings")
 
+func test_stop_dialog_suspends_commands(game) -> void:
+	await start_bigfoot_meeting(game, true)
+	tap(game, "talk")
+	tap(game, "bigfoot")
+	await create_timer(0.2).timeout
+	game.home_button.pressed.emit()
+	await create_timer(0.6).timeout
+	check(game.stop_dialog.visible and game.feedback_text.text.is_empty() and not game.is_transitioning,
+		"A command in its debounce window must not fire behind the stop dialog")
+	check(game.slot1.token == "talk" and game.slot2.token == "bigfoot", "Pending tiles stay in the slots")
+	tap(game, "look")
+	check(game.slot1.token == "talk", "Tiles cannot be placed while the dialog is open")
+	game.slot1._drop_data(Vector2.ZERO, {"token": "look", "label": "look"})
+	check(game.command_timer.is_stopped(), "Dropping a tile while the dialog is open must not arm the timer")
+	game.slot1.set_tile("talk", "talk")
+	game.keep_button.pressed.emit()
+	await create_timer(0.3).timeout
+	check(game.feedback_text.text.is_empty(), "KEEP PLAYING restarts the full delay")
+	await create_timer(0.35).timeout
+	check(game.feedback_text.text.contains("hoot") and game.current_scene_id == "bigfoot_meeting", "The pending command executes after KEEP PLAYING")
+	game._show_menu()
+	game._clear_save()
+	print("Checked the stop dialog suspends pending commands")
+
+func test_pending_transition_save(game) -> void:
+	# Item-adding transition interrupted before Continue.
+	await start_dragon(game)
+	game.current_scene_id = "hall"
+	game.flags["box_open"] = true
+	await game._render_scene()
+	await apply(game, ["take", "key"])
+	check(game.pending_scene_id == "gate", "Transition destination is pending until Continue")
+	game.home_button.pressed.emit()
+	game.stop_menu_button.pressed.emit()
+	game._on_resume_pressed()
+	await settle()
+	check(game.current_scene_id == "gate" and game.inventory.has("key") and game.pending_scene_id.is_empty(),
+		"Resume after stopping before Continue lands past the command with the new item")
+	# Item-consuming transition interrupted before Continue.
+	game._show_menu()
+	await start_dragon(game)
+	game.current_scene_id = "dragon"
+	game.inventory["egg"] = true
+	await game._render_scene()
+	await apply(game, ["give", "egg"])
+	game.home_button.pressed.emit()
+	game.stop_menu_button.pressed.emit()
+	game._on_resume_pressed()
+	await settle()
+	check(game.current_scene_id == "treasure" and not game.inventory.has("egg"), "Resume keeps the consumed item consumed and lands on the destination")
+	# A completed transition clears the pending destination and saves normally.
+	await apply(game, ["look", "treasure"])
+	check(game.pending_scene_id.is_empty(), "No pending scene after a plain command")
+	game._show_menu()
+	game._clear_save()
+	print("Checked pending-transition saves for added and consumed items")
+
+func test_home_button_fixed(game) -> void:
+	check(game._load_story("res://stories/phone_trap.json"), "Load Phone Trap")
+	await game._start_story()
+	game.current_scene_id = "home"
+	await game._render_scene()
+	await settle()
+	check(game.layout.size.y > game.scroll_container.size.y, "Phone Trap home scene must overflow at 540x960 for this check")
+	game.scroll_container.scroll_vertical = 100000
+	await settle()
+	var rect: Rect2 = game.home_button.get_global_rect()
+	check(rect.position.y >= 0 and rect.end.y <= root.size.y and rect.end.x <= root.size.x, "Home button stays on screen after scrolling")
+	check(game.scroll_container.get_global_rect().position.y >= rect.end.y, "Story content starts below the home bar")
+	game._show_menu()
+	check(game.scroll_container.offset_top == 0.0, "Menu reclaims the top bar space")
+	game._clear_save()
+	print("Checked the home button stays fixed while scrolling")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -296,6 +370,9 @@ func run() -> void:
 	await test_save_resume(game)
 	await test_stop_dialog(game)
 	await test_bigfoot_meeting(game)
+	await test_stop_dialog_suspends_commands(game)
+	await test_pending_transition_save(game)
+	await test_home_button_fixed(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame
