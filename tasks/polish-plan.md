@@ -60,10 +60,11 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: TTS voice available on Gerald's moto g; volume/rate feel right; mute persists across launches; long-press timing on touch.
 
 ## Phase 7 — Text and typography [B16, B17, B22, B23, C27]
-- [ ] Early-reader font bundled with looser line spacing; story min height reduced.
-- [ ] Typewriter reveal with tap-to-finish; per-scene `mood` tint.
-- [ ] Hint threshold to 4 and idle timer.
-- [ ] Feedback length budget documented in `docs/story-qa-checklist.md`.
+- [x] Andika Regular/Bold bundled (SIL OFL) with emoji fallback; story line spacing 8; story min height 3 lines.
+- [x] Typewriter reveal (60 cps) with tap-to-finish; per-scene `mood` tint on every scene in every story.
+- [x] Hint threshold to 4 and a 40 s idle hint.
+- [x] Length budgets and mood/ending checks documented in `docs/story-qa-checklist.md`; Phone Trap `home` split into `landing` → `home` (199 checks).
+- [ ] Phone: font legibility at 32 px; reveal speed; mood colours under the phone's brightness.
 
 ## Phase 8 — Bigfoot rebuild and story pass [D]
 - [ ] Rebuild Bigfoot to 10–12 scenes per the sketch in the recommendations doc.

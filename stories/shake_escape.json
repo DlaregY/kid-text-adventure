@@ -24,6 +24,7 @@
   "start_scene": "kitchen",
   "scenes": {
     "kitchen": {
+      "mood": "kitchen",
       "text": [
         "You sit at the table. Breakfast time!",
         "There are scrambled eggs on your plate.",
@@ -87,6 +88,8 @@
     },
 
     "stuck": {
+
+    	"mood": "kitchen",
       "text": [
         "You try to shake salt on your eggs.",
         "But OH NO!",
@@ -162,6 +165,8 @@
     },
 
     "salt_world": {
+
+    	"mood": "salt",
       "text": [
         "WHOA! You are TINY!",
         "You are standing inside the saltshaker!",
@@ -239,6 +244,8 @@
     },
 
     "salt_lake": {
+
+    	"mood": "salt",
       "text": [
         "You stand at the edge of the salt lake.",
         "The water is thick and shimmery.",
@@ -325,6 +332,8 @@
     },
 
     "salt_cliffs": {
+
+    	"mood": "salt",
       "text": [
         "You climb out of the lake onto the far shore.",
         "The tall salt cliffs stretch way up above you!",
@@ -399,6 +408,8 @@
     },
 
     "salt_top": {
+
+    	"mood": "salt",
       "text": [
         "You made it near the top of the cliff!",
         "You can see the little holes right above you!",
@@ -480,6 +491,8 @@
     },
 
     "escape": {
+
+    	"mood": "salt",
       "text": [
         "THUD!",
         "You land at the bottom of the saltshaker.",
@@ -560,6 +573,8 @@
     },
 
     "home": {
+
+    	"mood": "kitchen",
 
     	"ending": { "id": "win", "title": "Perfectly Salty" },
       "text": [

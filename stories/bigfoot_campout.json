@@ -25,6 +25,7 @@
   "start_scene": "camp",
   "scenes": {
     "camp": {
+      "mood": "night",
       "text": [
         "You are camping with Dad under the stars.",
         "Dad says: Pack a snack before we explore!",
@@ -110,6 +111,7 @@
       ]
     },
     "forest_edge": {
+      "mood": "forest",
       "text": [
         "At the forest edge, you and Dad find enormous tracks.",
         "Each footprint is longer than your shoe."
@@ -169,6 +171,7 @@
       ]
     },
     "creek": {
+      "mood": "night",
       "text": [
         "You and Dad follow the tracks to a moonlit creek.",
         "Across the water, the bushes sneeze: AH-CHOO!"
@@ -223,6 +226,7 @@
       ]
     },
     "bigfoot_meeting": {
+      "mood": "forest",
       "text": [
         "You and Dad stop as a friendly Bigfoot steps into the moonlight!",
         "He looks hungry, and he keeps glancing at your pocket.",
@@ -323,6 +327,7 @@
       ]
     },
     "ending_cautious": {
+      "mood": "win",
       "ending": { "id": "quiet", "title": "The Quiet Secret" },
       "text": [
         "You watch quietly as Bigfoot crosses the creek and vanishes into the trees.",
@@ -355,6 +360,7 @@
       ]
     },
     "ending_friend": {
+      "mood": "win",
       "ending": { "id": "friend", "title": "Bigfoot Friend" },
       "text": [
         "Bigfoot shares the snack with you and Dad, then shows you his hidden berry patch.",
@@ -386,6 +392,7 @@
       ]
     },
     "ending_goofy": {
+      "mood": "win",
       "ending": { "id": "goofy", "title": "Mixed-Up Message" },
       "text": [
         "You meant to say hello in Bigfoot language.",
@@ -418,6 +425,7 @@
       ]
     },
     "ending_missed": {
+      "mood": "win",
       "ending": { "id": "missed", "title": "The Giant Footprint" },
       "text": [
         "When you and Dad return with the camera, Bigfoot has disappeared.",

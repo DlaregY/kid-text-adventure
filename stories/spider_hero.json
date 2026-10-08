@@ -47,6 +47,7 @@
   "start_scene": "bedroom",
   "scenes": {
     "bedroom": {
+      "mood": "night",
       "text": [
         "You are in your bedroom reading a comic book.",
         "CRASH! Something hits your window!",
@@ -218,6 +219,8 @@
     },
 
     "street": {
+
+    	"mood": "fire",
       "text": [
         "You run outside into the street!",
         "Fire trails cover the ground. The air smells like smoke.",
@@ -283,6 +286,8 @@
     },
 
     "rooftop": {
+
+    	"mood": "night",
       "text": [
         "Spiderdude is on the rooftop! He looks worried.",
         "The city glows orange with Skull Rider's fire below."
@@ -419,6 +424,8 @@
     },
 
     "park": {
+
+    	"mood": "night",
       "text": [
         "The park is smoky. Burnt grass everywhere.",
         "An old lady sits on a bench looking scared."
@@ -570,6 +577,8 @@
     },
 
     "library": {
+
+    	"mood": "cave",
       "text": [
         "The old library is quiet and dusty.",
         "One shelf in the back glows with a strange light!"
@@ -855,6 +864,8 @@
     },
 
     "basement": {
+
+    	"mood": "cave",
       "text": [
         "A secret basement under the library!",
         "Old bottles and tools line the walls.",
@@ -1078,6 +1089,8 @@
     },
 
     "tunnel": {
+
+    	"mood": "cave",
       "text": [
         "A dark underground tunnel. You can barely see!",
         "You hear water dripping somewhere.",
@@ -1222,6 +1235,8 @@
     },
 
     "bridge": {
+
+    	"mood": "cave",
       "text": [
         "An old stone bridge over an underground river!",
         "Skull Rider's fire marks cover the walls."
@@ -1354,6 +1369,8 @@
     },
 
     "tower": {
+
+    	"mood": "fire",
       "text": [
         "A dark tower rises above you!",
         "Skull Rider's bike is parked by the door.",
@@ -1488,6 +1505,8 @@
     },
 
     "stairs": {
+
+    	"mood": "fire",
       "text": [
         "Spiral stairs going up!",
         "You hear chains rattling above!",
@@ -1623,6 +1642,8 @@
     },
 
     "battle": {
+
+    	"mood": "fire",
       "text": [
         "You reach the top of the tower!",
         "Skull Rider swings his fire chain! WHOOSH!",
@@ -1860,6 +1881,8 @@
     },
 
     "victory": {
+
+    	"mood": "day",
       "text": [
         "The fire goes out! Skull Rider's flames disappear!",
         "A confused man stands where Skull Rider was.",
@@ -1972,6 +1995,8 @@
     },
 
     "win": {
+
+    	"mood": "win",
 
     	"ending": { "id": "win", "title": "True Hero" },
       "text": [

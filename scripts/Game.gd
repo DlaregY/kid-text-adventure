@@ -32,6 +32,19 @@ const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "giv
 const STORY_FONT_MAX: int = 32
 const STORY_FONT_MIN: int = 18
 const STORY_FONT_STEP: int = 2
+const STORY_MIN_HEIGHT_LINES: int = 3 # reserved story height = font_size * this
+const HINT_FAIL_THRESHOLD: int = 4
+const IDLE_HINT_SECONDS: float = 40.0
+const TYPEWRITER_CHARS_PER_SECOND: float = 60.0
+const FONT_REGULAR := preload("res://assets/fonts/Andika-Regular.ttf")
+const FONT_BOLD := preload("res://assets/fonts/Andika-Bold.ttf")
+const DEFAULT_BACKGROUND := Color(0.3, 0.3, 0.3)
+const MOODS := {
+	"night": Color(0.11, 0.13, 0.26), "forest": Color(0.1, 0.21, 0.13), "cave": Color(0.14, 0.11, 0.2),
+	"fire": Color(0.32, 0.11, 0.08), "day": Color(0.16, 0.27, 0.38), "digital": Color(0.08, 0.13, 0.22),
+	"kitchen": Color(0.3, 0.22, 0.1), "salt": Color(0.3, 0.31, 0.35), "crystal": Color(0.2, 0.11, 0.32),
+	"win": Color(0.27, 0.21, 0.06),
+}
 const EMOJI := {
 	"key": "🗝️", "box": "📦", "door": "🚪", "rope": "🪢",
 	"apple": "🍎", "treasure": "💎", "egg": "🥚",
@@ -155,6 +168,7 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var layout: VBoxContainer = $ScrollContainer/Layout
+@onready var background: ColorRect = $Background
 @onready var timer_bar: ProgressBar = $ScrollContainer/Layout/TimerBar
 @onready var ending_badge: PanelContainer = $ScrollContainer/Layout/EndingBadge
 @onready var ending_label: Label = $ScrollContainer/Layout/EndingBadge/EndingLabel
@@ -179,6 +193,8 @@ var command_timer := Timer.new()
 var is_executing_command := false
 var story_generation: int = 0 # bumped whenever a story starts or stops; stale coroutines check it
 var continue_pressed := false
+var idle_timer := Timer.new()
+var reveal_tween: Tween
 var settings := {"read_aloud": false, "sound": true}
 var last_sfx := "" # name of the most recent effect actually played (for tests)
 var tts_voice := "" # chosen system voice id, "" when the device has none
@@ -196,13 +212,13 @@ func _ready() -> void:
 		"climb": CLIMB_FALLBACKS,
 	}
 
-	var emoji_font := SystemFont.new()
-	emoji_font.font_names = PackedStringArray(["Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji"])
-	var fb: Font = ThemeDB.fallback_font
-	if fb:
-		var arr = fb.fallbacks.duplicate()
-		arr.append(emoji_font)
-		fb.fallbacks = arr
+	_apply_reader_font()
+
+	idle_timer.one_shot = true
+	idle_timer.wait_time = IDLE_HINT_SECONDS
+	idle_timer.timeout.connect(_on_idle_timeout)
+	add_child(idle_timer)
+	story_text.gui_input.connect(_on_story_text_input)
 
 	var vf := FileAccess.open("res://version.txt", FileAccess.READ)
 	if vf:
@@ -311,6 +327,70 @@ func _on_tile_long_pressed(tile: Button) -> void:
 		return
 	_bounce_tile(tile)
 	_speak(_label_for(tile.token))
+
+func _apply_reader_font() -> void:
+	# Andika (SIL OFL) is drawn for beginning readers; emoji fall back to the OS colour font.
+	var emoji_font := SystemFont.new()
+	emoji_font.font_names = PackedStringArray(["Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji"])
+	var regular: FontFile = FONT_REGULAR.duplicate()
+	regular.fallbacks = [emoji_font]
+	var bold: FontFile = FONT_BOLD.duplicate()
+	bold.fallbacks = [emoji_font]
+	var app_theme := Theme.new()
+	app_theme.default_font = regular
+	app_theme.set_font("font", "Button", bold)
+	theme = app_theme
+	var fb: Font = ThemeDB.fallback_font
+	if fb:
+		var arr = fb.fallbacks.duplicate()
+		arr.append(emoji_font)
+		fb.fallbacks = arr
+
+func _set_mood(mood_value: Variant) -> void:
+	var target := DEFAULT_BACKGROUND
+	var mood := str(mood_value).strip_edges()
+	if MOODS.has(mood):
+		target = MOODS[mood]
+	elif mood.begins_with("#") and Color.html_is_valid(mood):
+		target = Color.html(mood)
+	if background.color == target:
+		return
+	var tween := create_tween()
+	tween.tween_property(background, "color", target, 0.4)
+
+func _reveal_story_text() -> void:
+	if reveal_tween and reveal_tween.is_valid():
+		reveal_tween.kill()
+	var total: int = story_text.get_total_character_count()
+	if total <= 0:
+		story_text.visible_characters = -1
+		return
+	story_text.visible_characters = 0
+	reveal_tween = create_tween()
+	reveal_tween.tween_property(story_text, "visible_characters", total, total / TYPEWRITER_CHARS_PER_SECOND)
+	reveal_tween.tween_callback(func() -> void: story_text.visible_characters = -1)
+
+func _finish_reveal() -> void:
+	if reveal_tween and reveal_tween.is_valid():
+		reveal_tween.kill()
+	story_text.visible_characters = -1
+
+func _on_story_text_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		_finish_reveal()
+
+func _restart_idle_timer() -> void:
+	idle_timer.stop()
+	if has_active_story:
+		idle_timer.start()
+
+func _on_idle_timeout() -> void:
+	if not has_active_story or is_transitioning or stop_dialog.visible:
+		return
+	var scene: Dictionary = scenes.get(current_scene_id, {})
+	var hints: Array = scene.get("hints", [])
+	if not hints.is_empty():
+		hint_button.visible = true
 
 func _process(_delta: float) -> void:
 	var running: bool = not command_timer.is_stopped()
@@ -640,7 +720,10 @@ func _show_menu() -> void:
 	_reset_hints()
 	story_text.text = ""
 	story_text.add_theme_font_size_override("font_size", STORY_FONT_MAX)
-	story_text.custom_minimum_size.y = STORY_FONT_MAX * 5
+	story_text.custom_minimum_size.y = STORY_FONT_MAX * STORY_MIN_HEIGHT_LINES
+	idle_timer.stop()
+	_finish_reveal()
+	_set_mood("")
 	for tray in [action_tray, thing_tray, inventory_tray]:
 		for child in tray.get_children():
 			tray.remove_child(child)
@@ -884,6 +967,9 @@ func _render_scene() -> void:
 	# text
 	var lines: Array = scene.get("text", [])
 	story_text.text = "\n".join(lines)
+	_set_mood(scene.get("mood", ""))
+	_reveal_story_text()
+	_restart_idle_timer()
 
 	# clear feedback + command slots
 	_show_feedback("", "neutral")
@@ -994,7 +1080,7 @@ func _auto_fit_story_text(reset: bool = true) -> void:
 	var font_size: int = STORY_FONT_MAX
 	if reset:
 		story_text.add_theme_font_size_override("font_size", font_size)
-		story_text.custom_minimum_size.y = font_size * 5
+		story_text.custom_minimum_size.y = font_size * STORY_MIN_HEIGHT_LINES
 	else:
 		font_size = story_text.get_theme_font_size("font_size")
 	await get_tree().process_frame
@@ -1004,7 +1090,7 @@ func _auto_fit_story_text(reset: bool = true) -> void:
 			break
 		font_size -= STORY_FONT_STEP
 		story_text.add_theme_font_size_override("font_size", font_size)
-		story_text.custom_minimum_size.y = font_size * 5
+		story_text.custom_minimum_size.y = font_size * STORY_MIN_HEIGHT_LINES
 		await get_tree().process_frame
 
 	scroll_container.scroll_vertical = 0
@@ -1108,6 +1194,7 @@ func _try_execute_command() -> void:
 	is_executing_command = false
 
 func _apply_command(cmd: Array[String]) -> bool:
+	_restart_idle_timer()
 	var scene = scenes.get(current_scene_id, null)
 	var rules: Array = scene.get("commands", [])
 	var default_responses: Array = scene.get("default", ["Nothing happens."])
@@ -1285,7 +1372,7 @@ func _record_no_progress() -> void:
 	fail_count += 1
 	var scene: Dictionary = scenes.get(current_scene_id, {})
 	var hints: Array = scene.get("hints", [])
-	if fail_count >= 6 and not hints.is_empty():
+	if fail_count >= HINT_FAIL_THRESHOLD and not hints.is_empty():
 		hint_button.visible = true
 
 func _reset_hints() -> void:

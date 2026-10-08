@@ -186,6 +186,17 @@ For every state-changing command, test this sequence:
 - [ ] Text fits on the target desktop and mobile layouts without becoming
       uncomfortably small or requiring awkward scrolling.
 
+### Length budgets
+
+- [ ] Scene `text` is 3–6 short lines (one idea per line). Longer scenes shrink the
+      story font below what early readers can manage; split them instead.
+- [ ] Every `response` and `default` string is at most ~120 characters so it fits
+      in two lines above the command bar without pushing the tiles off screen.
+- [ ] Terminal scenes carry `ending: {id, title}` and do not repeat the title in
+      `text`.
+- [ ] Every scene has a `mood` from the engine palette (night, forest, cave, fire,
+      day, digital, kitchen, salt, crystal, win) or a `#rrggbb` colour.
+
 ## 8. Manual Playtest Matrix
 
 Run each test from the story picker with a fresh game unless the row says

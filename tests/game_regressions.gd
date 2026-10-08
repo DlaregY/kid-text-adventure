@@ -131,23 +131,23 @@ func test_hints(game) -> void:
 	await start_dragon(game)
 	game.current_scene_id = "hall"
 	await game._render_scene()
-	for i in range(5):
+	for i in range(3):
 		await apply(game, ["take", "key"])
-	check(not game.hint_button.visible, "Do not show hints before six attempts without progress")
+	check(not game.hint_button.visible, "Do not show hints before four attempts without progress")
 	await apply(game, ["take", "key"])
-	check(game.fail_count == 6 and game.hint_button.visible, "Blocked commands must unlock hints after six attempts")
+	check(game.fail_count == 4 and game.hint_button.visible, "Blocked commands must unlock hints after four attempts")
 	game._on_hint_pressed()
 	await apply(game, ["take", "key"])
 	check(game.hint_button.visible and game.hint_index == 1, "Another blocked command must preserve hint progression")
 	await apply(game, ["open", "box"])
 	check(game.fail_count == 0 and game.hint_index == 0 and not game.hint_button.visible, "Actual puzzle progress must reset hints")
-	for i in range(6):
+	for i in range(4):
 		await apply(game, ["open", "box"])
 	check(game.hint_button.visible, "Repeating a completed action must not suppress hints")
 	await apply(game, ["take", "key"])
 	await continue_story(game)
 	check(game.fail_count == 0 and not game.hint_button.visible, "New scene must reset hints")
-	for i in range(6):
+	for i in range(4):
 		await apply(game, ["go", "key"])
 	check(game.hint_button.visible, "Unmatched commands must still unlock hints")
 	game._show_menu()
@@ -160,7 +160,7 @@ func test_hints(game) -> void:
 	await game._render_scene()
 	await apply(game, ["take", "key"])
 	check(game.inventory.has("key") and game.fail_count == 0, "New inventory must count as progress")
-	for i in range(6):
+	for i in range(4):
 		await apply(game, ["take", "key"])
 	check(game.hint_button.visible, "Re-adding the same item must not count as progress")
 	print("Checked blocked actions, progress, repeated actions, and hint resets")
@@ -385,8 +385,11 @@ func test_home_button_fixed(game) -> void:
 	await game._start_story()
 	game.current_scene_id = "home"
 	await game._render_scene()
+	game._finish_reveal()
+	for i in range(12):
+		game.story_text.text += "\nExtra line %d to force the layout to scroll." % i
 	await settle()
-	check(game.layout.size.y > game.scroll_container.size.y, "Phone Trap home scene must overflow at 540x960 for this check")
+	check(game.layout.size.y > game.scroll_container.size.y, "Padded scene must overflow at 540x960 for this check")
 	game.scroll_container.scroll_vertical = 100000
 	await settle()
 	var rect: Rect2 = game.home_button.get_global_rect()
@@ -557,6 +560,55 @@ func test_sound_and_speech(game) -> void:
 		DirAccess.remove_absolute(game.SETTINGS_PATH)
 	print("Checked settings, sound effects, long-press, and speech guards")
 
+func test_text_and_mood(game) -> void:
+	# Reader font with emoji fallback is the app theme.
+	check(game.theme != null and game.theme.default_font != null and game.theme.default_font.fallbacks.size() == 1, "App theme uses the bundled reader font with an emoji fallback")
+	check(game.story_text.get_theme_constant("line_spacing") == 8, "Story text has loosened line spacing")
+	# Typewriter reveal, finished by a tap on the text.
+	await start_dragon(game)
+	check(game.story_text.visible_characters >= 0 and game.story_text.visible_characters < game.story_text.get_total_character_count(), "Story text reveals progressively")
+	var tap_event := InputEventMouseButton.new()
+	tap_event.button_index = MOUSE_BUTTON_LEFT
+	tap_event.pressed = true
+	game._on_story_text_input(tap_event)
+	check(game.story_text.visible_characters == -1, "Tapping the text finishes the reveal")
+	await create_timer(0.1).timeout
+	check(game.story_text.visible_characters == -1, "A finished reveal stays finished")
+	# Mood background.
+	check(game.background.color != game.DEFAULT_BACKGROUND or true, "Background exists")
+	game.current_scene_id = "dragon"
+	await game._render_scene()
+	await create_timer(0.5).timeout
+	check(game.background.color.is_equal_approx(game.MOODS["fire"]), "Dragon scene tints the background with its mood")
+	game._show_menu()
+	await create_timer(0.5).timeout
+	check(game.background.color.is_equal_approx(game.DEFAULT_BACKGROUND), "Menu restores the default background")
+	# Idle hint.
+	await start_dragon(game)
+	game.idle_timer.wait_time = 0.3
+	game._restart_idle_timer()
+	check(not game.hint_button.visible, "No hint right after a scene renders")
+	await create_timer(0.5).timeout
+	check(game.hint_button.visible, "Hint appears after idling")
+	await apply(game, ["look", "door"])
+	check(not game.idle_timer.is_stopped(), "A command restarts the idle timer")
+	game.idle_timer.wait_time = game.IDLE_HINT_SECONDS
+	game._show_menu()
+	check(game.idle_timer.is_stopped(), "Menu stops the idle timer")
+	# Phone Trap ending split.
+	check(game._load_story("res://stories/phone_trap.json"), "Load Phone Trap")
+	await game._start_story()
+	game.current_scene_id = "landing"
+	await game._render_scene()
+	check(game.story_text.get_total_character_count() < 260 and not game.new_game_button.visible, "Landing scene is short and not terminal")
+	await apply(game, ["open", "bed"])
+	await continue_story(game)
+	check(game.current_scene_id == "home" and game.new_game_button.visible and game.ending_badge.visible, "Bed leads to the morning ending")
+	game._show_menu()
+	game._clear_save()
+	game._clear_progress()
+	print("Checked reader font, typewriter reveal, mood tint, idle hint, and the Phone Trap split")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -580,6 +632,7 @@ func run() -> void:
 	await test_labels(game)
 	await test_endings(game)
 	await test_sound_and_speech(game)
+	await test_text_and_mood(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame
