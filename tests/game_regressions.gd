@@ -145,6 +145,83 @@ func test_inventory(game) -> void:
 	check(game.inventory_label.visible and game.inventory_tray.get_child_count() == 1, "Keep inventory visible when another item remains")
 	print("Checked inventory visibility after consumption")
 
+func test_save_resume(game) -> void:
+	game._clear_save()
+	game._show_menu()
+	check(not game.resume_button.visible, "No CONTINUE button without a save")
+	check(not game.top_bar.visible, "Home bar hidden on the menu")
+	await start_dragon(game)
+	check(game.top_bar.visible, "Home bar visible during a story")
+	check(FileAccess.file_exists(game.SAVE_PATH), "Starting a story writes a save")
+	game.current_scene_id = "hall"
+	await game._render_scene()
+	await apply(game, ["open", "box"])
+	await apply(game, ["take", "key"])
+	await continue_story(game)
+	check(game.current_scene_id == "gate" and game.inventory.has("key"), "Reached the gate with the key")
+	game._show_menu()
+	check(game.resume_button.visible, "CONTINUE appears when a save exists")
+	check(game.inventory.is_empty(), "Menu clears live state")
+	game._on_resume_pressed()
+	await settle()
+	check(game.has_active_story and game.current_scene_id == "gate", "Resume lands on the saved scene")
+	check(game.inventory.has("key") and game.flags.get("box_open", false), "Resume restores inventory and flags")
+	check(game.inventory_tray.get_child_count() == 1, "Resumed inventory renders a tile")
+	# PLAY always starts fresh.
+	game._show_menu()
+	game._on_start_pressed()
+	await settle()
+	check(game.current_scene_id == "room" and game.inventory.is_empty(), "PLAY starts from the beginning")
+	# Reaching an ending clears the save.
+	game.current_scene_id = "win"
+	await game._render_scene()
+	check(not FileAccess.file_exists(game.SAVE_PATH), "Terminal scene clears the save")
+	game._show_menu()
+	check(not game.resume_button.visible, "No CONTINUE after an ending")
+	# A corrupt save is ignored.
+	var f := FileAccess.open(game.SAVE_PATH, FileAccess.WRITE)
+	f.store_string("{not json")
+	f.close()
+	game._show_menu()
+	check(not game.resume_button.visible, "Corrupt save is ignored")
+	game._clear_save()
+	print("Checked save, resume, fresh start, and ending cleanup")
+
+func test_stop_dialog(game) -> void:
+	await start_dragon(game)
+	game._notification(game.NOTIFICATION_WM_GO_BACK_REQUEST)
+	check(game.stop_dialog.visible, "Back opens the stop dialog during a story")
+	game.keep_button.pressed.emit()
+	check(not game.stop_dialog.visible and game.has_active_story, "KEEP PLAYING closes the dialog and keeps the story")
+	game.home_button.pressed.emit()
+	check(game.stop_dialog.visible, "Home button opens the stop dialog")
+	game._notification(game.NOTIFICATION_WM_GO_BACK_REQUEST)
+	check(not game.stop_dialog.visible and game.has_active_story, "Back while the dialog is open dismisses it")
+	game.home_button.pressed.emit()
+	game.stop_menu_button.pressed.emit()
+	check(not game.has_active_story and game.menu_screen.visible and not game.stop_dialog.visible, "GO TO MENU returns to the menu")
+	check(game.resume_button.visible, "Progress survives stopping")
+	# Stopping mid-transition must not let the old transition finish later.
+	await start_dragon(game)
+	game.current_scene_id = "hall"
+	game.flags["box_open"] = true
+	await game._render_scene()
+	await apply(game, ["take", "key"])
+	while not game.continue_button.visible:
+		await process_frame
+	game.home_button.pressed.emit()
+	game.stop_menu_button.pressed.emit()
+	check(not game.is_transitioning and not game.continue_button.visible, "Menu cancels a pending transition")
+	await start_dragon(game)
+	game.continue_button.pressed.emit()
+	await settle()
+	await create_timer(0.5).timeout
+	check(game.current_scene_id == "room", "A stale transition must not change the new game's scene")
+	check(game.transition_overlay.color.a == 0.0, "Overlay stays clear")
+	game._show_menu()
+	game._clear_save()
+	print("Checked back button, home button, and stop dialog")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -158,6 +235,8 @@ func run() -> void:
 	await test_command_delay(game)
 	await test_hints(game)
 	await test_inventory(game)
+	await test_save_resume(game)
+	await test_stop_dialog(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

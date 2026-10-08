@@ -65,7 +65,11 @@ Rule evaluation is deterministic and simple:
 
 When a rule has `next`, the game shows the response text, pauses briefly, then displays a continue button (▶). When tapped, it fades to black, swaps scene content, and fades back in.
 
-### 6) State tracking
+### 6) Save, resume, and stopping
+
+Progress (story, scene, inventory, flags) is written to `user://save.json` on start, on every state change, and on every scene transition, and cleared when an ending scene renders. The menu shows an orange **CONTINUE** button when a save exists; **PLAY** always starts fresh. During a story a ⌂ button (and the Android Back button) opens a "Stop playing?" dialog with KEEP PLAYING / GO TO MENU. On the menu, Back exits the app.
+
+### 7) State tracking
 
 - `inventory`: dictionary acting like a set (`item -> true`)
 - `flags`: dictionary for boolean state (`flag -> true/false`)

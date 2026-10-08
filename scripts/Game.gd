@@ -6,6 +6,8 @@
 extends Control
 
 const STORIES_DIR := "res://stories"
+const SAVE_PATH := "user://save.json"
+const SAVE_VERSION := 1
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
@@ -101,6 +103,12 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var menu_screen: VBoxContainer = $ScrollContainer/Layout/MenuScreen
 @onready var story_picker: OptionButton = $ScrollContainer/Layout/MenuScreen/StoryPicker
 @onready var play_button: Button = $ScrollContainer/Layout/MenuScreen/PlayButton
+@onready var resume_button: Button = $ScrollContainer/Layout/MenuScreen/ResumeButton
+@onready var top_bar: HBoxContainer = $ScrollContainer/Layout/TopBar
+@onready var home_button: Button = $ScrollContainer/Layout/TopBar/HomeButton
+@onready var stop_dialog: Control = $StopDialog
+@onready var keep_button: Button = $StopDialog/Center/Panel/Box/KeepButton
+@onready var stop_menu_button: Button = $StopDialog/Center/Panel/Box/StopMenuButton
 @onready var new_game_button: Button = $ScrollContainer/Layout/NewGameButton
 @onready var command_bar: HBoxContainer = $ScrollContainer/Layout/CommandBar
 @onready var tile_section: VBoxContainer = $ScrollContainer/Layout/TileSection
@@ -127,6 +135,7 @@ var inventory = {} # token -> true
 var flags = {}     # flag -> true/false
 var discovered_stories: Array[Dictionary] = []
 var selected_story_path := ""
+var loaded_story_path := "" # path of the story currently in `story`; the save keys off this, not the picker
 var has_active_story := false
 var is_transitioning := false
 var fail_count: int = 0
@@ -134,6 +143,7 @@ var hint_index: int = 0
 var action_fallback_map := {}
 var command_timer := Timer.new()
 var is_executing_command := false
+var story_generation: int = 0 # bumped whenever a story starts or stops; stale coroutines check it
 
 func _ready() -> void:
 	command_timer.one_shot = true
@@ -161,6 +171,10 @@ func _ready() -> void:
 
 	story_picker.item_selected.connect(_on_story_selected)
 	play_button.pressed.connect(_on_start_pressed)
+	resume_button.pressed.connect(_on_resume_pressed)
+	home_button.pressed.connect(_show_stop_dialog)
+	keep_button.pressed.connect(_hide_stop_dialog)
+	stop_menu_button.pressed.connect(_on_stop_confirmed)
 	new_game_button.pressed.connect(_on_menu_pressed)
 	hint_button.pressed.connect(_on_hint_pressed)
 	slot1.tile_dropped.connect(_check_slots_and_execute)
@@ -262,6 +276,7 @@ func _load_story(path: String) -> bool:
 
 	story = parsed
 	scenes = story.get("scenes", {})
+	loaded_story_path = path
 	current_scene_id = story.get("start_scene", "")
 	if current_scene_id == "":
 		push_error("No start_scene set in story JSON.")
@@ -354,20 +369,29 @@ func _validate_story(story_data: Dictionary) -> Dictionary:
 
 	return {"ok": errors.is_empty(), "errors": errors}
 
-func _start_story() -> void:
-	inventory.clear()
-	flags.clear()
+func _start_story(resume: bool = false) -> void:
+	if not resume:
+		inventory.clear()
+		flags.clear()
+	story_generation += 1
 	has_active_story = true
 	menu_screen.visible = false
+	top_bar.visible = true
 	command_bar.visible = true
 	tile_section.visible = true
 	feedback_text.visible = true
 	new_game_button.visible = false
+	_save_progress()
 	await _render_scene()
 
 func _show_menu() -> void:
 	command_timer.stop()
+	story_generation += 1
 	has_active_story = false
+	is_transitioning = false
+	is_executing_command = false
+	stop_dialog.visible = false
+	top_bar.visible = false
 	menu_screen.visible = true
 	command_bar.visible = false
 	tile_section.visible = false
@@ -385,6 +409,107 @@ func _show_menu() -> void:
 	slot2.clear()
 	inventory.clear()
 	flags.clear()
+	_refresh_resume_button()
+
+func _refresh_resume_button() -> void:
+	var save: Dictionary = _read_save()
+	var index: int = _story_index_for_path(str(save.get("story_path", "")))
+	resume_button.visible = index >= 0
+	if index >= 0:
+		story_picker.select(index)
+		_set_selected_story(index)
+
+func _story_index_for_path(path: String) -> int:
+	if path == "":
+		return -1
+	for i in range(discovered_stories.size()):
+		if str(discovered_stories[i].get("path", "")) == path:
+			return i
+	return -1
+
+func _save_progress() -> void:
+	if not has_active_story or loaded_story_path == "":
+		return
+	var data := {
+		"version": SAVE_VERSION,
+		"story_path": loaded_story_path,
+		"scene": current_scene_id,
+		"inventory": inventory.keys(),
+		"flags": flags.duplicate(),
+	}
+	var f := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if f == null:
+		push_warning("Could not write save file: " + SAVE_PATH)
+		return
+	f.store_string(JSON.stringify(data))
+
+func _clear_save() -> void:
+	if FileAccess.file_exists(SAVE_PATH):
+		DirAccess.remove_absolute(SAVE_PATH)
+
+func _read_save() -> Dictionary:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return {}
+	var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if f == null:
+		return {}
+	var parsed = JSON.parse_string(f.get_as_text())
+	if typeof(parsed) != TYPE_DICTIONARY:
+		return {}
+	if int(parsed.get("version", 0)) != SAVE_VERSION:
+		return {}
+	if typeof(parsed.get("scene", null)) != TYPE_STRING or typeof(parsed.get("inventory", null)) != TYPE_ARRAY or typeof(parsed.get("flags", null)) != TYPE_DICTIONARY:
+		return {}
+	return parsed
+
+func _on_resume_pressed() -> void:
+	var save: Dictionary = _read_save()
+	var index: int = _story_index_for_path(str(save.get("story_path", "")))
+	if index < 0:
+		_refresh_resume_button()
+		return
+	story_picker.select(index)
+	_set_selected_story(index)
+	if not _load_story(str(discovered_stories[index].get("path", ""))):
+		_clear_save()
+		_refresh_resume_button()
+		return
+	var scene_id := str(save.get("scene", ""))
+	if not scenes.has(scene_id):
+		_clear_save()
+		_refresh_resume_button()
+		return
+	current_scene_id = scene_id
+	inventory.clear()
+	for item in save.get("inventory", []):
+		inventory[str(item)] = true
+	flags.clear()
+	var saved_flags: Dictionary = save.get("flags", {})
+	for k in saved_flags.keys():
+		flags[str(k)] = bool(saved_flags[k])
+	_start_story(true)
+
+func _show_stop_dialog() -> void:
+	if not has_active_story:
+		return
+	stop_dialog.visible = true
+
+func _hide_stop_dialog() -> void:
+	stop_dialog.visible = false
+
+func _on_stop_confirmed() -> void:
+	_show_menu()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if not is_node_ready():
+			return
+		if stop_dialog.visible:
+			_hide_stop_dialog()
+		elif has_active_story:
+			_show_stop_dialog()
+		else:
+			get_tree().quit()
 
 func _set_selected_story(index: int) -> void:
 	if index < 0 or index >= discovered_stories.size():
@@ -460,6 +585,8 @@ func _render_scene() -> void:
 			has_next = true
 			break
 	new_game_button.visible = not has_next
+	if not has_next:
+		_clear_save()
 	await _auto_fit_story_text()
 
 func _auto_fit_story_text() -> void:
@@ -592,7 +719,11 @@ func _apply_command(cmd: Array[String]) -> bool:
 		else:
 			if made_progress:
 				# Refresh inventory and reset hints only when the world changes.
+				var generation: int = story_generation
+				_save_progress()
 				await _render_scene()
+				if generation != story_generation:
+					return false
 			else:
 				_record_no_progress()
 			feedback_text.text = response
@@ -648,22 +779,31 @@ func _transition_to_scene(scene_id: String) -> void:
 	if is_transitioning:
 		return
 	is_transitioning = true
+	var generation: int = story_generation
 
 	# Brief pause so kid notices the response text
 	await get_tree().create_timer(1.0).timeout
+	if generation != story_generation:
+		return
 
 	# Show continue button and wait for kid to tap it
 	continue_button.visible = true
 	await continue_button.pressed
 	continue_button.visible = false
+	if generation != story_generation:
+		return
 
 	# Fade to black
 	var tween := create_tween()
 	tween.tween_property(transition_overlay, "color:a", 1.0, 0.3)
 	await tween.finished
+	if generation != story_generation:
+		transition_overlay.color.a = 0.0
+		return
 
 	# Change scene content
 	current_scene_id = scene_id
+	_save_progress()
 	await _render_scene()
 
 	# Fade back in
