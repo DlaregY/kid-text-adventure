@@ -14,8 +14,12 @@ func check(condition: bool, message: String) -> void:
 		printerr("FAIL: ", message)
 func settle(n: int = 6) -> void:
 	for i in range(n): await process_frame
-func shot(name: String) -> void:
+func shot(name: String, stable: bool = true) -> void:
+	# Let mood/feedback tweens finish except in the deliberate countdown capture.
+	if stable:
+		await create_timer(0.45).timeout
 	await settle(3)
+	await RenderingServer.frame_post_draw
 	var img: Image = root.get_viewport().get_texture().get_image()
 	check(img.save_png(out_dir.path_join(name + ".png")) == OK, "Save screenshot " + name)
 	print("saved ", name)
@@ -52,7 +56,7 @@ func run() -> void:
 	await shot("3_bigfoot_camp")
 	tap(game, "look"); tap(game, "bushes")
 	await create_timer(0.25).timeout
-	await shot("4_debounce_timer_bar")
+	await shot("4_debounce_timer_bar", false)
 	await create_timer(0.5).timeout
 	await shot("5_success_flag")
 	tap(game, "go"); tap(game, "snack")
