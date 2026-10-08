@@ -1979,9 +1979,56 @@
         "THE END"
       ],
       "tiles": [
-        "look"
+        "look",
+        "talk",
+        "go",
+        "spiderdude",
+        "city",
+        "home"
       ],
       "commands": [
+        {
+          "pattern": [
+            "look",
+            "spiderdude"
+          ],
+          "response": "Spiderdude flips off a lamppost and sticks the landing. Show-off!"
+        },
+        {
+          "pattern": [
+            "talk",
+            "spiderdude"
+          ],
+          "response": "Spiderdude says, 'Thanks, partner. The city owes you one!'"
+        },
+        {
+          "pattern": [
+            "look",
+            "city"
+          ],
+          "response": "No more fire. Just pink sky, chirping birds, and a bakery that smells amazing."
+        },
+        {
+          "pattern": [
+            "talk",
+            "city"
+          ],
+          "response": "You shout, 'GOOD MORNING, CITY!' Somewhere, a window slams. Oops."
+        },
+        {
+          "pattern": [
+            "look",
+            "home"
+          ],
+          "response": "Your house is right there. Mom has NO idea what you did tonight."
+        },
+        {
+          "pattern": [
+            "go",
+            "home"
+          ],
+          "response": "Almost! Just enjoy the sunrise a little longer."
+        },
         {
           "pattern": [
             "look",

@@ -25,6 +25,7 @@
     "camp": {
       "text": [
         "You are camping with Dad under the stars.",
+        "Dad says: Pack a snack before we explore!",
         "Something tall moves behind the bushes."
       ],
       "tiles": ["go", "take", "look", "camp", "tent", "bushes", "snack", "forest"],
@@ -47,10 +48,7 @@
         {
           "pattern": ["take", "snack"],
           "response": "You tuck a granola snack into your pocket.",
-          "effects": {
-            "inventory_add": ["snack"],
-            "flags_set": { "packed_snack": true }
-          }
+          "effects": { "inventory_add": ["snack"], "flags_set": { "packed_snack": true } }
         },
         {
           "pattern": ["look", "snack"],
@@ -62,9 +60,14 @@
         },
         {
           "pattern": ["go", "forest"],
-          "requirements": { "flags_true": ["saw_movement"] },
+          "requirements": { "flags_true": ["saw_movement", "packed_snack"] },
           "response": "You tell Dad. Together, you switch on your lanterns and follow the sound.",
           "next": "forest_edge"
+        },
+        {
+          "pattern": ["go", "forest"],
+          "requirements": { "flags_true": ["saw_movement"] },
+          "response": "Dad says: Wait! Grab a snack first. Explorers get hungry!"
         },
         {
           "pattern": ["go", "forest"],
@@ -72,9 +75,14 @@
         },
         {
           "pattern": ["go", "bushes"],
-          "requirements": { "flags_true": ["saw_movement"] },
+          "requirements": { "flags_true": ["saw_movement", "packed_snack"] },
           "response": "You tell Dad. Together, you pass the bushes and follow the furry stranger.",
           "next": "forest_edge"
+        },
+        {
+          "pattern": ["go", "bushes"],
+          "requirements": { "flags_true": ["saw_movement"] },
+          "response": "Dad says: Not so fast! Pack a snack before we go."
         },
         {
           "pattern": ["go", "bushes"],
@@ -94,9 +102,9 @@
         "Try checking the bushes."
       ],
       "hints": [
-        "Something moved nearby. Take a closer look!",
-        "LOOK at the BUSHES, then follow it into the woods.",
-        "Use LOOK BUSHES, then GO FOREST."
+        "Dad wants you to pack something. And what moved in the bushes?",
+        "TAKE the SNACK, then LOOK at the BUSHES.",
+        "Use TAKE SNACK, LOOK BUSHES, then GO FOREST."
       ]
     },
     "forest_edge": {
@@ -215,28 +223,69 @@
     "bigfoot_meeting": {
       "text": [
         "You and Dad stop as a friendly Bigfoot steps into the moonlight!",
-        "He looks hungry, but he also looks ready to run."
+        "He looks hungry, and he keeps glancing at your pocket.",
+        "What will you do?"
       ],
-      "tiles": ["go", "look", "talk", "give", "bigfoot", "camp"],
+      "tiles": ["go", "look", "talk", "give", "bigfoot", "forest", "camp"],
       "commands": [
         {
           "pattern": ["give", "snack"],
           "requirements": { "inventory_has": ["snack"] },
           "response": "Bigfoot's eyes light up. He gently takes the snack.",
-          "effects": {
-            "inventory_remove": ["snack"]
-          },
+          "effects": { "inventory_remove": ["snack"] },
           "next": "ending_friend"
         },
         {
+          "pattern": ["snack", "bigfoot"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "You hold out the snack. Bigfoot's eyes light up and he gently takes it.",
+          "effects": { "inventory_remove": ["snack"] },
+          "next": "ending_friend"
+        },
+        {
+          "pattern": ["give", "bigfoot"],
+          "requirements": { "inventory_has": ["snack"] },
+          "response": "You hand Bigfoot your snack. His eyes light up as he gently takes it.",
+          "effects": { "inventory_remove": ["snack"] },
+          "next": "ending_friend"
+        },
+        {
+          "pattern": ["give", "bigfoot"],
+          "response": "Bigfoot tilts his head. Give him what? Your pockets are empty."
+        },
+        {
           "pattern": ["look", "bigfoot"],
-          "response": "You stay calm and watch. Bigfoot gives you a tiny wave.",
-          "next": "ending_cautious"
+          "requirements": { "flags_true": ["looked_bigfoot"] },
+          "response": "Bigfoot is still waiting. His stomach rumbles: GRRRUMBLE!"
+        },
+        {
+          "pattern": ["look", "bigfoot"],
+          "response": "Bigfoot is taller than Dad! His fur is brown and fluffy. He gives you a tiny wave, then looks at your pocket again.",
+          "effects": { "flags_set": { "looked_bigfoot": true } }
         },
         {
           "pattern": ["talk", "bigfoot"],
-          "response": "You copy Bigfoot's friendly hoot. His eyes grow wide, then he laughs!",
+          "requirements": { "flags_true": ["said_hello"] },
+          "response": "You try to say 'friend' in Bigfoot. It comes out as 'My socks taste like pinecones!' Bigfoot laughs so hard that owls fly away.",
           "next": "ending_goofy"
+        },
+        {
+          "pattern": ["talk", "bigfoot"],
+          "response": "You say hello. Bigfoot answers with a soft hoot and leans closer. If you TALK again, you can try a whole Bigfoot word!",
+          "effects": { "flags_set": { "said_hello": true } }
+        },
+        {
+          "pattern": ["look", "forest"],
+          "response": "The dark forest is Bigfoot's home. He glances at it. He could leave any time."
+        },
+        {
+          "pattern": ["go", "forest"],
+          "response": "You step back and point to the forest. Bigfoot nods, gives you a tiny wave, and slips away quietly.",
+          "next": "ending_cautious"
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "The camera is back at camp. If you GO to CAMP, you might get a picture. Or you might not!"
         },
         {
           "pattern": ["go", "camp"],
@@ -246,15 +295,15 @@
         {
           "pattern": ["look", "snack"],
           "requirements": { "inventory_has": ["snack"] },
-          "response": "Bigfoot looks at your snack, then politely looks away."
-        },
-        {
-          "pattern": ["give", "bigfoot"],
-          "response": "Bigfoot tilts his head. Give him what?"
+          "response": "Bigfoot looks at your snack, then politely looks away. He is too shy to ask."
         },
         {
           "pattern": ["go", "bigfoot"],
           "response": "You take one step closer. Bigfoot takes one step back."
+        },
+        {
+          "pattern": ["talk", "forest"],
+          "response": "You call hello to the trees. An owl answers. Bigfoot is right here, silly!"
         }
       ],
       "default": [
@@ -266,9 +315,9 @@
         "Choose carefully. Bigfoot is watching you."
       ],
       "hints": [
-        "Your next choice will decide how the meeting ends.",
-        "Try LOOK BIGFOOT, TALK BIGFOOT, or GO CAMP. A snack offers another choice.",
-        "Use LOOK BIGFOOT, TALK BIGFOOT, or GO CAMP. If you packed it, use GIVE SNACK."
+        "Bigfoot is hungry. What do you have in your pocket?",
+        "GIVE him your SNACK. Or TALK to him twice, GO to the FOREST, or GO to CAMP for a different ending.",
+        "Use GIVE SNACK for the best ending. TALK BIGFOOT twice, GO FOREST, or GO CAMP end the story other ways."
       ]
     },
     "ending_cautious": {
@@ -404,4 +453,3 @@
     }
   }
 }
-

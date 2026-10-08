@@ -23,11 +23,11 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: Back mid-story shows dialog; force-stop then relaunch shows CONTINUE and lands on the same scene.
 
 ## Phase 2 — Bigfoot meeting fixes (quick wins before the rebuild) [A4, A5, A6]
-- [ ] `look bigfoot` / `talk bigfoot` become safe, non-ending responses.
-- [ ] Add `["snack","bigfoot"]` rule mirroring `give snack`.
-- [ ] Camp hints and Dad's dialogue push the snack so the friend ending is reachable.
-- [ ] Spiderdude `win` scene gets things to pair with `look` [A7].
-- [ ] Tests: story smoke still renders; reachability script shows all endings reachable.
+- [x] `look bigfoot` / `talk bigfoot` become safe, non-ending responses (goofy ending needs a second TALK after an explicit prompt; quiet ending moved to GO FOREST).
+- [x] Add `["snack","bigfoot"]` and `["give","bigfoot"]` (with snack) rules mirroring `give snack`.
+- [x] Camp text, hints, and a Dad nag gate leaving camp on packing the snack so the friend ending is always reachable.
+- [x] Spiderdude `win` scene gets talk/go and spiderdude/city/home tiles [A7].
+- [x] Tests: smoke renders 55 scenes; regression covers safe LOOK/TALK, snack→Bigfoot tap routing, all four endings, and the camp gate.
 
 ## Phase 3 — Command bar feel [B13, B14, B15, B21]
 - [ ] Tap a filled slot to clear it.

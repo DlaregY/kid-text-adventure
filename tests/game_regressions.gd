@@ -222,6 +222,64 @@ func test_stop_dialog(game) -> void:
 	game._clear_save()
 	print("Checked back button, home button, and stop dialog")
 
+func start_bigfoot_meeting(game, with_snack: bool) -> void:
+	check(game._load_story("res://stories/bigfoot_campout.json"), "Load Bigfoot")
+	await game._start_story()
+	game.current_scene_id = "bigfoot_meeting"
+	if with_snack:
+		game.inventory["snack"] = true
+	await game._render_scene()
+
+func test_bigfoot_meeting(game) -> void:
+	# LOOK and TALK must not end the story on the first use.
+	await start_bigfoot_meeting(game, true)
+	await apply(game, ["look", "bigfoot"])
+	await apply(game, ["talk", "bigfoot"])
+	await settle()
+	check(game.current_scene_id == "bigfoot_meeting" and not game.is_transitioning, "First LOOK and TALK are safe in the meeting")
+	# Tapping the snack tile then Bigfoot must reach the friend ending.
+	tap(game, "snack")
+	tap(game, "bigfoot")
+	check(game.slot1.token == "snack" and game.slot2.token == "bigfoot", "Inventory tile routes to the action slot")
+	await create_timer(0.6).timeout
+	await continue_story(game)
+	check(game.current_scene_id == "ending_friend" and not game.inventory.has("snack"), "snack + bigfoot gives the snack")
+	game._show_menu()
+	# Every other ending is a deliberate choice.
+	var routes := {
+		"ending_goofy": [["talk", "bigfoot"], ["talk", "bigfoot"]],
+		"ending_cautious": [["go", "forest"]],
+		"ending_missed": [["go", "camp"]],
+		"ending_friend": [["give", "bigfoot"]],
+	}
+	for ending in routes.keys():
+		await start_bigfoot_meeting(game, true)
+		for step in routes[ending]:
+			var cmd: Array[String] = [str(step[0]), str(step[1])]
+			await apply(game, cmd)
+		await continue_story(game)
+		check(game.current_scene_id == ending, "Reach " + ending)
+		game._show_menu()
+	# Without the snack, GIVE explains the problem instead of ending anything.
+	await start_bigfoot_meeting(game, false)
+	await apply(game, ["give", "bigfoot"])
+	await settle()
+	check(game.current_scene_id == "bigfoot_meeting" and game.feedback_text.text.contains("empty"), "GIVE without a snack is explained")
+	# Camp will not let you leave without the snack.
+	game.current_scene_id = "camp"
+	await game._render_scene()
+	await apply(game, ["look", "bushes"])
+	await apply(game, ["go", "forest"])
+	await settle()
+	check(game.current_scene_id == "camp" and game.feedback_text.text.contains("snack"), "Leaving camp requires the snack")
+	await apply(game, ["take", "snack"])
+	await apply(game, ["go", "forest"])
+	await continue_story(game)
+	check(game.current_scene_id == "forest_edge" and game.inventory.has("snack"), "Leave camp with the snack")
+	game._show_menu()
+	game._clear_save()
+	print("Checked Bigfoot meeting safety, routing, and endings")
+
 func run() -> void:
 	create_timer(60).timeout.connect(func():
 		printerr("FAIL: Regression suite timed out")
@@ -237,6 +295,7 @@ func run() -> void:
 	await test_inventory(game)
 	await test_save_resume(game)
 	await test_stop_dialog(game)
+	await test_bigfoot_meeting(game)
 	print("Game regression checks=", checks, "; failures=", failures.size())
 	game.queue_free()
 	await process_frame

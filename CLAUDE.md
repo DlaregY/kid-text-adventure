@@ -89,6 +89,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - **`phone_trap.json`** — "Phone Trap." 8 scenes, 2-word commands. Player gets sucked into Dad's phone and must defeat the Phone Boss to escape.
 - **`shake_escape.json`** — "Shake Escape." 8 scenes, 2-word commands. Player gets sucked into a saltshaker, explores a salt crystal world (Dead Sea lake, salt cliffs), and escapes when Mom shakes the shaker.
 - **`crystal_cave.json`** — "The Crystal Cave." 8 scenes, 2-word commands. Player explores a glowing cave behind a waterfall, finds crystals, crosses a rope bridge, and unlocks hidden treasure.
+- **`bigfoot_campout.json`** — "The Bigfoot Campout." 8 scenes, four endings. Packing the snack is required to leave camp. In `bigfoot_meeting`, LOOK and TALK are safe on first use; endings come only from deliberate choices (give/snack→Bigfoot = friend, second TALK = goofy, GO FOREST = quiet, GO CAMP = missed). A full rebuild to 10–12 scenes is planned in `tasks/polish-plan.md` Phase 8.
 
 ## Story JSON Format
 
