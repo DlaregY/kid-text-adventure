@@ -30,7 +30,7 @@ const FEEDBACK_FAIL := Color(1.0, 0.6, 0.5)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
 const STORY_FONT_MAX: int = 32
-const STORY_FONT_MIN: int = 18
+const STORY_FONT_MIN: int = 22
 const STORY_FONT_STEP: int = 2
 const STORY_MIN_HEIGHT_LINES: int = 3 # reserved story height = font_size * this
 const HINT_FAIL_THRESHOLD: int = 4
@@ -66,6 +66,8 @@ const EMOJI := {
 	"lake": "🌊", "cliff": "🏔️", "crystal": "🔮", "rock": "🪨", "river": "🏞️",
 	"camp": "⛺", "tent": "⛺", "bushes": "🌿", "snack": "🍪",
 	"tracks": "👣", "creek": "🏞️", "bigfoot": "🦶",
+	"dad": "👨", "lantern": "🏮", "camera": "📷", "log": "🪵", "pinecone": "🌰",
+	"stones": "🪨", "berries": "🫐",
 }
 
 const LOOK_FALLBACKS: Array[String] = [
@@ -1124,10 +1126,10 @@ func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thin
 		var normal := StyleBoxFlat.new()
 		normal.bg_color = color
 		normal.set_corner_radius_all(8)
-		normal.content_margin_left = 16
-		normal.content_margin_right = 16
-		normal.content_margin_top = 12
-		normal.content_margin_bottom = 12
+		normal.content_margin_left = 14
+		normal.content_margin_right = 14
+		normal.content_margin_top = 8
+		normal.content_margin_bottom = 8
 		var hover := normal.duplicate()
 		hover.bg_color = Color(0.92, 0.75, 0.25)
 		var pressed := normal.duplicate()

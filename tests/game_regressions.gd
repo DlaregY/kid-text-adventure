@@ -265,12 +265,14 @@ func test_stop_dialog(game) -> void:
 	game._clear_save()
 	print("Checked back button, home button, and stop dialog")
 
-func start_bigfoot_meeting(game, with_snack: bool) -> void:
+func start_bigfoot_meeting(game, with_snack: bool, with_camera: bool = false) -> void:
 	check(game._load_story("res://stories/bigfoot_campout.json"), "Load Bigfoot")
 	await game._start_story()
 	game.current_scene_id = "bigfoot_meeting"
 	if with_snack:
 		game.inventory["snack"] = true
+	if with_camera:
+		game.inventory["camera"] = true
 	await game._render_scene()
 
 func test_bigfoot_meeting(game) -> void:
@@ -291,12 +293,13 @@ func test_bigfoot_meeting(game) -> void:
 	# Every other ending is a deliberate choice.
 	var routes := {
 		"ending_goofy": [["talk", "bigfoot"], ["talk", "bigfoot"]],
-		"ending_cautious": [["go", "forest"]],
+		"ending_quiet": [["go", "forest"]],
 		"ending_missed": [["go", "camp"]],
 		"ending_friend": [["give", "bigfoot"]],
+		"ending_photo": [["camera", "bigfoot"]],
 	}
 	for ending in routes.keys():
-		await start_bigfoot_meeting(game, true)
+		await start_bigfoot_meeting(game, true, ending == "ending_photo")
 		for step in routes[ending]:
 			var cmd: Array[String] = [str(step[0]), str(step[1])]
 			await apply(game, cmd)
@@ -308,20 +311,51 @@ func test_bigfoot_meeting(game) -> void:
 	await apply(game, ["give", "bigfoot"])
 	await settle()
 	check(game.current_scene_id == "bigfoot_meeting" and game.feedback_text.text.contains("empty"), "GIVE without a snack is explained")
-	# Camp will not let you leave without the snack.
+	# Camp will not let you leave without the lantern and the snack.
 	game.current_scene_id = "camp"
 	await game._render_scene()
+	await apply(game, ["go", "forest"])
+	check(game.current_scene_id == "camp" and game.feedback_text.text.to_lower().contains("bushes"), "Leaving camp first requires looking at the bushes")
 	await apply(game, ["look", "bushes"])
 	await apply(game, ["go", "forest"])
 	await settle()
-	check(game.current_scene_id == "camp" and game.feedback_text.text.contains("snack"), "Leaving camp requires the snack")
+	check(game.current_scene_id == "camp" and game.feedback_text.text.to_lower().contains("lantern"), "Leaving camp requires the lantern")
+	await apply(game, ["take", "lantern"])
+	await apply(game, ["go", "forest"])
+	check(game.current_scene_id == "camp" and game.feedback_text.text.to_lower().contains("snack"), "Leaving camp requires the snack")
 	await apply(game, ["take", "snack"])
 	await apply(game, ["go", "forest"])
 	await continue_story(game)
-	check(game.current_scene_id == "forest_edge" and game.inventory.has("snack"), "Leave camp with the snack")
+	check(game.current_scene_id == "forest_edge" and game.inventory.has("snack") and game.inventory.has("lantern"), "Leave camp with the lantern and snack")
+	# The full critical path to the meeting, with the optional pinecone and berries.
+	await apply(game, ["look", "tracks"])
+	await apply(game, ["go", "forest"])
+	await continue_story(game)
+	check(game.current_scene_id == "hollow_log", "Tracks lead to the hollow log")
+	await apply(game, ["look", "log"])
+	await apply(game, ["take", "pinecone"])
+	check(game.inventory.has("pinecone"), "Pinecone is collectible after looking in the log")
+	await apply(game, ["climb", "log"])
+	await continue_story(game)
+	check(game.current_scene_id == "creek", "Climbing the log reaches the creek")
+	await apply(game, ["go", "creek"])
+	check(game.current_scene_id == "creek", "Wading is refused")
+	await apply(game, ["go", "stones"])
+	await continue_story(game)
+	check(game.current_scene_id == "berry_patch", "Stones cross to the berry patch")
+	await apply(game, ["go", "bigfoot"])
+	check(game.current_scene_id == "berry_patch", "Approaching before calming him is refused")
+	await apply(game, ["take", "berries"])
+	await apply(game, ["look", "bigfoot"])
+	await apply(game, ["go", "bigfoot"])
+	await continue_story(game)
+	check(game.current_scene_id == "bigfoot_meeting" and game.inventory.has("berries"), "Calm approach reaches the meeting with berries")
+	await apply(game, ["berries", "bigfoot"])
+	await apply(game, ["pinecone", "bigfoot"])
+	check(game.current_scene_id == "bigfoot_meeting" and game.inventory.has("pinecone"), "Berries and pinecone are safe, fun non-endings")
 	game._show_menu()
 	game._clear_save()
-	print("Checked Bigfoot meeting safety, routing, and endings")
+	print("Checked Bigfoot meeting safety, routing, endings, and the full path")
 
 func test_stop_dialog_suspends_commands(game) -> void:
 	await start_bigfoot_meeting(game, true)
@@ -449,28 +483,28 @@ func test_endings(game) -> void:
 	for i in range(game.discovered_stories.size()):
 		if game.discovered_stories[i].path.ends_with("bigfoot_campout.json"):
 			bigfoot_index = i
-	check(bigfoot_index >= 0 and game.discovered_stories[bigfoot_index].ending_ids.size() == 4, "Bigfoot declares four endings")
+	check(bigfoot_index >= 0 and game.discovered_stories[bigfoot_index].ending_ids.size() == 5, "Bigfoot declares five endings")
 	var badge: Label = game.story_cards[bigfoot_index].get_node("Row/Col/Badge")
-	check(badge.text.contains("0 of 4 endings"), "Card shows no endings found yet: " + badge.text)
+	check(badge.text.contains("0 of 5 endings"), "Card shows no endings found yet: " + badge.text)
 	await start_bigfoot_meeting(game, true)
 	await apply(game, ["give", "bigfoot"])
 	await continue_story(game)
-	check(game.ending_badge.visible and game.ending_label.text.contains("Bigfoot Friend") and game.ending_label.text.contains("1 of 4"), "Ending badge names the ending and the count: " + game.ending_label.text)
+	check(game.ending_badge.visible and game.ending_label.text.contains("Bigfoot Friend") and game.ending_label.text.contains("1 of 5"), "Ending badge names the ending and the count: " + game.ending_label.text)
 	check(not game.story_text.text.begins_with("THE "), "Ending scene text no longer shouts its title")
 	game._show_menu()
-	check(badge.text.contains("1 of 4 endings"), "Card counts the found ending: " + badge.text)
+	check(badge.text.contains("1 of 5 endings"), "Card counts the found ending: " + badge.text)
 	# Reaching the same ending again does not double count; a second ending does.
 	await start_bigfoot_meeting(game, true)
 	await apply(game, ["give", "bigfoot"])
 	await continue_story(game)
-	check(game.ending_label.text.contains("1 of 4"), "Repeat ending is not counted twice")
+	check(game.ending_label.text.contains("1 of 5"), "Repeat ending is not counted twice")
 	game._show_menu()
 	await start_bigfoot_meeting(game, true)
 	await apply(game, ["go", "camp"])
 	await continue_story(game)
-	check(game.ending_label.text.contains("2 of 4"), "Second ending counts")
+	check(game.ending_label.text.contains("2 of 5"), "Second ending counts")
 	game._show_menu()
-	check(badge.text.contains("2 of 4 endings"), "Card updates after the second ending")
+	check(badge.text.contains("2 of 5 endings"), "Card updates after the second ending")
 	# Single-ending stories show Finished.
 	await start_dragon(game)
 	game.current_scene_id = "win"
@@ -487,7 +521,7 @@ func test_endings(game) -> void:
 	f.store_string("[1,2")
 	f.close()
 	game._show_menu()
-	check(badge.text.contains("0 of 4 endings"), "Corrupt progress file reads as nothing found")
+	check(badge.text.contains("0 of 5 endings"), "Corrupt progress file reads as nothing found")
 	game._clear_progress()
 	game._clear_save()
 	print("Checked ending badge, progress persistence, and card counts")

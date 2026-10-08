@@ -128,6 +128,14 @@ Command rule keys:
 
 8 scenes. You sneak Dad's phone at night and get sucked into the screen. Navigate a digital world, defeat bugs and a firewall, and battle the Phone Boss to escape.
 
+### The Crystal Cave (`crystal_cave.json`)
+
+8 scenes. Explore a glowing cave behind a waterfall, find crystals, cross a rope bridge, and unlock hidden treasure.
+
+### The Bigfoot Campout (`bigfoot_campout.json`)
+
+11 scenes, five endings. Camping with Dad, you follow giant footprints past a hollow log and across a creek to a berry patch where Bigfoot is snacking. Pack a lantern and a snack (and maybe the camera) at camp; how you treat Bigfoot at the meeting decides which ending you get. Found endings are collected on the story card.
+
 ### Shake Escape (`shake_escape.json`)
 
 8 scenes. Your breakfast eggs need salt, but the saltshaker sucks you inside! Explore a tiny salt crystal world, float across a Dead Sea-style salt lake, climb slippery cliffs with a crystal pick, and bounce on a salt trampoline. Mom shakes you out in the end.

@@ -632,6 +632,11 @@
         "You did it! You escaped the saltshaker!",
         "Mom is still staring at you. Just smile!",
         "Your eggs are perfect now. Worth it? DEFINITELY."
+      ],
+      "hints": [
+        "You made it home! Just look around and enjoy breakfast.",
+        "LOOK at or TALK to things to remember your adventure.",
+        "This is the end! Tap NEW GAME to play again."
       ]
     }
   }

@@ -67,10 +67,10 @@ cannot see touch, safe areas, or TTS.
 - [ ] Phone: font legibility at 32 px; reveal speed; mood colours under the phone's brightness.
 
 ## Phase 8 — Bigfoot rebuild and story pass [D]
-- [ ] Rebuild Bigfoot to 10–12 scenes per the sketch in the recommendations doc.
-- [ ] Split Phone Trap `home` into two scenes; add hints to Shake Escape `home`.
-- [ ] Decide Spiderdude naming [A10].
-- [ ] Run `docs/story-qa-checklist.md` on every touched story.
+- [x] Rebuild Bigfoot to 11 scenes / 5 endings (Dad, lantern gate, hollow log + pinecone, creek stones, berry patch + berries, camera photo ending); state search: 4008 states, all endings reachable, no dead ends.
+- [x] Split Phone Trap `home` into two scenes (Phase 7); add hints to Shake Escape `home`.
+- [ ] Decide Spiderdude naming [A10] — Gerald's call; no change made.
+- [x] Structural QA (schema, reachability, budgets) run on Bigfoot, Phone Trap, Shake Escape; manual phone playtest still owed.
 
 ## Phase 9 — Release hygiene [A8, A11, A12]
 - [ ] Production preset exports AAB; preset renamed to match the app.
