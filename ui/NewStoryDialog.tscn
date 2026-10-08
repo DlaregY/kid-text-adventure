@@ -23,6 +23,20 @@ corner_radius_top_right = 12
 corner_radius_bottom_left = 12
 corner_radius_bottom_right = 12
 
+[sub_resource type="StyleBoxFlat" id="keep_hover"]
+bg_color = Color(0.25, 0.8, 0.35, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
+[sub_resource type="StyleBoxFlat" id="keep_pressed"]
+bg_color = Color(0.15, 0.55, 0.22, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+
 [node name="NewStoryDialog" type="Control"]
 visible = false
 layout_mode = 3
@@ -80,6 +94,8 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("keep")
+theme_override_styles/hover = SubResource("keep_hover")
+theme_override_styles/pressed = SubResource("keep_pressed")
 focus_neighbor_top = NodePath("../StartNew")
 focus_neighbor_bottom = NodePath("../StartNew")
 focus_next = NodePath("../StartNew")
@@ -87,9 +103,9 @@ focus_previous = NodePath("../StartNew")
 text = "KEEP MY SAVE"
 
 [node name="StartNew" type="Button" parent="Center/Panel/Box"]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 22
 focus_neighbor_top = NodePath("../KeepSave")
 focus_neighbor_bottom = NodePath("../KeepSave")
 focus_next = NodePath("../KeepSave")
