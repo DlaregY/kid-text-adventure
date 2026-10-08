@@ -103,9 +103,15 @@ func run(suite, game) -> void:
 	var holds: Array = []
 	tile.long_pressed.connect(func() -> void: holds.append(true))
 	tile.button_down.emit()
+	# set_drag_preview requires an active viewport drag; a direct virtual call alone is invalid.
+	tile.force_drag({"token": tile.token, "label": tile.text}, null)
+	suite.check(suite.root.gui_is_dragging(), "Drag test owns a real viewport drag")
 	tile._get_drag_data(Vector2.ZERO)
 	await suite.create_timer(0.6).timeout
 	suite.check(holds.is_empty() and tile._hold_timer.is_stopped(), "Drag cancels long-press speech")
+	suite.root.gui_cancel_drag()
+	await suite.process_frame
+	suite.check(not suite.root.gui_is_dragging(), "Drag preview is released on cancellation")
 	tile.button_up.emit()
 	tile.pressed.emit()
 	suite.check(game.slot1.token.is_empty(), "Drag release does not place a second tile")
