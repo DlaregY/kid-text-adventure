@@ -358,12 +358,6 @@ offset_right = -16.0
 offset_bottom = 48.0
 grow_horizontal = 2
 
-[node name="SpeakButton" type="Button" parent="TopBar"]
-custom_minimum_size = Vector2(56, 48)
-layout_mode = 2
-theme_override_font_sizes/font_size = 26
-text = "🔊"
-
 [node name="TopSpacer" type="Control" parent="TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -487,24 +481,22 @@ custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-text = "Ike Quest is a tap-to-read adventure for early readers, made by Norbonics Games.
+text = "Ike Quest is a word-tile adventure for early readers, made by Norbonics Games.
 
 It runs completely offline. No ads, no accounts, no in-app purchases, and no internet connection.
 
 It does not collect, store, or share any personal information. Story progress is saved only on this device.
 
-Privacy policy: see the Google Play listing.
+Read the full privacy policy below.
+This version has no read-aloud feature.
 games.norbonics.com"
 autowrap_mode = 3
 
-[node name="ReadAloudToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
+[node name="PrivacyButton" type="Button" parent="AboutDialog/Center/Panel/Box"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
-theme_override_colors/font_hover_color = Color(0.2, 0.15, 0.1, 1)
-theme_override_colors/font_pressed_color = Color(0.2, 0.15, 0.1, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.2, 0.15, 0.1, 1)
-text = "Read responses aloud automatically"
+theme_override_font_sizes/font_size = 22
+text = "Privacy policy"
 
 [node name="SoundToggle" type="CheckButton" parent="AboutDialog/Center/Panel/Box"]
 layout_mode = 2

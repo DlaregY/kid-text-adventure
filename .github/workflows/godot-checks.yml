@@ -13,9 +13,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Install desktop test dependencies
-        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri fonts-noto-color-emoji libspeechd2 speech-dispatcher speech-dispatcher-espeak-ng
-      - name: Start local speech discovery service
-        run: speech-dispatcher --spawn
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri fonts-noto-color-emoji
       - name: Download and verify Godot 4.6.1
         shell: bash
         run: |

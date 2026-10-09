@@ -15,7 +15,7 @@ Gerald has already created and paid for the Google Play developer account and co
 - Contact choices: `hello@norbonics.com` public, `gerald@norbonics.com` private; Norbonics catch-all delivery was verified.
 - Zo browser sign-in is blocked by Google's browser-security error. Gerald can access Console in his own browser. Lack of agent access does not undo completed enrollment.
 
-Account completion is distinct from app creation, closed testing, production access and app approval. Those remain to inspect or complete; no public app release is established. Continue release preparation under Hub #1511 using the current plan. Preserve the production application ID and all six stories; story expansion and save/resume remain proposals pending an implementation decision.
+Account completion is distinct from app creation, closed testing, production access and app approval. Those remain to inspect or complete; no public app release is established. Continue release preparation under Hub #1511 using the current plan. Preserve the production application ID and all six stories. Save/resume, safe replacement, and the Bigfoot story changes are implemented through PRs #12–14. On October 9 Gerald chose to defer speech and originalize the sixth story; see the current-state section in PROJECT_PLAN.md. No release or Play mutation is authorized by those code decisions.
 
 ## Play Developer API access: 2026-10-08
 
