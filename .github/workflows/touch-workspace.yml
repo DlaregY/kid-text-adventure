@@ -1,0 +1,29 @@
+name: Touch feedback workspace
+on:
+  push:
+    branches: [codex/ike-touch-workspace-2026-10-09]
+    paths: [.github/workflows/touch-workspace.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ad758b0e569df8d65ddfa1f2e8befbb2db4368d5
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bundle pinned source
+        run: |
+          mkdir -p "$RUNNER_TEMP/ike-touch"
+          git bundle create "$RUNNER_TEMP/ike-touch/source.bundle" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/ike-touch/BASE.txt"
+          cd "$RUNNER_TEMP/ike-touch"
+          sha256sum source.bundle > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ike-touch-baseline
+          path: ${{ runner.temp }}/ike-touch/
+          retention-days: 1
