@@ -7,7 +7,7 @@ import unittest
 import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import android_candidate as candidate
-from verify_android_candidate import elf_load_alignments, validate_badging
+from verify_android_candidate import elf_load_alignments, validate_badging, validate_manifest
 
 class AndroidCandidateTests(unittest.TestCase):
     def test_separate_identity_and_bad_ids(self):
@@ -31,11 +31,23 @@ class AndroidCandidateTests(unittest.TestCase):
 
     def test_aapt2_sdk_names_and_wrong_values(self):
         expected={'package':'com.ike.textadventure.candidate.r1','version_code':700,'version_name':'0.7.0'}
-        text="package: name='com.ike.textadventure.candidate.r1' versionCode='700' versionName='0.7.0'\nminSdkVersion:'24'\ntargetSdkVersion:'36'\n"
+        text="package: name='com.ike.textadventure.candidate.r1' versionCode='700' versionName='0.7.0' compileSdkVersion='36'\nminSdkVersion:'24'\ntargetSdkVersion:'36'\n"
         validate_badging(text,expected)
         for bad in [text.replace("'36'", "'34'"), text.replace("'24'", "'21'"),
                     text+"uses-permission: name='android.permission.INTERNET'\n", text.replace("versionCode='700'", "versionCode='2'")]:
             with self.assertRaises(ValueError):validate_badging(bad,expected)
+
+    def test_aapt2_manifest_requires_explicit_backup_and_matching_renderer(self):
+        text = ('      E: application (line=30)\n'
+                '        A: http://schemas.android.com/apk/res/android:allowBackup(0x01010280)=false\n'
+                '          E: meta-data (line=41)\n'
+                '            A: http://schemas.android.com/apk/res/android:name(0x01010003)="org.godotengine.rendering.method" (Raw: "org.godotengine.rendering.method")\n'
+                '            A: http://schemas.android.com/apk/res/android:value(0x01010024)="mobile" (Raw: "mobile")\n')
+        validate_manifest(text, 'mobile')
+        for bad in [text.replace('=false', '=true'), text.replace('allowBackup','wrongName'),
+                    text.replace('"mobile"', '"gl_compatibility"'), text + text,
+                    text + '      E: uses-permission (line=8)\n']:
+            with self.assertRaises(ValueError):validate_manifest(bad, 'mobile')
 
     def test_exact_template_patch_fails_on_drift(self):
         source='\n'.join(candidate.TEMPLATE_CHANGES)

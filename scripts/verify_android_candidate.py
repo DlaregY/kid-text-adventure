@@ -33,8 +33,24 @@ def validate_badging(badging: str, expected: dict) -> None:
     for prefix, value in [('minSdkVersion', 24), ('targetSdkVersion', 36)]:
         if f"{prefix}:'{value}'" not in badging:
             raise ValueError('Packaged SDK mismatch')
+    if "compileSdkVersion='36'" not in badging:
+        raise ValueError('Packaged compile SDK mismatch')
     if 'uses-permission:' in badging or 'uses-permission-sdk-' in badging:
         raise ValueError('APK unexpectedly requests permissions')
+
+
+def validate_manifest(manifest: str, renderer: str) -> None:
+    # AAPT2 36 expands the Android namespace and prints booleans as words.
+    # Read the exact application attribute, not an unqualified substring.
+    attribute = r"^\s*A: (?:http://schemas\.android\.com/apk/res/android:|android:)allowBackup(?:\(0x[0-9a-f]+\))?=(.*)$"
+    values = re.findall(attribute, manifest, re.M)
+    if len(values) != 1 or values[0].strip() not in {'false', '0x0', '(type 0x12)0x0'}:
+        raise ValueError('Manifest does not explicitly disable backup')
+    if re.search(r'E: uses-permission(?:-|\s)', manifest):
+        raise ValueError('Manifest unexpectedly requests permissions')
+    rendering = re.search(r'name[^\n]*="org\.godotengine\.rendering\.method"[^\n]*\n[^\n]*value[^\n]*="([^"\n]+)"', manifest)
+    if not rendering or rendering.group(1) != renderer:
+        raise ValueError('Packaged renderer metadata mismatch')
 
 
 def verify(apk: Path, expected: dict, tools: Path, output: Path, env: dict) -> dict:
@@ -51,8 +67,7 @@ def verify(apk: Path, expected: dict, tools: Path, output: Path, env: dict) -> d
     if 'uses-permission' in permissions:
         raise ValueError('APK requests a permission')
     manifest = checked([str(tools / 'aapt2'), 'dump', 'xmltree', str(apk), '--file', 'AndroidManifest.xml'], 'manifest.txt')
-    if not re.search(r'android:allowBackup[^\n]*=(?:\(type 0x12\))?0x0\b', manifest):
-        raise ValueError('Manifest does not explicitly disable backup')
+    validate_manifest(manifest, expected['renderer_requested'])
     signing = checked([str(tools / 'apksigner'), 'verify', '--verbose', '--print-certs', str(apk)], 'signing.txt')
     checked([str(tools / 'apksigner'), 'verify', '--min-sdk-version', '33', str(apk)], 'signing-android13.txt')
     fingerprint = re.search(r'Signer #1 certificate SHA-256 digest: ([a-fA-F0-9]+)', signing)
@@ -94,5 +109,6 @@ def verify(apk: Path, expected: dict, tools: Path, output: Path, env: dict) -> d
         apk_sha256=hashlib.sha256(apk.read_bytes()).hexdigest(), signer_sha256=fingerprint.group(1).lower(),
         permissions=[], signature_verified=True, android13_signature_verified=True,
         zip_crc_verified=True, zip_alignment_16kb=True, native_load_alignments=libraries,
-        packaged_story_bytes_verified=True, privacy_dialog_packaged=True, backup_allowed=False)
+        packaged_story_bytes_verified=True, privacy_dialog_packaged=True, backup_allowed=False,
+        renderer_manifest_verified=expected['renderer_requested'])
     return evidence
