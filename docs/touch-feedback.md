@@ -22,8 +22,9 @@ is not silently promoted into a new measurement.
   still select; physical mouse dragging remains immediate.
 - A slot clears on a genuine release-to-tap, not on finger-down. A scrolling,
   canceled or drag gesture cannot clear it. Native scrolling cancels a card or
-  button click and pauses pending command execution; scroll end gives already
-  selected commands a fresh full delay.
+  button click. Finger-down, a stationary hold, scrolling and an active drag
+  pause pending execution; gesture end gives selected commands a fresh full
+  delay, including when a replacement drop is rejected.
 - Derive slot roles from current scene/inventory, not the supplied drag category.
   First slot: action or collected item. Second: target/collected item, never an
   action. Unknown/stale tokens are refused, rejected drops leave slots intact,
@@ -42,6 +43,9 @@ story content, speech restoration, a Play upload, or a public release.
 The pre-fix source reproduced three failures with viewport-routed, touch-derived
 mouse events: swipe over a card, over story text, and over a word button. The
 same initial checks pass after fixing propagation and touch/drag priority.
+A second negative-control pass exposed two failures around an already queued
+command during a stationary hold/rejected replacement drag. Those checks pass
+after pausing execution across the complete gesture, not just native scrolling.
 
 `tests/touch_input.gd` extends this with actual ScreenTouch/ScreenDrag input,
 repeated card swipes to both ends, real taps and held drags, slot-swiping, invalid

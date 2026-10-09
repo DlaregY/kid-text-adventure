@@ -214,6 +214,43 @@ func run() -> void:
 	await create_timer(0.5).timeout
 	check(game.slot1.token.is_empty() and game.slot2.token.is_empty(), "Swipe/pause places no command")
 
+	# Holding/dragging a replacement must pause an already queued command.
+	game.slot1.set_tile("look", "look")
+	game.slot2.set_tile("bigfoot", "Bigfoot")
+	game.flags.erase("looked_bigfoot")
+	game._check_slots_and_execute()
+	point = tile_for(game, "give").get_global_rect().get_center()
+	motion(point, Vector2.ZERO)
+	button(point, true)
+	await create_timer(0.65).timeout
+	check(not bool(game.flags.get("looked_bigfoot", false)), "Stationary hold pauses the prior queued command")
+	button(point, false)
+	game.command_timer.stop()
+	game.slot1.clear()
+	game.slot2.clear()
+	await settle()
+	game.slot1.set_tile("look", "look")
+	game.slot2.set_tile("bigfoot", "Bigfoot")
+	game.flags.erase("looked_bigfoot")
+	game._check_slots_and_execute()
+	point = tile_for(game, "give").get_global_rect().get_center()
+	var wrong_slot: Vector2 = game.slot2.get_global_rect().get_center()
+	motion(point, Vector2.ZERO)
+	button(point, true)
+	await create_timer(0.4).timeout
+	motion(point.lerp(wrong_slot, 0.3), (wrong_slot-point)*0.3, true)
+	await create_timer(0.3).timeout
+	check(root.gui_is_dragging() and not bool(game.flags.get("looked_bigfoot", false)), "Active drag cannot run the prior command")
+	motion(wrong_slot, (wrong_slot-point)*0.7, true)
+	button(wrong_slot, false)
+	await create_timer(0.2).timeout
+	check(game.slot1.token == "look" and game.slot2.token == "bigfoot" and not bool(game.flags.get("looked_bigfoot", false)), "Rejected drag retains both old words and grants a fresh delay")
+	await create_timer(0.5).timeout
+	check(bool(game.flags.get("looked_bigfoot", false)), "The retained command resumes after the rejected drag")
+	game.slot1.clear()
+	game.slot2.clear()
+	await settle()
+
 	# Roles are recomputed from game state, including forged/stale payloads.
 	for data in [{"token": "go", "category": "thing"}, {"token": "not_here", "category": "inventory"}]:
 		check(not game.slot2._can_drop_data(Vector2.ZERO, data), "Thing slot rejects action/unavailable token despite claimed category")

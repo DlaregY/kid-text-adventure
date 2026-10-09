@@ -282,9 +282,19 @@ func _ready() -> void:
 	# Dialogs and fixed bars are outside this subtree and keep their input shields.
 	_pass_scroll_input(layout)
 	scroll_container.scroll_deadzone = 12
+	scroll_container.gui_input.connect(_on_scroll_input)
 	scroll_container.scroll_started.connect(func() -> void: command_timer.stop())
 	scroll_container.scroll_ended.connect(_check_slots_and_execute)
 	_show_menu()
+
+func _on_scroll_input(event: InputEvent) -> void:
+	# A held word is still being chosen. Do not run the old two-word command
+	# while the player holds/drags a replacement or begins a scroll gesture.
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			command_timer.stop()
+		else:
+			_check_slots_and_execute.call_deferred()
 
 func _pass_scroll_input(node: Node) -> void:
 	if node is Control and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
@@ -853,6 +863,10 @@ func _on_stop_confirmed() -> void:
 	_show_menu()
 
 func _notification(what: int) -> void:
+	if is_node_ready() and what == NOTIFICATION_DRAG_BEGIN:
+		command_timer.stop()
+	elif is_node_ready() and what == NOTIFICATION_DRAG_END:
+		_check_slots_and_execute.call_deferred()
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if not is_node_ready():
 			return
@@ -1254,7 +1268,7 @@ func _on_tile_pressed(tile: Button) -> void:
 func _check_slots_and_execute() -> void:
 	# A new selection replaces the previous delay, including incomplete input.
 	command_timer.stop()
-	if _input_blocked():
+	if _input_blocked() or get_viewport().gui_is_dragging():
 		return
 	# Check if all visible required slots are filled
 	if not _slot_accepts_token(slot1.token, 1) or not _slot_accepts_token(slot2.token, 2):
@@ -1263,7 +1277,7 @@ func _check_slots_and_execute() -> void:
 
 func _try_execute_command() -> void:
 	command_timer.stop()
-	if _input_blocked():
+	if _input_blocked() or get_viewport().gui_is_dragging():
 		return
 	var first: String = slot1.token
 	var second: String = slot2.token
