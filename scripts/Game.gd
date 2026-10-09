@@ -28,6 +28,7 @@ const FEEDBACK_NEUTRAL := Color(0.95, 0.92, 0.85)
 const FEEDBACK_SUCCESS := Color(0.55, 0.95, 0.55)
 const FEEDBACK_FAIL := Color(1.0, 0.6, 0.5)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
+const PRIVACY_DIALOG_SCENE := preload("res://ui/PrivacyDialog.tscn")
 const NEW_STORY_DIALOG_SCENE := preload("res://ui/NewStoryDialog.tscn")
 const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb", "tell"]
 const STORY_FONT_MAX: int = 32
@@ -153,9 +154,7 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var about_version: Label = $AboutDialog/Center/Panel/Box/AboutVersion
 @onready var top_bar: HBoxContainer = $TopBar
 @onready var home_button: Button = $TopBar/HomeButton
-@onready var speak_button: Button = $TopBar/SpeakButton
 @onready var sfx_player: AudioStreamPlayer = $Sfx
-@onready var read_aloud_toggle: CheckButton = $AboutDialog/Center/Panel/Box/ReadAloudToggle
 @onready var sound_toggle: CheckButton = $AboutDialog/Center/Panel/Box/SoundToggle
 @onready var stop_dialog: Control = $StopDialog
 @onready var keep_button: Button = $StopDialog/Center/Panel/Box/KeepButton
@@ -205,10 +204,10 @@ var story_generation: int = 0 # bumped whenever a story starts or stops; stale c
 var continue_pressed := false
 var idle_timer := Timer.new()
 var reveal_tween: Tween
-var settings := {"read_aloud": false, "sound": true}
+var settings := {"sound": true} # Legacy read_aloud keys are ignored on load.
 var last_sfx := "" # name of the most recent effect actually played (for tests)
-var tts_voice := "" # chosen system voice id, "" when the device has none
 var pending_scene_id := "" # destination of a transition whose Continue tap has not happened yet; saves point here
+var privacy_dialog: Control
 var new_story_dialog: Control
 var pending_new_story_path := "" # frozen when the replace-save confirmation opens
 
@@ -239,14 +238,13 @@ func _ready() -> void:
 
 	about_button.pressed.connect(_on_about_pressed)
 	_load_settings()
-	read_aloud_toggle.button_pressed = bool(settings["read_aloud"])
 	sound_toggle.button_pressed = bool(settings["sound"])
-	read_aloud_toggle.toggled.connect(func(on: bool) -> void: settings["read_aloud"] = on; _save_settings())
 	sound_toggle.toggled.connect(func(on: bool) -> void: settings["sound"] = on; _save_settings())
-	speak_button.pressed.connect(_on_speak_pressed)
 	continue_button.pressed.connect(func() -> void: _play_sfx("next"))
-	_pick_tts_voice()
-	about_close.pressed.connect(func() -> void: about_dialog.visible = false)
+	about_close.pressed.connect(func() -> void:
+		if not privacy_dialog.visible:
+			about_dialog.visible = false
+	)
 	play_button.pressed.connect(_on_start_pressed)
 	resume_button.pressed.connect(_on_resume_pressed)
 	home_button.pressed.connect(_show_stop_dialog)
@@ -267,6 +265,10 @@ func _ready() -> void:
 	var start_new: Button = new_story_dialog.get_node("Center/Panel/Box/StartNew")
 	keep_save.pressed.connect(_cancel_new_story)
 	start_new.pressed.connect(_confirm_new_story)
+	privacy_dialog = PRIVACY_DIALOG_SCENE.instantiate()
+	add_child(privacy_dialog)
+	privacy_dialog.get_node("Margin/Panel/Box/Close").pressed.connect(_hide_privacy_policy)
+	$AboutDialog/Center/Panel/Box/PrivacyButton.pressed.connect(_show_privacy_policy)
 	play_button.text = "START NEW"
 	resume_button.add_theme_font_size_override("font_size", 22)
 	resume_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -274,7 +276,20 @@ func _ready() -> void:
 	_discover_stories()
 	_show_menu()
 
-# --- Settings, sound effects, and read-aloud.
+# --- Local settings and bundled sound effects. No speech service is used.
+
+func _show_privacy_policy() -> void:
+	if not about_dialog.visible or has_active_story:
+		return
+	privacy_dialog.visible = true
+	var body: RichTextLabel = privacy_dialog.get_node("Margin/Panel/Box/Policy")
+	body.get_v_scroll_bar().value = 0
+	privacy_dialog.get_node("Margin/Panel/Box/Close").grab_focus()
+
+func _hide_privacy_policy() -> void:
+	privacy_dialog.visible = false
+	if about_dialog.visible:
+		$AboutDialog/Center/Panel/Box/PrivacyButton.grab_focus()
 
 func _load_settings() -> void:
 	if not FileAccess.file_exists(SETTINGS_PATH):
@@ -299,8 +314,6 @@ func _save_settings() -> void:
 func _exit_tree() -> void:
 	# Release any in-flight playback so the audio server holds nothing after the game is freed.
 	sfx_player.stop()
-	if tts_voice != "":
-		DisplayServer.tts_stop()
 
 func _play_sfx(name: String) -> void:
 	if not bool(settings["sound"]) or not SFX.has(name):
@@ -310,46 +323,6 @@ func _play_sfx(name: String) -> void:
 		return # headless/no-audio runs: record the trigger without starting a playback that never ends
 	sfx_player.stream = SFX[name]
 	sfx_player.play()
-
-func _pick_tts_voice() -> void:
-	tts_voice = ""
-	if not DisplayServer.has_feature(DisplayServer.FEATURE_TEXT_TO_SPEECH):
-		return
-	var voices: PackedStringArray = DisplayServer.tts_get_voices_for_language("en")
-	if voices.is_empty():
-		var all_voices: Array = DisplayServer.tts_get_voices()
-		if not all_voices.is_empty():
-			voices.append(str(all_voices[0].get("id", "")))
-	if not voices.is_empty() and voices[0] != "":
-		tts_voice = voices[0]
-
-func _speak(text: String) -> bool:
-	if tts_voice == "" or text.strip_edges() == "":
-		return false
-	DisplayServer.tts_stop()
-	DisplayServer.tts_speak(text, tts_voice, 80, 1.0, 0.9)
-	return true
-
-func _on_speak_pressed() -> void:
-	if not has_active_story:
-		return
-	if tts_voice != "" and DisplayServer.tts_is_speaking():
-		DisplayServer.tts_stop()
-		return
-	var parts: Array[String] = []
-	if ending_badge.visible:
-		parts.append(ending_label.text)
-	parts.append(story_text.text)
-	if feedback_text.text != "":
-		parts.append(feedback_text.text)
-	if not _speak(". ".join(parts)):
-		_show_feedback("This phone has no reading voice.", "neutral")
-
-func _on_tile_long_pressed(tile: Button) -> void:
-	if _input_blocked():
-		return
-	_bounce_tile(tile)
-	_speak(_label_for(tile.token))
 
 func _apply_reader_font() -> void:
 	# Andika (SIL OFL) is drawn for beginning readers; emoji fall back to the OS colour font.
@@ -719,9 +692,8 @@ func _start_story(resume: bool = false) -> void:
 	await _render_scene()
 
 func _show_menu() -> void:
+	privacy_dialog.visible = false
 	command_timer.stop()
-	if tts_voice != "":
-		DisplayServer.tts_stop()
 	story_generation += 1
 	has_active_story = false
 	is_transitioning = false
@@ -814,7 +786,7 @@ func _read_save() -> Dictionary:
 	return parsed
 
 func _on_resume_pressed() -> void:
-	if has_active_story or about_dialog.visible or new_story_dialog.visible:
+	if has_active_story or about_dialog.visible or new_story_dialog.visible or privacy_dialog.visible:
 		return
 	var save: Dictionary = _read_save()
 	var index: int = _story_index_for_path(str(save.get("story_path", "")))
@@ -868,7 +840,9 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if not is_node_ready():
 			return
-		if new_story_dialog.visible:
+		if privacy_dialog.visible:
+			_hide_privacy_policy()
+		elif new_story_dialog.visible:
 			_cancel_new_story()
 		elif about_dialog.visible:
 			about_dialog.visible = false
@@ -973,16 +947,16 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	return card
 
 func _on_story_card_pressed(index: int) -> void:
-	if has_active_story or about_dialog.visible or new_story_dialog.visible:
+	if has_active_story or about_dialog.visible or new_story_dialog.visible or privacy_dialog.visible:
 		return
 	_set_selected_story(index)
 
 func _on_about_pressed() -> void:
-	if not has_active_story and not new_story_dialog.visible:
+	if not has_active_story and not new_story_dialog.visible and not privacy_dialog.visible:
 		about_dialog.visible = true
 
 func _on_start_pressed() -> void:
-	if has_active_story or about_dialog.visible or new_story_dialog.visible:
+	if has_active_story or about_dialog.visible or new_story_dialog.visible or privacy_dialog.visible:
 		return
 	var new_index := _story_index_for_path(selected_story_path)
 	if new_index < 0:
@@ -1125,8 +1099,6 @@ func _show_feedback(text: String, kind: String) -> void:
 	feedback_text.add_theme_color_override("font_color", color)
 	if text == "":
 		return
-	if bool(settings["read_aloud"]):
-		_speak(text)
 	if kind == "success":
 		_play_sfx("success")
 	elif kind == "fail":
@@ -1220,17 +1192,16 @@ func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thin
 		tile.add_theme_stylebox_override("hover", hover)
 		tile.add_theme_stylebox_override("pressed", pressed)
 	tile.pressed.connect(_on_tile_pressed.bind(tile))
-	tile.long_pressed.connect(_on_tile_long_pressed.bind(tile))
 	return tile
 
 func _input_blocked() -> bool:
-	return not has_active_story or is_transitioning or is_executing_command or stop_dialog.visible
+	return not has_active_story or is_transitioning or is_executing_command or stop_dialog.visible or privacy_dialog.visible
 
 func _on_tile_pressed(tile: Button) -> void:
 	if _input_blocked():
 		return
-	if tile.long_press_fired:
-		tile.long_press_fired = false
+	if tile.drag_started:
+		tile.drag_started = false
 		return
 
 	_bounce_tile(tile)

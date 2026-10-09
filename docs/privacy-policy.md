@@ -1,45 +1,35 @@
-# Privacy Policy — Ike Quest
+# Ike Quest Privacy Policy
 
-_Last updated: 2026-10-08_
+_Last updated: 2026-10-09_
 
 ## Overview
 
-Ike Quest is an offline text adventure for early readers, published by Norbonics Games.
+Ike Quest is an offline word-tile adventure for early readers, published by Norbonics Games. It has no accounts, advertising, analytics, in-app purchases, or online gameplay. The app does not collect or share personal information, and does not send gameplay data to Norbonics Games or third parties.
 
-- It does not require an account or sign-in.
-- It does not connect to the internet during normal use.
-- It contains no advertising, analytics, or in-app purchases.
-- It does not collect, store, or share personal information.
+## Data kept on your device
 
-## Data stored on your device
+The app stores your current story and scene, collected items, puzzle progress, discovered endings, and sound-effects preference in its local storage. These files let you continue playing and remember completed endings. They are not sent off the device by the app. The app does not offer cloud saves or player profiles.
 
-The app keeps a few small files on the device only, so that play can resume:
+## Retention and deletion
 
-- Story progress (which story and scene you are on, and the items collected).
-- Which story endings have been found.
-- Settings: whether sound effects and automatic read-aloud are on.
+Local progress and settings remain until replaced or deleted. Starting a new adventure replaces the current checkpoint but retains discovered endings and settings. Clearing Ike Quest's app storage in Android settings, or uninstalling it, removes this local data. This also erases saved progress; there is no server copy to restore.
 
-None of this is personal information, and none of it leaves the device. Uninstalling the app removes it.
+## Sound and permissions
 
-## Read-aloud
+Sound effects are bundled with the app and can be switched off in Parent corner. This version does not provide read-aloud or text-to-speech, and does not use a speech service or microphone. The app requests no Android permissions.
 
-The optional read-aloud feature uses the text-to-speech voice already installed on your phone. Text is spoken on the device; nothing is sent to a server.
+## Children's privacy
 
-## Children’s privacy
+Ike Quest is intended for children and their families. The app does not collect personal information from children or other players.
 
-Ike Quest is designed for young children and their families. Because the app collects no personal data, no personal data is collected from children.
+## Policy changes
 
-## Permissions
-
-The app requests no Android permissions.
-
-## Changes to this policy
-
-If a future version adds online features, this policy will be updated before that version is released, and the “Last updated” date above will change.
+This policy will be updated before a future release changes the app's data practices.
 
 ## Contact
 
-- Studio: Norbonics Games
-- Email: hello@norbonics.com
-- Website: https://games.norbonics.com/
-- Country/Region: United States
+Norbonics Games
+hello@norbonics.com
+United States
+
+The contact email is provided for a parent or guardian to use outside the app. Contacting us by email is separate from gameplay; do not include a child's personal information in support messages.

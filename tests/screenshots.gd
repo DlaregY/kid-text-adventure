@@ -48,6 +48,12 @@ func run() -> void:
 	await shot("1_menu")
 	game.about_button.pressed.emit()
 	await shot("2_about")
+	game._show_privacy_policy()
+	await shot("2a_privacy_top")
+	var policy: RichTextLabel = game.privacy_dialog.get_node("Margin/Panel/Box/Policy")
+	policy.get_v_scroll_bar().value = policy.get_v_scroll_bar().max_value
+	await shot("2b_privacy_bottom")
+	game._hide_privacy_policy()
 	game.about_close.pressed.emit()
 	game.card_buttons[2].pressed.emit()
 	game._on_start_pressed()

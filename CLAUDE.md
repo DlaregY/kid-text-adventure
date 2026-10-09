@@ -57,12 +57,12 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 ## Architecture
 
-**Three scripts, one scene, JSON-driven stories.**
+**Three runtime scripts, reusable dialog scenes, JSON-driven stories.**
 
 - `scripts/Game.gd` — The entire game controller. Handles story discovery, scene rendering, click-to-place + drag-drop input, auto-execution, rule evaluation, smart fallback responses, inventory/flag state, scene transitions with fade effect, emoji font loading, tile categorization, and auto-fit text sizing. Inventory items can be placed in either slot (first-empty routing). This is where nearly all logic lives.
 - `scripts/Tile.gd` — Draggable/clickable button: has `token`, `tile_color`, and `category` ("action"/"thing"/"inventory") properties. `_get_drag_data()` creates a styled preview and returns token + label + category. `pressed` signal connected to Game.gd for click-to-place.
 - `scripts/CommandSlot.gd` — Drop target: accepts tile drag data, stores the token, updates its label. Has `set_tile(token, text)` method and `tile_dropped` signal for auto-execution. `clear()` resets to placeholder.
-- `Game.tscn` — Main UI scene: MenuScreen (VBoxContainer with logo, title, story picker, CONTINUE button when a save exists, PLAY button), fixed TopBar overlay (sibling of the ScrollContainer, which is pushed down by `TOP_BAR_HEIGHT` during a story) with ⌂ HomeButton, StopDialog overlay (KEEP PLAYING / GO TO MENU), story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), HintButton (hidden until 6 failed commands, shows progressive hints), fixed ContinueBar overlay with the NEXT ▶ button (shown during scene transitions), EndingBadge (gold panel above the story text on ending scenes), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions).
+- `Game.tscn` — Main UI scene: MenuScreen (VBoxContainer with logo, title, story picker, CONTINUE button when a save exists, PLAY button), fixed TopBar overlay (sibling of the ScrollContainer, which is pushed down by `TOP_BAR_HEIGHT` during a story) with ⌂ HomeButton, StopDialog overlay (KEEP PLAYING / GO TO MENU), story text, feedback label, 2 command slots (Action + Thing), categorized tile tray (TileSection with InventoryTray + ActionTray + ThingTray), HintButton (hidden until 4 no-progress commands, shows progressive hints), fixed ContinueBar overlay with the NEXT ▶ button (shown during scene transitions), EndingBadge (gold panel above the story text on ending scenes), NewGameButton (inline, shown on terminal scenes), TransitionOverlay (full-screen ColorRect for fade transitions).
 - `ui/Tile.tscn` — Reusable tile button component (64px min height, 28px font). Instantiated at runtime.
 - `stories/*.json` — Story content files auto-discovered at startup.
 
@@ -96,7 +96,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 
 **Typography and mood:** `_apply_reader_font()` builds the app `Theme` at startup from the bundled Andika Regular/Bold (`assets/fonts/`, SIL OFL; licence file alongside) with the OS emoji `SystemFont` as fallback; buttons use Bold. StoryText has `line_spacing` 8. `_render_scene()` calls `_reveal_story_text()`, a tween on `visible_characters` at `TYPEWRITER_CHARS_PER_SECOND`; tapping the story text (`_on_story_text_input`) or returning to the menu finishes it. Each scene may carry `mood` (a `MOODS` key: night, forest, cave, fire, day, digital, kitchen, salt, crystal, win; or `#rrggbb`); `_set_mood()` tweens the full-screen `Background` ColorRect to it, and the menu restores `DEFAULT_BACKGROUND`.
 
-**Sound and read-aloud:** Six generated WAV effects live in `assets/sfx/` and are preloaded in the `SFX` dict; `_play_sfx(name)` plays them through the `Sfx` AudioStreamPlayer when `settings.sound` is on (tap on tile tap, success/fail from `_show_feedback()`, whoosh on fade, fanfare on an ending scene, next on NEXT). It records `last_sfx` and skips actual playback on the Dummy audio driver so headless runs leave nothing alive. `project.godot` enables `audio/general/text_to_speech`; `_pick_tts_voice()` picks the first English system voice (empty on devices without one). The 🔊 SpeakButton in the TopBar reads the ending badge, story text and current response, or stops speech if already speaking; with no voice it shows "This phone has no reading voice." Long-pressing a tile (`Tile.long_pressed`, 0.5 s via `button_down`/`button_up`) bounces it and speaks its label without placing it (`long_press_fired` makes the following `pressed` a no-op). Settings `{read_aloud, sound}` persist in `user://settings.json` and are toggled by two CheckButtons in the Parent corner; `read_aloud` speaks every response automatically. `_exit_tree()` stops playback and speech.
+**Sound effects:** Six bundled WAV effects are controlled by the local `sound` preference. Speech is deferred: no voice discovery, synthesis, speaker button, automatic reading, or hold-to-read handler. Legacy `read_aloud` settings are ignored. Holding a tile selects normally on release; dragging still suppresses a duplicate selection. Parent corner opens `ui/PrivacyDialog.tscn`, containing an offline policy synchronized with `docs/privacy-policy.md` by a test.
 
 **Emoji rendering:** At startup, a `SystemFont` referencing OS emoji fonts (Segoe UI Emoji, Apple Color Emoji, Noto Color Emoji) is appended to `ThemeDB.fallback_font.fallbacks`. The `EMOJI` dict maps tokens to emoji characters; tiles display "emoji + token" text.
 
@@ -121,7 +121,7 @@ scenes.{id}.text: [lines]        # displayed to player
 scenes.{id}.tiles: [tokens]      # available drag tiles
 scenes.{id}.commands: [rules]    # evaluated in order, first match wins
 scenes.{id}.default: [strings]   # random fallback if no rule matches (5-8 funny responses per scene)
-scenes.{id}.hints: [strings]    # progressive hints shown after 6 failed commands (optional, 3 strings: gentle → specific → direct)
+scenes.{id}.hints: [strings]    # progressive hints shown after 4 no-progress commands (optional, 3 strings: gentle → specific → direct)
 scenes.{id}.ending: {id, title} # terminal scenes only; shown as a gold badge and recorded in the endings collection
 scenes.{id}.mood: "night"       # background tint; see MOODS in Game.gd, or "#rrggbb"
 ```
@@ -139,7 +139,7 @@ Command rules: `pattern` (2 token array), `response`, optional `requirements` (i
 ## Known Limitations
 
 - Scene `image` fields in JSON are parsed but not rendered.
-- Emoji icons, sound effects and TTS voices all depend on what the device provides.
+- Emoji glyphs depend on device fonts; sound effects are bundled. Read-aloud is deferred.
 - Emoji rendering depends on OS system fonts (Segoe UI Emoji on Windows, Apple Color Emoji on macOS). Bundled CBDT-format emoji fonts (e.g. NotoColorEmoji.ttf) do not render in Godot.
 
 ## Deferred Features

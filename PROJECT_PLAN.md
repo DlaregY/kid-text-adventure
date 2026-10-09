@@ -2,6 +2,35 @@
 
 Updated: 2026-10-03. Status: approved Norbonics Games menu and splash branding plus a visible Games URL implemented. Android 36 toolchain preview rebuilt for a new device check; the original target-36 installer rejection remains unproven. Gerald confirms the earlier target-34 preview and basic Bigfoot gameplay work on his phone. Story pacing, ending presentation and save/resume remain proposals.
 
+
+## Current implementation — October 9, 2026
+
+This section supersedes stale implementation claims in the dated October 2–3
+record below; the older artifact hashes and device observations remain historical.
+Baseline: main `7ef951f` includes merged PRs #12–14 and Gerald's final Bigfoot
+wording, dedicated TELL responses, and safer save-confirmation styling.
+
+- Local save/resume, replacement confirmation, ending badges/collection, protected
+  Back/Home behavior, corrected library help, GO BED, and deliberate TELL JOKE
+  are implemented. There are six stories, 59 scenes, and ten ending IDs.
+- Gerald selected removal of read-aloud for the first release. The speech-removal
+  PR removes speaker/automatic/long-press entry points and device voice discovery,
+  disables engine speech, and retains bundled optional sound effects. Old sound
+  settings and saved adventures remain compatible.
+- Parent corner now contains a full scrollable offline privacy policy. The
+  matching `docs/privacy-policy.md` is prepared for web hosting; a canonical public
+  HTTPS policy URL still must be published and verified. No Console field or
+  website was changed by this code work.
+- Gerald authorized a separate original-content rewrite of the sixth story.
+  This is not a decision to remove a story, and is not a legal clearance claim.
+- Device installation/runtime, final manifest/network verification, signing,
+  store materials/declarations, and testing/production-access gates remain open.
+  PR CI is desktop evidence, not a new phone result or release authorization.
+
+See `docs/polish-no-speech.md` for the speech-removal scope and validation. Use
+`python3 tests/run_checks.py --godot /path/to/Godot --suite all`, not the historical
+direct test commands below. Hub #1511 is not marked complete by these changes.
+
 ## Goal and scope
 
 Prepare Ike Quest for Android distribution under the Norbonics brand. Gerald chose Android only because he and his close associates cannot test iOS. Google Play enrollment is paid and verified; continue app build, testing and release preparation. ChallengeBoard follows separately.
