@@ -7,6 +7,10 @@ on:
       - .github/workflows/android-candidate.yml
       - scripts/android_candidate.py
       - scripts/verify_android_candidate.py
+      - scripts/Game.gd
+      - scripts/Tile.gd
+      - scripts/CommandSlot.gd
+      - tests/touch_input.gd
 permissions:
   contents: read
 concurrency:
