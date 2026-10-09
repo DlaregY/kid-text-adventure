@@ -4,26 +4,43 @@ on:
     branches: [codex/ike-polish-workspace-2026-10-09]
     paths: [.github/workflows/implementation-workspace.yml]
 permissions:
-  contents: read
+  contents: write
 jobs:
-  snapshot:
+  publish-review-branches:
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: 7ef951f3783df1426b1d9c0c30d7fe219adc9714
           fetch-depth: 0
-          persist-credentials: false
-      - name: Bundle exact approved baseline
+      - name: Verify prepared Git objects and publish two new review branches
+        shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/ike-source"
-          git bundle create "$RUNNER_TEMP/ike-source/source.bundle" HEAD
-          git rev-parse HEAD > "$RUNNER_TEMP/ike-source/BASE.txt"
-          cd "$RUNNER_TEMP/ike-source"
-          sha256sum source.bundle > SHA256SUMS
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ike-approved-baseline
-          path: ${{ runner.temp }}/ike-source/
-          retention-days: 1
+          set -euo pipefail
+          python3 - <<'PY'
+          import base64, hashlib, os, pathlib, zlib
+          encoded = ''.join(pathlib.Path(f'.transport/part{i}.b64').read_text().strip() for i in range(3))
+          data = zlib.decompress(base64.b64decode(encoded, validate=True))
+          expected = 'e0b76f0fecb80d8488b7cbae1087e7b9c3cc3f2d9a361ab8e1d90a62f7a26992'
+          assert hashlib.sha256(data).hexdigest() == expected, 'Bundle checksum mismatch'
+          pathlib.Path(os.environ['RUNNER_TEMP'], 'implementation.bundle').write_bytes(data)
+          PY
+          bundle="$RUNNER_TEMP/implementation.bundle"
+          git bundle verify "$bundle"
+          printf '%s\n' \
+            'a8d7a15c9993badb94b6f0a94c2bbd9238214ec0 refs/heads/codex/ike-no-speech-2026-10-09' \
+            '7a4c7346e815baea53a1a94aa2bcd4ba27041682 refs/heads/codex/ike-original-story-2026-10-09' > "$RUNNER_TEMP/expected-refs"
+          git bundle list-heads "$bundle" > "$RUNNER_TEMP/actual-refs"
+          diff -u "$RUNNER_TEMP/expected-refs" "$RUNNER_TEMP/actual-refs"
+          first='codex/ike-no-speech-2026-10-09'
+          second='codex/ike-original-story-2026-10-09'
+          test -z "$(git ls-remote --heads origin "refs/heads/$first" "refs/heads/$second")"
+          git fetch "$bundle" "refs/heads/$first:refs/heads/$first" "refs/heads/$second:refs/heads/$second"
+          test "$(git rev-parse "$first")" = a8d7a15c9993badb94b6f0a94c2bbd9238214ec0
+          test "$(git rev-parse "$second")" = 7a4c7346e815baea53a1a94aa2bcd4ba27041682
+          for ref in "$first" "$second"; do
+            test "$(git rev-parse "$ref^")" = 7ef951f3783df1426b1d9c0c30d7fe219adc9714
+            git diff --check "$ref^" "$ref"
+          done
+          git push --atomic origin "refs/heads/$first:refs/heads/$first" "refs/heads/$second:refs/heads/$second"
+          echo 'Published two review branches only. No main update, Android build, signing, or Play change.'
