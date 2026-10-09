@@ -1,0 +1,29 @@
+name: Implementation workspace
+on:
+  push:
+    branches: [codex/ike-polish-workspace-2026-10-09]
+    paths: [.github/workflows/implementation-workspace.yml]
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 7ef951f3783df1426b1d9c0c30d7fe219adc9714
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Bundle exact approved baseline
+        run: |
+          mkdir -p "$RUNNER_TEMP/ike-source"
+          git bundle create "$RUNNER_TEMP/ike-source/source.bundle" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/ike-source/BASE.txt"
+          cd "$RUNNER_TEMP/ike-source"
+          sha256sum source.bundle > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ike-approved-baseline
+          path: ${{ runner.temp }}/ike-source/
+          retention-days: 1
