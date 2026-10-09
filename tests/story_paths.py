@@ -12,6 +12,7 @@ import json
 from pathlib import Path
 
 STORIES = Path(__file__).resolve().parents[1] / "stories"
+ACTIONS = frozenset({"go", "open", "take", "look", "talk", "give", "climb", "tell"})
 
 @dataclass(frozen=True)
 class State:
@@ -20,11 +21,19 @@ class State:
     flags: frozenset[str] = frozenset()
 
 
+def fits_slots(state: State, command: tuple[str, str]) -> bool:
+    """Player input: action/held item first; non-action target/held item second."""
+    return (len(command) == 2 and command[0] in (ACTIONS | state.inventory)
+            and command[1] not in ACTIONS)
+
+
 def apply(story: dict, state: State, command: tuple[str, str]) -> State:
     scene = story["scenes"][state.scene]
     available = set(scene["tiles"]) | state.inventory
     if not set(command) <= available:
         raise ValueError(f"Unavailable tiles at {state.scene}: {command}")
+    if not fits_slots(state, command):
+        raise ValueError(f"Invalid slot roles at {state.scene}: {command}")
     for rule in scene["commands"]:
         if tuple(rule["pattern"]) != command:
             continue
@@ -66,7 +75,7 @@ def audit(story: dict, max_states: int = 50000) -> dict:
         for command in sorted(patterns):
             if len(command) != 2:
                 raise ValueError("Expected two-token story command")
-            if not set(command) <= available:
+            if not set(command) <= available or not fits_slots(state, command):
                 continue
             nxt = apply(story, state, command)
             reverse[nxt].add(state)

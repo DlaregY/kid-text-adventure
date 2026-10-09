@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8su1qp12tm63" path="res://scripts/CommandSlot.gd" id="1_wbfu4"]
 [ext_resource type="Script" uid="uid://b6jbs8g6nrgnj" path="res://scripts/Game.gd" id="1_xkndl"]
-[ext_resource type="Texture2D" path="res://assets/branding/norbonics-games.png" id="icon_tex"]
+[ext_resource type="Texture2D" path="res://assets/branding/ike-portrait.png" id="icon_tex"]
 
 [sub_resource type="StyleBoxFlat" id="slot_panel"]
 bg_color = Color(1.0, 0.953, 0.878, 1)
@@ -169,7 +169,7 @@ custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="Logo" type="TextureRect" parent="ScrollContainer/Layout/MenuScreen"]
-custom_minimum_size = Vector2(320, 141)
+custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
 size_flags_horizontal = 3
 expand_mode = 1
@@ -193,7 +193,7 @@ horizontal_alignment = 1
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
-text = "Pick a story!"
+text = "Pick a story! Swipe to see more."
 horizontal_alignment = 1
 
 [node name="StoryList" type="VBoxContainer" parent="ScrollContainer/Layout/MenuScreen"]
@@ -261,14 +261,14 @@ size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("slot_panel")
 script = ExtResource("1_wbfu4")
 slot_index = 1
-placeholder_text = "Action"
+placeholder_text = "Action / item"
 
 [node name="Slot1Label" type="Label" parent="ScrollContainer/Layout/CommandBar/Slot1" unique_id=401115347]
 custom_minimum_size = Vector2(0, 90)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.2, 0.15, 0.1, 1)
 theme_override_font_sizes/font_size = 24
-text = "Action"
+text = "Action / item"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -320,7 +320,7 @@ theme_override_constants/v_separation = 10
 [node name="ActionsLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Actions:"
+text = "Actions: tap to choose"
 
 [node name="ActionTray" type="FlowContainer" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2
@@ -329,7 +329,7 @@ theme_override_constants/v_separation = 10
 [node name="ThingsLabel" type="Label" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Things:"
+text = "Things: swipe to scroll, hold to drag"
 
 [node name="ThingTray" type="FlowContainer" parent="ScrollContainer/Layout/TileSection"]
 layout_mode = 2
