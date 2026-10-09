@@ -88,7 +88,7 @@ class IsolationTests(unittest.TestCase):
                             qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 
     def test_logged_checks_accept_verified_summary(self):
-        complete = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nChecked library hint, bed aliases, and deliberate Bigfoot goodbye\nGame regression checks=42; failures=0\n"
+        complete = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help\nChecked library hint, bed aliases, and deliberate Bigfoot goodbye\nChecked sound settings, legacy preferences, and speech removal\nChecked offline privacy policy and Back navigation\nGame regression checks=42; failures=0\n"
         with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, complete)):
             with redirect_stdout(io.StringIO()):
                 qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
@@ -103,6 +103,19 @@ class IsolationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, partial)):
             with self.assertRaises(RuntimeError), redirect_stdout(io.StringIO()):
                 qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
+
+    def test_missing_speech_removal_or_policy_check_fails_closed(self):
+        markers = [
+            "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help",
+            "Checked library hint, bed aliases, and deliberate Bigfoot goodbye",
+            "Checked sound settings, legacy preferences, and speech removal",
+            "Checked offline privacy policy and Back navigation",
+        ]
+        for missing in markers[-2:]:
+            partial = "\n".join(m for m in markers if m != missing) + "\nGame regression checks=337; failures=0\n"
+            with tempfile.TemporaryDirectory() as t, patch.object(qa.subprocess, "run", return_value=subprocess.CompletedProcess([], 0, partial)):
+                with self.assertRaises(RuntimeError), redirect_stdout(io.StringIO()):
+                    qa.run_logged(["fake"], {}, Path(t) / "log", "Game regression checks=")
 
     def test_known_recovery_diagnostics_are_narrowly_scoped(self):
         save = ("ERROR: Parse JSON failed. Error at line 0: Expected key\n"

@@ -20,7 +20,7 @@ boot_splash/fullsize=true
 
 [audio]
 
-general/text_to_speech=true
+general/text_to_speech=false
 
 [display]
 

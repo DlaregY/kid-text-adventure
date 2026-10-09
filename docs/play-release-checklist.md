@@ -20,7 +20,8 @@ Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-
 
 - [ ] **Privacy Policy URL**
   - Add a publicly accessible URL in Play Console.
-  - Ensure the policy accurately matches current app behavior.
+  - The full offline policy is available in Parent corner; `docs/privacy-policy.md` matches the speech-free build. Publish and verify its public URL separately.
+  - Ensure the policy accurately matches the final artifact, including optional bundled sound effects and local saves.
   - Update the policy before release if data practices change.
 
 - [ ] **Data Safety form answers**
