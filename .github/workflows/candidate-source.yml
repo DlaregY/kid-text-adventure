@@ -1,0 +1,29 @@
+name: Candidate source snapshot
+on:
+  push:
+    branches: [codex/ike-android-candidate-2026-10-09]
+    paths: [.github/workflows/candidate-source.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 0193dbac8efef1337358339e63a7e06ebb9b07bc
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Snapshot approved main without credentials
+        run: |
+          mkdir -p "$RUNNER_TEMP/source"
+          git bundle create "$RUNNER_TEMP/source/source.bundle" HEAD
+          git rev-parse HEAD > "$RUNNER_TEMP/source/BASE.txt"
+          cd "$RUNNER_TEMP/source"
+          sha256sum source.bundle > SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-candidate-source
+          path: ${{ runner.temp }}/source/
+          retention-days: 1
