@@ -26,6 +26,12 @@ Gerald has already created and paid for the Google Play developer account and co
 
 Account completion is distinct from app creation, closed testing, production access and app approval. Those remain to inspect or complete; no public app release is established. Continue release preparation under Hub #1511 using the current plan. Preserve the production application ID and all six stories. Save/resume, safe replacement, and the Bigfoot story changes are implemented through PRs #12–14. On October 9 Gerald chose to defer speech and originalize the sixth story; see the current-state section in PROJECT_PLAN.md. No release or Play mutation is authorized by those code decisions.
 
+Merged release-preparation baseline: main `2d4e68d` includes PRs #15–18 (speech deferred, original sixth story, isolated Android candidate pipeline, touch scrolling/slot roles/Ike portrait branding). Current phone-test APK: CI run 37987240185 (dispatched on main), `exports/candidate-main-2d4e68d/`, package `com.ike.textadventure.candidate.r37987240185a2`, SHA-256 `6da08c36…a951`. Candidate packages are unique per run, so each installs beside the previous one rather than upgrading it (saves do not carry over). Gerald's phone retest of the touch fixes is still pending; no Play upload or production signing performed.
+
+## Phone download link (set up 2026-10-09)
+
+Gerald gets the newest test APK on his phone at https://norbonics.com/ike (a Vercel redirect, unchanged per release) or directly at https://gerald.zo.space/ike. That public, unlinked API route 302-redirects (no-store) to a versioned zo.space asset, currently `/ike/ike-quest-0.7.0-2d4e68d.apk` (main `2d4e68d` candidate, sha256 prefix `6da08c3613c00aef`, refreshed 2026-10-09). Assets are served with a 4-hour cache, so never overwrite one path; for each new phone-test APK: `update_space_asset` to `/ike/ike-quest-<version>-<shorthash>.apk`, `edit_space_route('/ike')` to point at it, verify with `curl -sIL https://gerald.zo.space/ike`, then `delete_space_asset` the previous file. Anyone with the URL can download the APK; Play testing tracks replace this once release-signed builds exist.
+
 ## Play Developer API access: 2026-10-08
 
 Hub #1543 provides agent inspection without browser sign-in. Cloud project `norbonics-play` has Android Publisher API enabled; service account `play-publisher@norbonics-play.iam.gserviceaccount.com` uses Zo shell secret `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`. Read JSON only from the environment, keep credentials in memory, and never write the key or token to disk/logs.

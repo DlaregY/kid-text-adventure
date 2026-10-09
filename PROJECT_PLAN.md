@@ -18,22 +18,22 @@ Updated: 2026-10-03. Status: approved Norbonics Games menu and splash branding p
 
 This section supersedes stale implementation claims in the dated October 2–3
 record below; the older artifact hashes and device observations remain historical.
-Baseline: main `7ef951f` includes merged PRs #12–14 and Gerald's final Bigfoot
+Baseline: main `0193dba` includes merged PRs #12–16 and Gerald's final Bigfoot
 wording, dedicated TELL responses, and safer save-confirmation styling.
 
 - Local save/resume, replacement confirmation, ending badges/collection, protected
   Back/Home behavior, corrected library help, GO BED, and deliberate TELL JOKE
   are implemented. There are six stories, 59 scenes, and ten ending IDs.
-- Gerald selected removal of read-aloud for the first release. The speech-removal
-  PR removes speaker/automatic/long-press entry points and device voice discovery,
+- Gerald selected removal of read-aloud for the first release. Merged PR #15
+  removes speaker/automatic/long-press entry points and device voice discovery,
   disables engine speech, and retains bundled optional sound effects. Old sound
   settings and saved adventures remain compatible.
 - Parent corner now contains a full scrollable offline privacy policy. The
   matching `docs/privacy-policy.md` is prepared for web hosting; a canonical public
   HTTPS policy URL still must be published and verified. No Console field or
   website was changed by this code work.
-- Gerald authorized a separate original-content rewrite of the sixth story.
-  This is not a decision to remove a story, and is not a legal clearance claim.
+- Merged PR #16 rewrites the sixth story as Tess and the Cloud Machine. All six
+  stories remain; legacy identifiers preserve saves. This is not a legal clearance claim.
 - Device installation/runtime, final manifest/network verification, signing,
   store materials/declarations, and testing/production-access gates remain open.
   PR CI is desktop evidence, not a new phone result or release authorization.
@@ -41,6 +41,30 @@ wording, dedicated TELL responses, and safer save-confirmation styling.
 See `docs/polish-no-speech.md` for the speech-removal scope and validation. Use
 `python3 tests/run_checks.py --godot /path/to/Godot --suite all`, not the historical
 direct test commands below. Hub #1511 is not marked complete by these changes.
+
+### Fresh merged preview: October 9
+
+Built from main `0193dba`: `exports/ike-quest-preview-polished-0.7.0-0193dba-target36.apk`.
+Version 0.7.0/code 700; debug-signed preview identity `com.ike.textadventure.preview`;
+compile/target SDK 36, min SDK 24, ARM64, no declared permissions. Size 80,671,868
+bytes; SHA-256 `8fa545b3927515472585af1f9ac4e539267ed3de7614b33dd9c08903762bc50f`.
+Android-13-specific signature verification, ZIP integrity, 16 KB ZIP/native ELF
+alignment, six exact story JSONs, version and branding checks passed. The earlier
+default preview was preserved as `exports/ike-quest-preview-pre-polish-oct03.apk`.
+All 28 Python checks passed, including the 4,499-state story audit with no dead
+states. Godot smoke rendered all 59 scenes with zero failures.
+The configured safe wrapper also passed all 338 Godot regressions, 148 original-story
+assertions and the screenshot suite. Menu and Tess library captures were visually
+inspected. Logs/captures: `exports/qa-polished-20261009/`. The first wrapper attempt
+stopped during font import; the full retry with the project editor configuration
+completed. These are desktop checks, not Android device results.
+
+Next device pass: install this freshly named target-36 preview, test save/resume
+after closing the app, Bigfoot's deliberate endings, Tess's repair story, sound,
+Parent corner and Android Back. Do not uninstall the working preview to diagnose
+an installation error: that would discard its local saves. Capture the exact
+installer/ADB error if rejected. No release signing, Play upload, listing write
+or website publication was performed.
 
 ## Goal and scope
 
