@@ -654,7 +654,7 @@ func test_privacy_policy(game) -> void:
 	check(game.about_dialog.visible and not game.has_active_story, "Underlying Parent/menu actions cannot bypass the policy")
 	var body: RichTextLabel = game.privacy_dialog.get_node("Margin/Panel/Box/Policy")
 	var close: Button = game.privacy_dialog.get_node("Margin/Panel/Box/Close")
-	check(body.text.contains("Privacy Policy") and body.text.contains("hello@norbonics.com"), "Full offline policy and contact are present")
+	check(body.text.contains("Ike Quest Privacy Policy") and body.text.contains("hello@norbonics.com"), "Full offline policy and contact are present")
 	check(body.text.contains("does not provide read-aloud"), "Policy describes the speech-free version")
 	check(close.get_global_rect().end.y <= root.size.y, "Policy close remains on screen")
 	check(body.get_global_rect().end.y <= close.get_global_rect().position.y, "Policy scrolls above its close button")

@@ -1,4 +1,4 @@
-# Privacy Policy — Ike Quest
+# Ike Quest Privacy Policy
 
 _Last updated: 2026-10-09_
 
