@@ -11,6 +11,7 @@
     "take": { "label": "take" },
     "look": { "label": "look" },
     "talk": { "label": "talk" },
+    "tell": { "label": "tell" },
     "give": { "label": "give" },
     "climb": { "label": "climb" },
     "camp": { "label": "camp" },
@@ -29,7 +30,8 @@
     "stones": { "label": "stones" },
     "berries": { "label": "berries" },
     "dad": { "label": "Dad" },
-    "bigfoot": { "label": "Bigfoot" }
+    "bigfoot": { "label": "Bigfoot" },
+    "joke": { "label": "joke" }
   },
   "start_scene": "camp",
   "scenes": {
@@ -185,8 +187,8 @@
       ],
       "hints": [
         "Something moved in the bushes. Dad might have advice.",
-        "TALK to DAD, then LOOK at the BUSHES.",
-        "Use TALK DAD, LOOK BUSHES, then GO FOREST. Pack the SNACK and LANTERN too!"
+        "LOOK at the BUSHES and pack the LANTERN and SNACK. The CAMERA is optional.",
+        "LOOK BUSHES, TAKE LANTERN, TAKE SNACK, then GO FOREST."
       ]
     },
     "forest_edge": {
@@ -592,10 +594,11 @@
       "mood": "forest",
       "text": [
         "You, Dad, and Bigfoot stand together in the moonlight.",
-        "He looks hungry, and he keeps glancing at your pocket.",
-        "What will you do?"
+        "He looks hungry and keeps glancing at your pocket.",
+        "LOOK and TALK to Bigfoot let you stay.",
+        "A snack, goodbye JOKE, camera photo, or leaving will end this visit."
       ],
-      "tiles": ["go", "look", "talk", "give", "bigfoot", "forest", "camp", "dad"],
+      "tiles": ["go", "look", "talk", "tell", "give", "bigfoot", "joke", "forest", "camp", "dad"],
       "commands": [
         {
           "pattern": ["give", "snack"],
@@ -664,14 +667,22 @@
           "effects": { "flags_set": { "looked_bigfoot": true } }
         },
         {
-          "pattern": ["talk", "bigfoot"],
-          "requirements": { "flags_true": ["said_hello"] },
-          "response": "You try to say FRIEND in Bigfoot. It comes out as MY SOCKS TASTE LIKE PINECONES!",
+          "pattern": ["tell", "joke"],
+          "response": "You try a silly Bigfoot goodbye: MY SOCKS TASTE LIKE PINECONES! Bigfoot bursts out laughing.",
           "next": "ending_goofy"
         },
         {
+          "pattern": ["look", "joke"],
+          "response": "A silly goodbye in Bigfoot language. TELL JOKE ends your visit with a laugh."
+        },
+        {
           "pattern": ["talk", "bigfoot"],
-          "response": "You say hello. Bigfoot hoots softly and leans closer. TALK again to try a whole Bigfoot word!",
+          "requirements": { "flags_true": ["said_hello"] },
+          "response": "Bigfoot hoots about his forest home. He is happy to keep chatting."
+        },
+        {
+          "pattern": ["talk", "bigfoot"],
+          "response": "You say hello. Bigfoot hoots softly. Keep chatting, or TELL JOKE for a silly goodbye that ends your visit.",
           "effects": { "flags_set": { "said_hello": true } }
         },
         {
@@ -684,7 +695,7 @@
         },
         {
           "pattern": ["look", "forest"],
-          "response": "The dark forest is Bigfoot's home. He glances at it. He could leave any time."
+          "response": "The forest is Bigfoot's home. GO FOREST lets him go home and ends your visit quietly."
         },
         {
           "pattern": ["go", "forest"],
@@ -693,7 +704,12 @@
         },
         {
           "pattern": ["look", "camp"],
-          "response": "Camp is far behind you. If you GO back now, Bigfoot might not wait."
+          "requirements": { "inventory_has": ["camera"] },
+          "response": "Your camera is already here. For a photo ending, use CAMERA BIGFOOT."
+        },
+        {
+          "pattern": ["look", "camp"],
+          "response": "GO CAMP leaves to fetch a camera and ends this visit. Bigfoot might not wait."
         },
         {
           "pattern": ["go", "camp"],
@@ -734,9 +750,9 @@
         "Choose carefully. Bigfoot is watching you."
       ],
       "hints": [
-        "Bigfoot is hungry. What do you have in your pocket?",
-        "GIVE him your SNACK for the best ending. Or try the CAMERA.",
-        "GIVE SNACK = friend. CAMERA BIGFOOT = photo. TALK twice, GO FOREST, or GO CAMP end it other ways."
+        "LOOK and TALK to BIGFOOT are safe. Choose how to end your visit when you are ready.",
+        "GIVE SNACK ends as friends. With a CAMERA, CAMERA BIGFOOT takes a goodbye photo.",
+        "TELL JOKE ends with a laugh. GO FOREST lets Bigfoot go. Without a CAMERA, GO CAMP leaves to fetch it."
       ]
     },
     "ending_friend": {
@@ -794,12 +810,12 @@
     },
     "ending_quiet": {
       "mood": "win",
-      "ending": { "id": "quiet", "title": "The Quiet Secret" },
+      "ending": { "id": "quiet", "title": "The Quiet Goodbye" },
       "text": [
         "You watch quietly as Bigfoot crosses the creek and melts into the trees.",
-        "Back at camp, you and Dad agree: this is a secret.",
+        "Back at camp, you and Dad promise to leave his home peaceful.",
         "You draw one enormous footprint in your notebook.",
-        "Some friends are best kept secret."
+        "Your shy forest friend deserves a quiet home."
       ],
       "tiles": ["look", "talk", "bigfoot", "tracks", "forest", "dad"],
       "commands": [
@@ -817,7 +833,7 @@
         },
         {
           "pattern": ["talk", "dad"],
-          "response": "Dad zips his lips. The secret is safe."
+          "response": "Dad says: We can tell our family about tonight and let Bigfoot enjoy his quiet home."
         },
         {
           "pattern": ["look", "dad"],
@@ -839,25 +855,25 @@
         }
       ],
       "default": [
-        "The secret is safe with you.",
-        "The forest is peaceful again.",
+        "Bigfoot's forest home is peaceful again.",
+        "Somewhere in the trees, an owl hoots goodnight.",
         "What an amazing camping night!"
       ]
     },
     "ending_goofy": {
       "mood": "win",
-      "ending": { "id": "goofy", "title": "Mixed-Up Message" },
+      "ending": { "id": "goofy", "title": "Pinecone Socks" },
       "text": [
-        "You meant to say FRIEND in Bigfoot language.",
-        "Instead you said: MY SOCKS TASTE LIKE PINECONES!",
+        "You wave goodbye with your silliest joke.",
+        "MY SOCKS TASTE LIKE PINECONES!",
         "Bigfoot laughs so hard that owls fly out of the trees.",
-        "He laughs all the way home. You can still hear him."
+        "Before he heads home, you and Dad laugh with him."
       ],
       "tiles": ["look", "talk", "bigfoot", "camp", "dad"],
       "commands": [
         {
           "pattern": ["talk", "bigfoot"],
-          "response": "Bigfoot repeats your mixed-up greeting. Now Dad is laughing too."
+          "response": "Bigfoot repeats your silly joke. Now Dad is laughing too."
         },
         {
           "pattern": ["look", "bigfoot"],
@@ -865,7 +881,7 @@
         },
         {
           "pattern": ["look", "camp"],
-          "response": "Back at camp, you and Dad practice the real Bigfoot word for hello. It is HOOT."
+          "response": "Back at camp, you and Dad make up even sillier jokes for next time."
         },
         {
           "pattern": ["talk", "dad"],
@@ -887,9 +903,9 @@
         }
       ],
       "default": [
-        "Somewhere in the woods, Bigfoot is still chuckling.",
+        "Bigfoot is still chuckling.",
         "Bigfoot language is harder than it sounds!",
-        "Next time, you will practice the greeting first."
+        "Next time, you will practice the goodbye first."
       ]
     },
     "ending_missed": {

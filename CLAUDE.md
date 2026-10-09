@@ -15,7 +15,14 @@ Open in Godot 4.6+ editor and press F5, or from CLI:
 godot4 --path .
 ```
 
-Run the headless smoke and regression suites with `godot4 --headless --path . --script res://tests/story_smoke.gd` and `godot4 --headless --path . --script res://tests/game_regressions.gd`. On a fresh checkout, import first with `godot4 --headless --path . --editor --import`. For visual review without a phone, `tests/screenshots.gd` walks the menu, Parent corner, a scene, a failed and a successful command, the stop dialog and the CONTINUE menu, saving PNGs to `exports/shots/`; it needs a display, e.g. `LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a -s "-screen 0 540x960x24" godot4 --path . --rendering-method gl_compatibility --rendering-driver opengl3 --resolution 540x960 --script res://tests/screenshots.gd`. Also playtest in the Godot editor and on target devices.
+Run checks through the isolated wrapper; do not invoke the test scripts directly:
+```bash
+python3 -m unittest discover -s tests -p 'test_*.py' -v
+python3 tests/run_checks.py --godot /path/to/godot4 --suite all
+```
+The wrapper stages disposable player data before Godot starts. It runs smoke and
+regression suites plus desktop captures under a display/Xvfb. See `docs/testing.md`.
+Phone testing remains Gerald's, separate from desktop checks.
 
 ## Export, Install & Release
 
@@ -102,7 +109,7 @@ The goodnight shutdown sequence should include: export APK, install on phone (if
 - **`phone_trap.json`** — "Phone Trap." 9 scenes (the ending is split into `landing` → `home`), 2-word commands. Player gets sucked into Dad's phone and must defeat the Phone Boss to escape.
 - **`shake_escape.json`** — "Shake Escape." 8 scenes, 2-word commands. Player gets sucked into a saltshaker, explores a salt crystal world (Dead Sea lake, salt cliffs), and escapes when Mom shakes the shaker.
 - **`crystal_cave.json`** — "The Crystal Cave." 8 scenes, 2-word commands. Player explores a glowing cave behind a waterfall, finds crystals, crosses a rope bridge, and unlocks hidden treasure.
-- **`bigfoot_campout.json`** — "The Bigfoot Campout." 11 scenes, five endings. camp (talk Dad; lantern + snack required to leave, camera optional) → forest_edge (look tracks) → hollow_log (look log, optional pinecone; climb log) → creek (go stones) → berry_patch (look Bigfoot to calm him, optional berries; go Bigfoot) → bigfoot_meeting, where LOOK and TALK are safe on first use and endings are deliberate: give/snack→Bigfoot = friend, camera→Bigfoot = photo, second TALK = goofy, GO FOREST = quiet, GO CAMP without the camera = missed. Berries and the pinecone are fun non-ending interactions. An exhaustive state search (4008 states) confirms all endings reachable with no dead ends.
+- **`bigfoot_campout.json`** — "The Bigfoot Campout." 11 scenes, five endings. camp (look bushes; lantern + snack required to leave, camera optional) → forest_edge (look tracks) → hollow_log (look log, optional pinecone; climb log) → creek (go stones) → berry_patch (look Bigfoot to calm him, optional berries; go Bigfoot) → bigfoot_meeting, where repeated LOOK and TALK to Bigfoot stay non-terminal and endings are deliberate: give/snack→Bigfoot = friend, camera→Bigfoot = photo, TELL JOKE = goofy (LOOK JOKE explains this goodbye), GO FOREST = quiet, GO CAMP without the camera = missed. Berries and the pinecone are fun non-ending interactions. The current `tests/story_paths.py` search covers 4,392 reachable states with all five endings and no dead states. Scene, ending, and saved-flag identifiers are preserved.
 
 ## Story JSON Format
 

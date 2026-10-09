@@ -100,7 +100,8 @@ def run_logged(command: list[str], env: dict[str, str], log: Path, expected: str
     if regressions:
         completed = "Checked save replacement, ending cleanup, blocked drops, drag holds, and idle help"
         if (not re.search(r"Game regression checks=\d+; failures=0", result.stdout)
-                or completed not in result.stdout):
+                or completed not in result.stdout
+                or "Checked library hint, bed aliases, and deliberate Bigfoot goodbye" not in result.stdout):
             raise RuntimeError(f"Regression suite did not complete successfully; see {log}")
 
 

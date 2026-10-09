@@ -29,7 +29,7 @@ const FEEDBACK_SUCCESS := Color(0.55, 0.95, 0.55)
 const FEEDBACK_FAIL := Color(1.0, 0.6, 0.5)
 const TILE_SCENE := preload("res://ui/Tile.tscn")
 const NEW_STORY_DIALOG_SCENE := preload("res://ui/NewStoryDialog.tscn")
-const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb"]
+const ACTION_TOKENS: Array[String] = ["go", "open", "take", "look", "talk", "give", "climb", "tell"]
 const STORY_FONT_MAX: int = 32
 const STORY_FONT_MIN: int = 22
 const STORY_FONT_STEP: int = 2
@@ -53,14 +53,14 @@ const EMOJI := {
 	"bridge": "🌉", "cave": "🕳️",
 	"dog": "🐕", "dragon": "🐉",
 	"go": "👉", "open": "📖", "take": "✋", "look": "👀",
-	"talk": "💬", "give": "🎁", "climb": "🧗",
+	"talk": "💬", "tell": "🗣️", "give": "🎁", "climb": "🧗",
 	"window": "🪟", "comic": "📕", "note": "📝", "fire": "🔥",
 	"cat": "🐱", "rooftop": "🏢", "spiderdude": "🕷️", "web": "🕸️",
 	"city": "🏙️", "lady": "👵", "bench": "🪑", "sign": "🪧",
 	"book": "📗", "shelf": "📚", "potion": "🧪", "hammer": "🔨",
 	"chain": "⛓️", "tunnel": "🚇", "torch": "🔦", "wall": "🧱",
 	"tower": "🗼", "bike": "🏍️", "stairs": "🪜", "ghost": "👻",
-	"home": "🏠", "library": "🏛️",
+	"home": "🏠", "library": "🏛️", "bed": "🛏️", "joke": "😄",
 	"phone": "📱", "robot": "🤖", "bug": "🐛",
 	"shield": "🛡️", "chip": "💾", "boss": "👾",
 	"eggs": "🍳", "salt": "🧂", "plate": "🍽️",
@@ -84,6 +84,13 @@ const TALK_FALLBACKS: Array[String] = [
 	"Hey {thing}! ...Nothing. Not a good listener.",
 	"You whisper to the {thing}. Shhhh. Still nothing!",
 	"The {thing} has nothing to say. Maybe it is shy!",
+]
+const TELL_FALLBACKS: Array[String] = [
+	"You tell the {thing} a joke. It does not laugh. Tough crowd!",
+	"You tell the {thing} a story. It is not listening!",
+	"The {thing} does not want to hear it right now!",
+	"You whisper a secret to the {thing}. It keeps quiet!",
+	"You tell the {thing} all about your day. No reply!",
 ]
 const OPEN_FALLBACKS: Array[String] = [
 	"You try to open the {thing}. It does not open!",
@@ -214,7 +221,7 @@ func _ready() -> void:
 	action_fallback_map = {
 		"look": LOOK_FALLBACKS, "talk": TALK_FALLBACKS, "open": OPEN_FALLBACKS,
 		"take": TAKE_FALLBACKS, "go": GO_FALLBACKS, "give": GIVE_FALLBACKS,
-		"climb": CLIMB_FALLBACKS,
+		"climb": CLIMB_FALLBACKS, "tell": TELL_FALLBACKS,
 	}
 
 	_apply_reader_font()
