@@ -6,6 +6,14 @@ Read the shared workflow first: `../../../Docs/Standard-Operating-Procedures/and
 
 Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-02).
 
+## Current testing path (October 9, 2026)
+
+PRs #15 and #16 are merged, including Gerald's privacy-title edit. Speech is
+removed; Tess and the Cloud Machine is the sixth story. The current next step is
+a separately identified debug APK for phone validation; see `android-candidate.md`
+and PR #17 for the exact candidate evidence. It does not replace existing installs
+or establish release signing, target-36 device success, or Play acceptance.
+
 ## Enrollment and release prerequisites
 
 - [x] Personal developer account created and paid for (Gerald reconfirmed October 3); all three verifications completed October 2. Owner geraldnorby@gmail.com; developer ID `8341017993051504358`. Do not enroll or pay again. Zo browser sign-in failure is separate from enrollment; inspect Console app status and production access before submission.
@@ -19,8 +27,9 @@ Active plan: `../PROJECT_PLAN.md`. Canonical execution task: Hub #1511 (2026-10-
 ## Required submission items
 
 - [ ] **Privacy Policy URL**
-  - Add a publicly accessible URL in Play Console.
-  - The full offline policy is available in Parent corner; `docs/privacy-policy.md` matches the speech-free build. Publish and verify its public URL separately.
+  - [x] Publish the matching app policy: `https://games.norbonics.com/ike-quest/privacy/`. Anonymous HTML 200 and exact app-policy body verified October 9 at 16:14:34 UTC; Actions run `37957663109`. See `android-candidate.md` for deployment/evidence.
+  - [ ] Enter the verified URL in Play Console under a separately authorized submission. No Console field was changed by publication.
+  - [x] Full offline policy is available in Parent corner; `docs/privacy-policy.md` describes the speech-free build.
   - Ensure the policy accurately matches the final artifact, including optional bundled sound effects and local saves.
   - Update the policy before release if data practices change.
 

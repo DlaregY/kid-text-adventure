@@ -105,11 +105,17 @@ release-mode behavior, store acceptance, or a 16 KB device-runtime test.
 
 ## Public policy and release gates
 
-The policy page is prepared in `DlaregY/norbonics-games` at
-`public/ike-quest/privacy/index.html`, intended for
-`https://games.norbonics.com/ike-quest/privacy/`. Its exact approved app-policy
-body is verified separately from site privacy. Do not enter it in Console or
-mark hosting complete until its deployed, signed-out URL has been verified.
+The policy is published at `https://games.norbonics.com/ike-quest/privacy/`.
+Website PR #1 in `DlaregY/norbonics-games` was merged as `166630e` under the
+approved publication scope. Vercel reported a successful deployment. Anonymous
+HTTPS verification at 2026-10-09 16:14:34 UTC returned a direct HTML 200 response,
+with an exact normalized body match to the app policy. Evidence: GitHub Actions
+run `37957663109`, artifact `11629070356`. HTML SHA-256:
+`2926f2e49e2745b718f809df8fc2769a5ad625938963d56f2f217a48d22110a3`.
+The page has no scripts and distinguishes app privacy from website privacy.
+No game catalogue link was added; this is not publication of the game. The URL
+has NOT been entered in Play Console. Repeat the anonymous check after policy
+changes: `python3 scripts/check_public_privacy.py` (requires networking).
 
 Still separate: phone results, any resulting fixes, secure production upload-key
 backup, release AAB/bundletool validation, current store assets and declarations,
