@@ -30,3 +30,9 @@ desktop.ini
 
 # Editor temp files
 *.tmp
+
+# Python caches and signing material
+__pycache__/
+*.py[cod]
+*.keystore
+*.jks

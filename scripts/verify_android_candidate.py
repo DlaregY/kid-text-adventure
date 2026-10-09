@@ -26,6 +26,17 @@ def elf_load_alignments(data: bytes) -> list[int]:
     return aligns
 
 
+def validate_badging(badging: str, expected: dict) -> None:
+    match = re.search(r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging)
+    if not match or match.groups() != (expected['package'], str(expected['version_code']), expected['version_name']):
+        raise ValueError('Packaged identity/version mismatch')
+    for prefix, value in [('minSdkVersion', 24), ('targetSdkVersion', 36)]:
+        if f"{prefix}:'{value}'" not in badging:
+            raise ValueError('Packaged SDK mismatch')
+    if 'uses-permission:' in badging or 'uses-permission-sdk-' in badging:
+        raise ValueError('APK unexpectedly requests permissions')
+
+
 def verify(apk: Path, expected: dict, tools: Path, output: Path, env: dict) -> dict:
     evidence = dict(expected)
     def checked(command: list[str], name: str) -> str:
@@ -35,14 +46,7 @@ def verify(apk: Path, expected: dict, tools: Path, output: Path, env: dict) -> d
             raise ValueError(f'Artifact validation failed: {name}')
         return result.stdout
     badging = checked([str(tools / 'aapt2'), 'dump', 'badging', str(apk)], 'badging.txt')
-    match = re.search(r"package: name='([^']+)' versionCode='([^']+)' versionName='([^']+)'", badging)
-    if not match or match.groups() != (expected['package'], str(expected['version_code']), expected['version_name']):
-        raise ValueError('Packaged identity/version mismatch')
-    for prefix, value in [('sdkVersion', 24), ('targetSdkVersion', 36)]:
-        if f"{prefix}:'{value}'" not in badging:
-            raise ValueError('Packaged SDK mismatch')
-    if 'uses-permission:' in badging or 'uses-permission-sdk-' in badging:
-        raise ValueError('APK unexpectedly requests permissions')
+    validate_badging(badging, expected)
     permissions = checked([str(tools / 'aapt2'), 'dump', 'permissions', str(apk)], 'permissions.txt')
     if 'uses-permission' in permissions:
         raise ValueError('APK requests a permission')

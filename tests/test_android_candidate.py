@@ -7,7 +7,7 @@ import unittest
 import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import android_candidate as candidate
-from verify_android_candidate import elf_load_alignments
+from verify_android_candidate import elf_load_alignments, validate_badging
 
 class AndroidCandidateTests(unittest.TestCase):
     def test_separate_identity_and_bad_ids(self):
@@ -28,6 +28,14 @@ class AndroidCandidateTests(unittest.TestCase):
                     source.replace('gradle_build/target_sdk="36"','gradle_build/target_sdk="34"'),
                     source.replace('gradle_build/export_format=1','gradle_build/export_format=0')]:
             with self.assertRaises(ValueError):candidate.configure_preset(bad,'r1',Path('/tmp'))
+
+    def test_aapt2_sdk_names_and_wrong_values(self):
+        expected={'package':'com.ike.textadventure.candidate.r1','version_code':700,'version_name':'0.7.0'}
+        text="package: name='com.ike.textadventure.candidate.r1' versionCode='700' versionName='0.7.0'\nminSdkVersion:'24'\ntargetSdkVersion:'36'\n"
+        validate_badging(text,expected)
+        for bad in [text.replace("'36'", "'34'"), text.replace("'24'", "'21'"),
+                    text+"uses-permission: name='android.permission.INTERNET'\n", text.replace("versionCode='700'", "versionCode='2'")]:
+            with self.assertRaises(ValueError):validate_badging(bad,expected)
 
     def test_exact_template_patch_fails_on_drift(self):
         source='\n'.join(candidate.TEMPLATE_CHANGES)

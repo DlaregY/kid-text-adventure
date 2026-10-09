@@ -7,6 +7,8 @@ import subprocess
 import tempfile
 import zipfile
 
+from android_candidate import patch_template
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -77,16 +79,7 @@ def main():
             if not required.exists():
                 raise SystemExit(f"Missing Android 36 prerequisite: {required}")
         gradle_config = stage / "android/build/config.gradle"
-        content = gradle_config.read_text()
-        for old, new in {
-            "androidGradlePlugin: '8.6.1'": "androidGradlePlugin: '8.9.2'",
-            "compileSdk         : 35": "compileSdk         : 36",
-            "buildTools         : '35.0.1'": "buildTools         : '36.0.0'",
-        }.items():
-            if content.count(old) != 1:
-                raise SystemExit(f"Unexpected Android template configuration: {old}")
-            content = content.replace(old, new)
-        gradle_config.write_text(content)
+        gradle_config.write_text(patch_template(gradle_config.read_text()))
     apk = output / ("ike-quest-preview-target34.apk" if args.diagnostic_target_34 else "ike-quest-preview.apk")
     subprocess.run([str(godot), "--headless", "--path", str(stage),
                     "--export-debug",
