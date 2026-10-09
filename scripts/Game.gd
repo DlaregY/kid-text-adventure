@@ -1159,11 +1159,20 @@ func _label_for(token: String) -> String:
 			return str(entry).strip_edges()
 	return token
 
+func _icon_for(token: String) -> String:
+	# A story can present stable save tokens with its own vocabulary and symbols.
+	var vocab = story.get("vocab", {})
+	if typeof(vocab) == TYPE_DICTIONARY:
+		var entry = vocab.get(token, null)
+		if typeof(entry) == TYPE_DICTIONARY and typeof(entry.get("icon", null)) == TYPE_STRING:
+			return str(entry["icon"])
+	return str(EMOJI.get(token, ""))
+
 func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thing") -> Button:
 	var tile = TILE_SCENE.instantiate()
 	tile.token = token_str
 	tile.category = cat
-	var icon: String = EMOJI.get(token_str, "")
+	var icon: String = _icon_for(token_str)
 	var label: String = _label_for(token_str)
 	tile.text = (icon + " " + label) if icon != "" else label
 	if color != TILE_BLUE:

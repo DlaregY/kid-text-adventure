@@ -109,6 +109,7 @@ func run() -> void:
 	await shot("12_menu_endings")
 	game._clear_progress()
 	await preload("res://tests/story_captures.gd").new().run(self, game)
+	check(await preload("res://tests/original_captures.gd").new().run(self, game), "Original-story capture suite completed")
 	print("Screenshot checks; failures=", failures.size())
 	game.queue_free()
 	await process_frame

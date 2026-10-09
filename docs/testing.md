@@ -23,6 +23,15 @@ The GitHub workflow downloads the official desktop Godot 4.6.1 binary and checks
 
 Desktop captures are not phone/store screenshots and do not prove physical touch, Android Back integration, process-death resume, target-36 installation, or safe-area behavior. Gerald's phone pass remains required.
 
+## Original sixth-story acceptance
+
+The optional `original_story` suite is included by `--suite all`. It plays every
+scene using current displayed words (Tess, tongs, Puff, gear, ice, workshop),
+including the supervised repair gates and a legacy-token save. Python tests lock
+all mechanical identifiers and verify final hints/fixtures. The screenshot suite
+includes every rewritten scene plus scrolled controls where needed. Desktop
+screenshots remain QA evidence, not Play assets or Android-device approval.
+
 ## Story polish acceptance (batch 2)
 
 `tests/test_story_paths.py` is included by the Python unittest command above. It

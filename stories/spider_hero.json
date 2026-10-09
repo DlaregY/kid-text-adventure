@@ -1,57 +1,141 @@
 {
   "meta": {
-    "title": "Spiderdude and the Ghost Chain",
-    "version": 3,
-    "teaser": "Help Spiderdude stop Skull Rider and save the city!",
-    "cover": "🕷️",
+    "title": "Tess and the Cloud Machine",
+    "version": 4,
+    "teaser": "Help a town mender free a cloud and bring back the kite-fair breeze!",
+    "cover": "☁️",
     "order": 6
   },
   "vocab": {
-    "look": { "label": "look" },
-    "open": { "label": "open" },
-    "take": { "label": "take" },
-    "talk": { "label": "talk" },
-    "go": { "label": "go" },
-    "climb": { "label": "climb" },
-    "give": { "label": "give" },
-    "window": { "label": "window" },
-    "comic": { "label": "comic" },
-    "note": { "label": "note" },
-    "fire": { "label": "fire" },
-    "cat": { "label": "cat" },
-    "rooftop": { "label": "rooftop" },
-    "spiderdude": { "label": "Spiderdude" },
-    "web": { "label": "web" },
-    "city": { "label": "city" },
-    "lady": { "label": "lady" },
-    "bench": { "label": "bench" },
-    "sign": { "label": "sign" },
-    "book": { "label": "book" },
-    "shelf": { "label": "shelf" },
-    "door": { "label": "door" },
-    "potion": { "label": "potion" },
-    "hammer": { "label": "hammer" },
-    "chain": { "label": "chain" },
-    "key": { "label": "key" },
-    "tunnel": { "label": "tunnel" },
-    "torch": { "label": "torch" },
-    "bridge": { "label": "bridge" },
-    "wall": { "label": "wall" },
-    "tower": { "label": "tower" },
-    "bike": { "label": "bike" },
-    "stairs": { "label": "stairs" },
-    "ghost": { "label": "Skull Rider" },
-    "home": { "label": "home" },
-    "library": { "label": "library" }
+    "look": {
+      "label": "look"
+    },
+    "open": {
+      "label": "open"
+    },
+    "take": {
+      "label": "take"
+    },
+    "talk": {
+      "label": "talk"
+    },
+    "go": {
+      "label": "go"
+    },
+    "climb": {
+      "label": "climb"
+    },
+    "give": {
+      "label": "give"
+    },
+    "window": {
+      "label": "window"
+    },
+    "comic": {
+      "label": "plans",
+      "icon": "📐"
+    },
+    "note": {
+      "label": "note"
+    },
+    "fire": {
+      "label": "fluff",
+      "icon": "☁️"
+    },
+    "cat": {
+      "label": "cat"
+    },
+    "rooftop": {
+      "label": "workshop",
+      "icon": "🛠️"
+    },
+    "spiderdude": {
+      "label": "Tess",
+      "icon": "👩‍🔧"
+    },
+    "web": {
+      "label": "tongs",
+      "icon": "🗜️"
+    },
+    "city": {
+      "label": "city"
+    },
+    "lady": {
+      "label": "Bea",
+      "icon": "👩‍🌾"
+    },
+    "bench": {
+      "label": "bench"
+    },
+    "sign": {
+      "label": "sign"
+    },
+    "book": {
+      "label": "book"
+    },
+    "shelf": {
+      "label": "shelf"
+    },
+    "door": {
+      "label": "door"
+    },
+    "potion": {
+      "label": "ice",
+      "icon": "🧊"
+    },
+    "hammer": {
+      "label": "mallet",
+      "icon": "🔨"
+    },
+    "chain": {
+      "label": "gear",
+      "icon": "⚙️"
+    },
+    "key": {
+      "label": "key"
+    },
+    "tunnel": {
+      "label": "tunnel"
+    },
+    "torch": {
+      "label": "lamp",
+      "icon": "💡"
+    },
+    "bridge": {
+      "label": "bridge"
+    },
+    "wall": {
+      "label": "wall"
+    },
+    "tower": {
+      "label": "tower"
+    },
+    "bike": {
+      "label": "cart",
+      "icon": "🛒"
+    },
+    "stairs": {
+      "label": "stairs"
+    },
+    "ghost": {
+      "label": "Puff",
+      "icon": "☁️"
+    },
+    "home": {
+      "label": "home"
+    },
+    "library": {
+      "label": "library"
+    }
   },
   "start_scene": "bedroom",
   "scenes": {
     "bedroom": {
-      "mood": "night",
+      "mood": "day",
       "text": [
-        "You are in your bedroom reading a comic book.",
-        "CRASH! Something hits your window!",
-        "What do you do?"
+        "You are drawing plans for the town kite fair.",
+        "TAP! A paper pinwheel lands at your window.",
+        "Mom looks up. \"Shall we see what that is?\""
       ],
       "tiles": ["look", "open", "take", "window", "comic", "note"],
       "commands": [
@@ -60,7 +144,7 @@
             "look",
             "comic"
           ],
-          "response": "Your favorite Spiderdude comic! So cool!"
+          "response": "Your plans show a kite with seven tails. Mom suggests starting with one."
         },
         {
           "pattern": [
@@ -72,14 +156,14 @@
               "saw_flames"
             ]
           },
-          "response": "The flames still light up the sky. Something important is happening!"
+          "response": "Little clouds still bob upside down above the houses."
         },
         {
           "pattern": [
             "look",
             "window"
           ],
-          "response": "You see bright flames lighting up the night sky! Something is happening out there!",
+          "response": "Little clouds are bobbing upside down! A paper pinwheel taps the glass.",
           "effects": {
             "flags_set": {
               "saw_flames": true
@@ -96,7 +180,7 @@
               "window_open"
             ]
           },
-          "response": "The window is already open, and the tiny spider's note is waiting for you!"
+          "response": "The window is open. The pinwheel carries a folded note."
         },
         {
           "pattern": [
@@ -108,7 +192,7 @@
               "saw_flames"
             ]
           },
-          "response": "You open the window. A tiny spider crawls in carrying a small note!",
+          "response": "You open the low window with Mom. The pinwheel drops a note onto the sill.",
           "effects": {
             "flags_set": {
               "window_open": true
@@ -120,7 +204,7 @@
             "open",
             "window"
           ],
-          "response": "Maybe look outside first to see what's going on!"
+          "response": "LOOK WINDOW first. What is tapping the glass?"
         },
         {
           "pattern": [
@@ -132,7 +216,7 @@
               "window_open"
             ]
           },
-          "response": "You read the note: HELP ME! Meet on the rooftop! -Spiderdude. Wow! Spiderdude needs YOUR help!",
+          "response": "The note says: Please visit my WORKSHOP. The cloud machine has hiccups! - Tess. Mom walks outside with you.",
           "effects": {
             "inventory_add": [
               "note"
@@ -145,21 +229,21 @@
             "take",
             "comic"
           ],
-          "response": "You already have lots of comics! Time for a REAL adventure!"
+          "response": "Your plans are safe on the desk. You leave them there for later."
         },
         {
           "pattern": [
             "take",
             "window"
           ],
-          "response": "You try to pick up the window. Nope! It's stuck to the wall! That's how windows work!"
+          "response": "The window belongs in the wall. It would make a very awkward hat."
         },
         {
           "pattern": [
             "open",
             "comic"
           ],
-          "response": "You open the comic and start reading. Spiderdude punches a bad guy. POW! Cool, but you have real stuff to do!"
+          "response": "Your kite plans unfold across the desk. One tail looks like a noodle."
         },
         {
           "pattern": [
@@ -171,14 +255,14 @@
               "window_open"
             ]
           },
-          "response": "You unfold the little note. It says: HELP ME! Meet on the rooftop! -Spiderdude"
+          "response": "The note says: Please visit my WORKSHOP. The cloud machine has hiccups! - Tess."
         },
         {
           "pattern": [
             "open",
             "note"
           ],
-          "response": "What note? You don't have a note yet! Check the window!"
+          "response": "The note is outside. LOOK WINDOW, then OPEN WINDOW to bring it in."
         },
         {
           "pattern": [
@@ -190,107 +274,112 @@
               "window_open"
             ]
           },
-          "response": "A tiny note from the spider! It says: HELP ME! Meet on the rooftop! -Spiderdude. Take it!"
+          "response": "A note from Tess is folded into the pinwheel. TAKE NOTE to read it with Mom."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "You don't see any note. Something crashed into the window though!"
+          "response": "There is no note inside yet. Try looking at the window."
         },
         {
           "pattern": [
             "take",
             "note"
           ],
-          "response": "What note? You don't see any note yet!"
+          "response": "You cannot reach the note yet. LOOK WINDOW, then OPEN WINDOW."
         }
       ],
       "default": [
-        "Hmm, try looking around your room!",
-        "Maybe look out the window?",
-        "That's a creative idea! But maybe try the window first.",
-        "Your bedroom is messy, but the window is more interesting right now!",
-        "You check under your bed. Just dust bunnies and an old sock.",
-        "Your teddy bear stares at you. He wants adventure too!"
+        "The paper pinwheel taps softly.",
+        "Mom studies your seven-tailed kite.",
+        "A pencil rolls across your plans.",
+        "The room smells of fresh crayons."
       ],
-      "hints": ["Something hit your window! Maybe LOOK at it?", "LOOK at the WINDOW, then OPEN it, then TAKE what comes in!", "LOOK WINDOW, then OPEN WINDOW, then TAKE NOTE!"]
+      "hints": [
+        "What is tapping the window?",
+        "LOOK WINDOW, then OPEN WINDOW with Mom.",
+        "LOOK WINDOW, OPEN WINDOW, then TAKE NOTE."
+      ]
     },
 
     "street": {
 
-    	"mood": "fire",
+      "mood": "day",
       "text": [
-        "You run outside into the street!",
-        "Fire trails cover the ground. The air smells like smoke.",
-        "Skull Rider was here!"
+        "You and Mom step outside.",
+        "Cloud fluff rolls along the street like cotton balls.",
+        "A cat is wearing a tiny cloud hat."
       ],
       "tiles": ["go", "look", "talk", "fire", "cat", "rooftop"],
       "commands": [
         {
           "pattern": ["look", "fire"],
-          "response": "The flames glow blue and green. Spooky! They lead down the street."
+          "response": "Soft bits of cloud roll past. One looks exactly like a potato."
         },
         {
           "pattern": ["look", "cat"],
-          "response": "A scared orange cat hides under a car. Poor kitty!"
+          "response": "The orange cat blinks under its fluffy hat. It seems quite pleased."
         },
         {
           "pattern": ["talk", "cat"],
-          "response": "The cat meows at you sadly. It does not like the fire!"
+          "response": "The cat says Mrrp. Perhaps that means: Do you like my new hat?"
         },
         {
           "pattern": ["look", "rooftop"],
-          "response": "You can see the rooftop of your building. There is a fire escape!"
+          "response": "Tess has a ground-floor workshop at the end of the garden path."
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spiderdude's note says: HELP ME! Meet on the rooftop! You need to get up there!"
+          "response": "Tess asked you to visit her WORKSHOP. Mom can walk there with you."
         },
         {
           "pattern": ["go", "rooftop"],
-          "response": "You climb the fire escape. Up, up, up you go!",
+          "response": "You and Mom follow the path to Tess. Her workshop bell rings: DING!",
           "next": "rooftop"
         },
         {
           "pattern": ["talk", "fire"],
-          "response": "You yell at the fire: STOP BURNING! The fire does not listen. Typical fire."
+          "response": "You tell the fluff to sit. It rolls over instead. Almost!"
         },
         {
           "pattern": ["talk", "rooftop"],
-          "response": "HEY ROOFTOP! ...Nothing. Buildings can't talk, silly!"
+          "response": "You call toward the workshop. A bell gives a little ding."
         },
         {
           "pattern": ["go", "fire"],
-          "response": "Walk INTO the fire?! No way! You're brave, not crispy!"
+          "response": "The fluff drifts away. The workshop is a better place to start."
         },
         {
           "pattern": ["go", "cat"],
-          "response": "The cat is not a place! But it IS very fluffy. Meow!"
+          "response": "You pause beside the cat. It gives you a very important sniff."
         },
         {
           "pattern": ["look", "look"],
-          "response": "You look at yourself. Looking good! Now look at something useful!"
+          "response": "You check your shoes. Both still there. Excellent."
         }
       ],
       "default": [
-        "The fire trails are scary! Maybe head up to the rooftop?",
-        "Spiderdude is waiting for you on the rooftop!",
-        "Nope! That didn't work. Try going to the rooftop!",
-        "The street is too hot to hang out here. Head up!",
-        "A pigeon walks by. Even the pigeon looks confused.",
-        "A car alarm goes BEEP BEEP BEEP! Oops, that wasn't you."
+        "A bit of fluff rolls into a flowerpot.",
+        "The cat adjusts its cloud hat.",
+        "The workshop bell gives a tiny ding.",
+        "Mom points along the garden path."
       ],
-      "hints": ["Spiderdude's note said to meet on the rooftop!", "Look for a way UP!", "GO to the ROOFTOP!"]
+      "hints": [
+        "Tess asked you to come to her workshop.",
+        "The workshop is at the end of the garden path.",
+        "GO WORKSHOP."
+      ]
     },
 
     "rooftop": {
 
-    	"mood": "night",
+      "mood": "day",
       "text": [
-        "Spiderdude is on the rooftop! He looks worried.",
-        "The city glows orange with Skull Rider's fire below."
+        "Tess the town mender waits in her workshop.",
+        "Her yellow apron is full of pencils.",
+        "Outside, a small cloud makes enormous sneezes."
       ],
       "tiles": ["look", "talk", "take", "spiderdude", "web", "city"],
       "commands": [
@@ -304,14 +393,14 @@
               "talked_spidey"
             ]
           },
-          "response": "Spiderdude nods: Find the chain's weakness, and take the web shooter before you go!"
+          "response": "Tess says: We need the guide at the library. Take the long TONGS and come with me."
         },
         {
           "pattern": [
             "talk",
             "spiderdude"
           ],
-          "response": "Spiderdude says: Skull Rider's fire chain melts my webs! I can't stop him alone. Can you help me find his weakness?",
+          "response": "Tess says: Puff is stuck in my cloud machine! We need its picture guide. Will you help me work out a repair?",
           "effects": {
             "flags_set": {
               "talked_spidey": true
@@ -323,35 +412,35 @@
             "look",
             "city"
           ],
-          "response": "You can see Skull Rider's flames near the park. That's where he went!"
+          "response": "Cloud hats float above the park. One has landed on a statue."
         },
         {
           "pattern": [
             "look",
             "spiderdude"
           ],
-          "response": "Spiderdude's suit has burn marks from the fight. It was tough!"
+          "response": "Tess wears a yellow work apron. There are three pencils behind one ear."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Spiderdude's web shooters! They are so cool!"
+          "response": "Long wooden tongs for reaching things. They open and close with a gentle squeeze."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "The note says: Meet on the rooftop! You made it! Talk to Spiderdude."
+          "response": "Your note brought you to the workshop. Tess is ready to explain the problem."
         },
         {
           "pattern": [
             "note",
             "spiderdude"
           ],
-          "response": "You show Spiderdude his note. He nods: Thanks for coming, kid! Now let me tell you what happened.",
+          "response": "You return Tess her note. She folds it into a smaller pinwheel and thanks you.",
           "effects": {
             "inventory_remove": [
               "note"
@@ -368,7 +457,7 @@
               "talked_spidey"
             ]
           },
-          "response": "Spiderdude gives you a web shooter! He says: Take this, just in case! Now go check the park!",
+          "response": "Tess lends you the TONGS and leads you to the park. Mom will meet you both at the kite fair.",
           "effects": {
             "inventory_add": [
               "web"
@@ -381,207 +470,213 @@
             "take",
             "web"
           ],
-          "response": "Maybe talk to Spiderdude first!"
+          "response": "Tess says: TALK TESS first, so we can make a plan together."
         },
         {
           "pattern": [
             "take",
             "spiderdude"
           ],
-          "response": "You try to pick up Spiderdude. He's a whole person! And very confused! Put him down!"
+          "response": "Tess is a person, not a tool. She offers to walk with you instead."
         },
         {
           "pattern": [
             "take",
             "city"
           ],
-          "response": "You try to pick up the entire city. It's... it's too big. Way too big. Nice try though!"
+          "response": "The city is much too big for your pockets. Even the extra pocket."
         },
         {
           "pattern": [
             "talk",
             "web"
           ],
-          "response": "You talk to the web shooter. Hello web! It says nothing. Webs are not great at conversation."
+          "response": "You say hello to the tongs. Their wooden tips clap politely."
         },
         {
           "pattern": [
             "talk",
             "city"
           ],
-          "response": "You shout HELLO at the city! Someone far away shouts HELLO back! Cool!"
+          "response": "You call GOOD MORNING, CITY! A baker waves a floury hand."
         }
       ],
       "default": [
-        "Try talking to Spiderdude! He needs your help!",
-        "Spiderdude looks like he has something to tell you.",
-        "Don't just stand there! A superhero needs your help!",
-        "Spiderdude is tapping his foot. He's waiting for you to talk to him!",
-        "The wind blows your hair into your face. Pthhh!",
-        "Spiderdude does a backflip while he waits. Show off!"
+        "Tess finds another pencil in her apron.",
+        "A pinwheel turns very slowly.",
+        "Something outside gives a tiny sneeze.",
+        "The tongs rest on the workbench."
       ],
-      "hints": ["A superhero wants to talk to you!", "TALK to Spiderdude first, then TAKE what he offers!", "TALK SPIDERDUDE, then TAKE WEB!"]
+      "hints": [
+        "Tess needs a helper. Ask about her plan.",
+        "TALK TESS before taking the long tool.",
+        "TALK TESS, then TAKE TONGS."
+      ]
     },
 
     "park": {
 
-    	"mood": "night",
+      "mood": "day",
       "text": [
-        "The park is smoky. Burnt grass everywhere.",
-        "An old lady sits on a bench looking scared."
+        "Tess walks with you through the park.",
+        "Bea the gardener catches tumbling flowerpots.",
+        "A watering can floats past. This weather is very mixed up!"
       ],
       "tiles": ["look", "talk", "take", "go", "lady", "bench", "sign", "key", "library"],
       "commands": [
         {
           "pattern": ["talk", "lady"],
           "requirements": { "inventory_has": ["key"] },
-          "response": "The lady says: You found the key! Now hurry to the library!"
+          "response": "Bea says: You have the tool-room key. The guide is in the LIBRARY."
         },
         {
           "pattern": ["talk", "lady"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "The lady says: I saw Skull Rider drop a glowing key near the bench!"
+          "response": "Bea points under the bench. The tool-room KEY is still there."
         },
         {
           "pattern": ["talk", "lady"],
-          "response": "The lady says: Skull Rider rode right through here! He dropped a glowing key near the bench!",
+          "response": "Bea says: A gust blew the tool-room KEY under this bench. You may borrow it with Tess.",
           "effects": { "flags_set": { "lady_talked": true } }
         },
         {
           "pattern": ["look", "bench"],
           "requirements": { "inventory_has": ["key"] },
-          "response": "Just an old park bench. Nothing under it now."
+          "response": "The bench is empty underneath now. The key is in your bag."
         },
         {
           "pattern": ["look", "bench"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "You look under the bench. A glowing purple key! Skull Rider must have dropped it!"
+          "response": "A brass key lies beneath the bench. Its tag shows a little cloud."
         },
         {
           "pattern": ["look", "bench"],
-          "response": "Just a park bench. The lady sitting on it looks like she saw something."
+          "response": "Bea steadies the bench with her boot. She looks as though she knows this park well."
         },
         {
           "pattern": ["take", "key"],
           "requirements": { "inventory_has": ["key"] },
-          "response": "You already have the glowing key!"
+          "response": "You already have the brass key."
         },
         {
           "pattern": ["take", "key"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "You grab the strange glowing key! It feels cold in your hand.",
+          "response": "You pick up the tool-room key. Its cloud tag jingles against your fingers.",
           "effects": { "inventory_add": ["key"] }
         },
         {
           "pattern": ["look", "sign"],
-          "response": "The sign says: CITY LIBRARY this way!"
+          "response": "The sign says: LIBRARY. There is a helpful arrow and a drawing of a book."
         },
         {
           "pattern": ["look", "lady"],
-          "response": "The old lady looks scared but okay. Maybe talk to her?"
+          "response": "Bea has muddy boots and a very large sunhat. She is ready to help."
         },
         {
           "pattern": ["go", "library"],
           "requirements": { "inventory_has": ["key"] },
-          "response": "You follow the signs to the library. The key glows brighter as you walk!",
+          "response": "You and Tess follow the sign to the library, carrying the tool-room key.",
           "next": "library"
         },
         {
           "pattern": ["go", "library"],
-          "response": "You should find that key first! The lady said Skull Rider dropped one."
+          "response": "The tool room is locked. Ask Bea about its key before you leave."
         },
         {
           "pattern": ["take", "lady"],
-          "response": "You can't take the lady! That would be VERY rude! She'd bonk you with her purse!"
+          "response": "Bea laughs. She is staying here to catch her flowerpots."
         },
         {
           "pattern": ["take", "bench"],
-          "response": "You pull on the bench. HNNNNG! Nope! It's bolted to the ground! And super heavy!"
+          "response": "The bench is bolted down. It has no plans to travel today."
         },
         {
           "pattern": ["take", "sign"],
-          "response": "You try to pull the sign out of the ground. It won't budge! It's meant to stay there!"
+          "response": "The sign needs to stay here so everyone can find the library."
         },
         {
           "pattern": ["talk", "bench"],
-          "response": "You whisper to the bench. Hey bench. It says nothing. Benches are quiet like that."
+          "response": "The bench says nothing. It is saving all its energy for sitting."
         },
         {
           "pattern": ["talk", "sign"],
-          "response": "You talk to the sign. It says: CITY LIBRARY. That's all it knows how to say!"
+          "response": "The sign has just one story: LIBRARY THIS WAY."
         },
         {
           "pattern": ["talk", "key"],
-          "response": "You talk to the key. It glows a tiny bit. Was that a response? ...Probably not."
+          "response": "You ask the key a question. Jingle! A short but cheerful answer."
         },
         {
           "pattern": ["go", "bench"],
-          "response": "You sit on the bench for a second. Comfy! But you have a mission, hero!"
+          "response": "You sit beside Bea for a moment. Tess catches a drifting flowerpot."
         },
         {
           "pattern": ["go", "sign"],
-          "response": "You walk to the sign and read it again. CITY LIBRARY. Yep, still says the same thing!"
+          "response": "You walk over to the sign. Its arrow points toward the library."
         },
         {
           "pattern": ["go", "key"],
-          "response": "You can't go TO a key! You can take it though!"
+          "response": "You can TAKE KEY once Bea shows you where it is."
         },
         {
           "pattern": ["look", "key"],
           "requirements": { "inventory_has": ["key"] },
-          "response": "The glowing purple key in your hand feels cold!"
+          "response": "Your brass key has a cloud-shaped tag. It opens the library tool room."
         },
         {
           "pattern": ["look", "key"],
           "requirements": { "flags_true": ["lady_talked"] },
-          "response": "The key sparkles with a purple glow under the bench! Ooooh shiny!"
+          "response": "The key is under the bench, just where Bea pointed."
         },
         {
           "pattern": ["look", "key"],
-          "response": "You don't see any key. Maybe someone here knows something?"
+          "response": "You do not see a key yet. TALK BEA for a clue."
         },
         {
           "pattern": ["look", "library"],
-          "response": "You can see the library building down the road. It looks old and dusty!"
+          "response": "The library has wide windows and a door shaped like an open book."
         },
         {
           "pattern": ["look", "note"],
-          "response": "Spiderdude's note. You already found him! Now you're on a mission!"
+          "response": "Tess asked for your help. Now you are finding the repair guide together."
         },
         {
           "pattern": ["look", "web"],
-          "response": "Your web shooter from Spiderdude! It goes THWIP!"
+          "response": "Your long tongs open and close. Handy for things just out of reach."
         },
         {
           "pattern": ["web", "lady"],
-          "response": "THWIP! No no no! Don't web the nice old lady! She'd be so mad!"
+          "response": "Tess gently lowers the tongs. Tools are for objects, not for grabbing people."
         },
         {
           "pattern": ["web", "bench"],
-          "response": "THWIP! You web the bench. Now it's extra sticky. Why though?"
+          "response": "You pick a leaf off the bench with the tongs. Bea gives you a grateful nod."
         },
         {
           "pattern": ["take", "key"],
-          "response": "What key? Talk to the lady first. She might know about a key!"
+          "response": "TALK BEA first. She knows where the key landed."
         }
       ],
       "default": [
-        "Maybe talk to the lady? She looks like she saw something.",
-        "Look around the park for clues!",
-        "The park is a mess! Skull Rider has no manners.",
-        "Hmm, that didn't work. Try talking to someone!",
-        "A duck waddles past. It quacks at you. QUACK!",
-        "You step on a crunchy leaf. Crunch! Satisfying."
+        "Bea catches one more flowerpot.",
+        "A cloud hat settles on the sign.",
+        "Tess puts a watering can back down.",
+        "A duck looks offended by the unusual weather."
       ],
-      "hints": ["The old lady looks like she saw something important!", "TALK to the LADY, then LOOK under the BENCH!", "TALK LADY, TAKE KEY, then GO LIBRARY!"]
+      "hints": [
+        "Bea knows where things land in this park.",
+        "TALK BEA to learn where the key fell.",
+        "TALK BEA, TAKE KEY, then GO LIBRARY."
+      ]
     },
 
     "library": {
 
-    	"mood": "cave",
+      "mood": "day",
       "text": [
-        "The old library is quiet and dusty.",
-        "One shelf in the back glows with a strange light!"
+        "The library smells of paper and fresh tea.",
+        "A little reading light shines on one shelf.",
+        "Tess says the cloud machine guide should be here."
       ],
       "tiles": ["look", "open", "take", "book", "shelf", "door"],
       "commands": [
@@ -595,7 +690,7 @@
               "book"
             ]
           },
-          "response": "The shelf is dark now. You already took the glowing book!"
+          "response": "The reading light shines on the gap where you found the book."
         },
         {
           "pattern": [
@@ -607,14 +702,14 @@
               "saw_book"
             ]
           },
-          "response": "The same glowing book waits on the shelf. You should take it!"
+          "response": "Cloud Care is waiting on the shelf. TAKE BOOK to borrow it."
         },
         {
           "pattern": [
             "look",
             "shelf"
           ],
-          "response": "One book on the shelf glows! The title says: Spirits and Chains - A Guide.",
+          "response": "The picture guide is called Cloud Care. Its cover shows a smiling cloud and a gear.",
           "effects": {
             "flags_set": {
               "saw_book": true
@@ -631,7 +726,7 @@
               "book"
             ]
           },
-          "response": "You already have the book!"
+          "response": "Cloud Care is already in your bag."
         },
         {
           "pattern": [
@@ -643,7 +738,7 @@
               "saw_book"
             ]
           },
-          "response": "You grab the glowing book. It feels warm!",
+          "response": "You borrow Cloud Care. Tess opens the library lending book and signs for it.",
           "effects": {
             "inventory_add": [
               "book"
@@ -655,7 +750,7 @@
             "take",
             "book"
           ],
-          "response": "Which book? There are a million books here! Look at the shelf to find the right one!"
+          "response": "LOOK SHELF first to find the right book among all these titles."
         },
         {
           "pattern": [
@@ -670,7 +765,7 @@
               "book"
             ]
           },
-          "response": "You reread the secret: break Skull Rider's chain to free the spirit!"
+          "response": "The guide says: Find the bent gear tooth. Stop the machine with a grown-up. Tap the tooth gently with a wooden mallet."
         },
         {
           "pattern": [
@@ -682,7 +777,7 @@
               "book"
             ]
           },
-          "response": "The book says: A Skull Rider's power lives in its chain. Break the chain, free the spirit! That's the secret!",
+          "response": "You read: Find the bent gear tooth. Have a grown-up stop the machine. Tap the tooth gently with a wooden mallet.",
           "effects": {
             "flags_set": {
               "read_book": true
@@ -694,14 +789,14 @@
             "open",
             "book"
           ],
-          "response": "You need to take the book first!"
+          "response": "TAKE BOOK before you try to open it."
         },
         {
           "pattern": [
             "look",
             "door"
           ],
-          "response": "A locked door in the back of the library. It has a strange keyhole."
+          "response": "The tool-room door is locked. Its keyhole is shaped like a tiny cloud."
         },
         {
           "pattern": [
@@ -716,7 +811,7 @@
               "read_book"
             ]
           },
-          "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
+          "response": "Tess checks the safety steps with you. The key turns, and you both walk down to the tool room. She hangs the key by the door.",
           "effects": {
             "inventory_remove": [
               "key"
@@ -734,28 +829,28 @@
               "key"
             ]
           },
-          "response": "The key fits, but the glowing book pulses in your bag. You should open the book and learn the chain's secret before going farther!"
+          "response": "The key fits. Tess says: First OPEN BOOK so we know the safe repair steps."
         },
         {
           "pattern": [
             "take",
             "shelf"
           ],
-          "response": "You try to pick up the entire shelf. CRASH! Books fall everywhere! Okay bad idea. You put it back. The librarian would be SO mad."
+          "response": "The shelf is staying put. You straighten one crooked book instead."
         },
         {
           "pattern": [
             "take",
             "door"
           ],
-          "response": "You pull on the door. It's attached to the wall! Doors don't go in your pocket!"
+          "response": "The door will not fit in your bag. Luckily, you only need to open it."
         },
         {
           "pattern": [
             "open",
             "shelf"
           ],
-          "response": "Shelves are already open! That's the whole point of shelves! They hold stuff where you can SEE it!"
+          "response": "This shelf has no doors. Its books are already out in the open."
         },
         {
           "pattern": [
@@ -767,14 +862,14 @@
               "book"
             ]
           },
-          "response": "Your glowing book: Spirits and Chains - A Guide. Try opening it!"
+          "response": "Cloud Care is a picture guide. OPEN BOOK to read the repair steps."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "So many books! There's one about dragons, one about cooking, and one about... socks? Libraries are weird."
+          "response": "A book about clouds sits among books about kites and very serious umbrellas."
         },
         {
           "pattern": [
@@ -789,7 +884,7 @@
               "read_book"
             ]
           },
-          "response": "The glowing key fits perfectly! CLICK! The door opens to stairs going down!",
+          "response": "Tess checks the safety steps with you. The key turns, and you both walk down to the tool room. She hangs the key by the door.",
           "effects": {
             "inventory_remove": [
               "key"
@@ -807,69 +902,71 @@
               "key"
             ]
           },
-          "response": "The key fits, but the glowing book pulses in your bag. You should open the book and learn the chain's secret before going farther!"
+          "response": "The key fits. Tess says: First OPEN BOOK so we know the safe repair steps."
         },
         {
           "pattern": [
             "look",
             "key"
           ],
-          "response": "The glowing purple key hums in your hand. Maybe it opens something here?"
+          "response": "The brass key has the same cloud shape as the tool-room lock."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your web shooter from Spiderdude. Save it for later!"
+          "response": "The tongs can reach high things. They are not a substitute for reading."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note. It got you into this adventure!"
+          "response": "The note is folded neatly. The pinwheel delivery was a good idea."
         },
         {
           "pattern": [
             "key",
             "shelf"
           ],
-          "response": "The key doesn't fit anywhere on the shelf."
+          "response": "There is no lock on the shelf. Try the door after reading the guide."
         },
         {
           "pattern": [
             "web",
             "door"
           ],
-          "response": "THWIP! The web sticks to the door but can't pull it open. You need a key!"
+          "response": "The tongs cannot open a locked door. Read the guide, then use the key."
         },
         {
           "pattern": [
             "key",
             "book"
           ],
-          "response": "You poke the key at a book. Nothing happens. Keys open locks, not books!"
+          "response": "Books open with your hands. This key is for the tool-room door."
         }
       ],
       "default": [
-        "Look around the library! There is something glowing.",
-        "Check out that glowing shelf!",
-        "Shhh! It's a library! But also look at that glowing thing!",
-        "The librarian isn't here. Good thing, because you're about to do some very non-library stuff.",
-        "A book falls off a shelf. It was NOT a ghost. Probably.",
-        "You sneeze from all the dust. ACHOO! Books fly everywhere!"
+        "A page rustles in the breeze.",
+        "The reading light makes a warm circle.",
+        "A librarian stamps a book: THUMP.",
+        "Tess reminds you to use your library voice."
       ],
-      "hints": ["Something on the shelf is glowing. What could you learn from it?", "LOOK at the SHELF, TAKE the BOOK, then OPEN the BOOK before trying the door.", "LOOK SHELF, TAKE BOOK, OPEN BOOK, then OPEN DOOR!"]
+      "hints": [
+        "Which book might explain the cloud machine?",
+        "LOOK SHELF, TAKE BOOK, then OPEN BOOK before trying the door.",
+        "LOOK SHELF, TAKE BOOK, OPEN BOOK, then OPEN DOOR!"
+      ]
     },
 
     "basement": {
 
-    	"mood": "cave",
+      "mood": "day",
       "text": [
-        "A secret basement under the library!",
-        "Old bottles and tools line the walls.",
-        "It smells like dust and magic."
+        "The library tool room is neat and bright.",
+        "An ice pad and a wooden mallet sit on a table.",
+        "A model cloud machine has a gear under a clear cover."
       ],
       "tiles": ["look", "take", "go", "potion", "hammer", "chain", "tunnel"],
       "commands": [
@@ -883,14 +980,14 @@
               "potion"
             ]
           },
-          "response": "You have the ice potion safe in your bag!"
+          "response": "The ice pad is safely tucked in its blue sleeve in your bag."
         },
         {
           "pattern": [
             "look",
             "potion"
           ],
-          "response": "A blue bottle with a label: ICE POTION - Freezes Ghost Fire. That could be useful!"
+          "response": "An ice pad in a blue sleeve. The label says: COOL HOT HANDLES. Tess has an insulated mitt to help."
         },
         {
           "pattern": [
@@ -902,28 +999,28 @@
               "hammer"
             ]
           },
-          "response": "You have the heavy hammer. It is ready to smash!"
+          "response": "You have a small wooden mallet. It is for gentle taps, not big swings."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "A heavy old hammer. It looks very strong!"
+          "response": "A wooden mallet with a soft head. Tess says it will not scratch the gear."
         },
         {
           "pattern": [
             "look",
             "chain"
           ],
-          "response": "A piece of ghost chain in a glass case! It glows with cold fire. Just like the book described!"
+          "response": "The model shows a bent gear tooth painted blue. Just like the repair guide!"
         },
         {
           "pattern": [
             "look",
             "tunnel"
           ],
-          "response": "A dark tunnel behind the shelves. It goes deep underground."
+          "response": "A service tunnel leads to the cloud tower. Tess knows the path."
         },
         {
           "pattern": [
@@ -935,14 +1032,14 @@
               "potion"
             ]
           },
-          "response": "You already have the ice potion!"
+          "response": "You already packed the ice pad."
         },
         {
           "pattern": [
             "take",
             "potion"
           ],
-          "response": "You carefully take the ice potion. Don't drop it!",
+          "response": "You pack the ice pad in its blue sleeve. Tess checks that it is ready.",
           "effects": {
             "inventory_add": [
               "potion"
@@ -959,14 +1056,14 @@
               "hammer"
             ]
           },
-          "response": "You already picked up the hammer!"
+          "response": "The wooden mallet is already in your bag."
         },
         {
           "pattern": [
             "take",
             "hammer"
           ],
-          "response": "You pick up the heavy hammer. You can do this!",
+          "response": "Tess shows you how to hold the little mallet. You pack it carefully.",
           "effects": {
             "inventory_add": [
               "hammer"
@@ -978,7 +1075,7 @@
             "take",
             "chain"
           ],
-          "response": "The glass case is sealed shut. You can't take it. But now you know what the chain looks like!"
+          "response": "This gear is part of the teaching model. You leave it under its cover."
         },
         {
           "pattern": [
@@ -991,7 +1088,7 @@
               "hammer"
             ]
           },
-          "response": "You have the potion and the hammer. Time to go! You squeeze through the tunnel entrance.",
+          "response": "With ICE and MALLET packed, you follow Tess into the service tunnel.",
           "next": "tunnel"
         },
         {
@@ -999,49 +1096,49 @@
             "go",
             "tunnel"
           ],
-          "response": "You should grab the useful stuff here before going into that dark tunnel!"
+          "response": "Tess checks the list: TAKE ICE and TAKE MALLET before we go."
         },
         {
           "pattern": [
             "take",
             "tunnel"
           ],
-          "response": "You try to pick up the tunnel. It's... a hole in the ground. You can't put a hole in your pocket!"
+          "response": "You cannot pack a tunnel. You would need a very long bag."
         },
         {
           "pattern": [
             "go",
             "chain"
           ],
-          "response": "You can't go to a chain! What would that even look like? Just look at it!"
+          "response": "The model is right in front of you. LOOK GEAR to study its bent tooth."
         },
         {
           "pattern": [
             "go",
             "hammer"
           ],
-          "response": "You can't travel to a hammer! But you CAN take it!"
+          "response": "You can TAKE MALLET and carry it with you."
         },
         {
           "pattern": [
             "go",
             "potion"
           ],
-          "response": "You can't go to a potion! Just pick it up!"
+          "response": "You can TAKE ICE and put the cooling pad in your bag."
         },
         {
           "pattern": [
             "look",
             "look"
           ],
-          "response": "You look around in a circle really fast. WHEEE! Okay you're dizzy now."
+          "response": "You look all around the room. A stool seems to be looking back."
         },
         {
           "pattern": [
             "web",
             "chain"
           ],
-          "response": "THWIP! The web sticks to the glass case but can't break it."
+          "response": "The model gear stays under its clear cover. The tongs cannot reach it."
         },
         {
           "pattern": [
@@ -1053,48 +1150,50 @@
               "hammer"
             ]
           },
-          "response": "You smash the glass case! CRASH! But the ghost chain just phases through your hand. Spooky! At least you know what it looks like."
+          "response": "Tess points to the cover. We study this model; the real repair is at the tower."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your web shooter! THWIP! Don't waste it. Save it for something important."
+          "response": "The tongs have soft wooden tips. They can reach without scratching."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note. It feels like forever ago you read it in your room!"
+          "response": "Tess smiles at her pinwheel note. Next time she might try a paper boat."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. Its secret could help you stop Skull Rider!"
+          "response": "Cloud Care shows the blue gear tooth and the stop lever. You know what to look for."
         }
       ],
       "default": [
-        "Look around! There are useful tools and potions here.",
-        "Take what you need before heading into the tunnel!",
-        "A secret basement! How cool is this? Grab some stuff!",
-        "This place smells funny. Like old socks mixed with magic. Take what you need and let's go!",
-        "Something bubbles in a jar. Blub blub blub.",
-        "Old cobwebs tickle your face. Bleh!"
+        "A tidy row of tools gleams.",
+        "Tess checks her insulated mitt.",
+        "The model cloud machine sits under its cover.",
+        "A stool creaks as though it has an opinion."
       ],
-      "hints": ["Grab everything useful before heading deeper!", "TAKE the POTION and TAKE the HAMMER!", "TAKE POTION, TAKE HAMMER, then GO TUNNEL!"]
+      "hints": [
+        "Pack the things on the repair list.",
+        "TAKE ICE for hot handles and TAKE MALLET for the gear.",
+        "TAKE ICE, TAKE MALLET, then GO TUNNEL."
+      ]
     },
 
     "tunnel": {
 
-    	"mood": "cave",
+      "mood": "cave",
       "text": [
-        "A dark underground tunnel. You can barely see!",
-        "You hear water dripping somewhere.",
-        "It is very dark in here."
+        "You and Tess enter the service tunnel.",
+        "A lamp hangs above the path.",
+        "A pipe goes plink, plink, plink."
       ],
       "tiles": ["go", "look", "web", "torch", "bridge"],
       "commands": [
@@ -1108,21 +1207,21 @@
               "has_light"
             ]
           },
-          "response": "The torch burns bright! You can see everything now!"
+          "response": "The lamp is on. Its warm glow lights the whole path."
         },
         {
           "pattern": [
             "look",
             "torch"
           ],
-          "response": "An old torch sits on the wall. But it is too high to reach!"
+          "response": "The lamp has a pull loop, just above your reach."
         },
         {
           "pattern": [
             "look",
             "bridge"
           ],
-          "response": "You can barely see a bridge ahead in the darkness."
+          "response": "A bridge waits ahead. You need light before walking farther."
         },
         {
           "pattern": [
@@ -1134,7 +1233,7 @@
               "has_light"
             ]
           },
-          "response": "The torch is already burning bright! No need for more webs."
+          "response": "The lamp is already on. Leave its loop alone for now."
         },
         {
           "pattern": [
@@ -1146,7 +1245,7 @@
               "web"
             ]
           },
-          "response": "You aim the web shooter at the torch! THWIP! You pull it down and light it. Now you can see!",
+          "response": "You reach the lamp loop with the TONGS and pull gently. CLICK! Tess checks that the path is clear.",
           "effects": {
             "flags_set": {
               "has_light": true
@@ -1163,7 +1262,7 @@
               "has_light"
             ]
           },
-          "response": "With the torch lighting the way, you walk through the tunnel to the bridge!",
+          "response": "With the lamp on, you and Tess walk along the tunnel to the bridge.",
           "next": "bridge"
         },
         {
@@ -1171,75 +1270,78 @@
             "go",
             "bridge"
           ],
-          "response": "It is too dark! You need light to go deeper into the tunnel."
+          "response": "Tess says: Let us turn on the lamp before walking farther."
         },
         {
           "pattern": [
             "go",
             "torch"
           ],
-          "response": "The torch is on the wall! You can't walk to a wall decoration!"
+          "response": "The lamp is up high. A long tool could reach its loop."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your trusty web shooter! Ready to go. THWIP THWIP!"
+          "response": "The tongs are long enough to reach the lamp loop."
         },
         {
           "pattern": [
             "look",
             "potion"
           ],
-          "response": "The ice potion. The label says: FREEZES GHOST FIRE. Save it for Skull Rider!"
+          "response": "The ice pad will cool a hot handle later. Keep it packed."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "The heavy hammer. You'll need it later!"
+          "response": "The wooden mallet is for the repair at the tower."
         },
         {
           "pattern": [
             "hammer",
             "torch"
           ],
-          "response": "You throw the hammer at the torch! CLANG! It bounces off the wall and almost hits you! Try the web shooter instead."
+          "response": "Tess shakes her head gently. Use a reaching tool, not a mallet, for the lamp."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note reminds you why you joined the adventure!"
+          "response": "The folded note is safe in your pocket."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. Its pages glow in the torchlight!"
+          "response": "The pictures in Cloud Care are easier to read with a lamp on."
         }
       ],
       "default": [
-        "It is so dark! You need to find some light.",
-        "Maybe there is something on the wall that can help?",
-        "You bump into a wall. OOF! It's really dark in here!",
-        "Was that a bat? No wait, it was just a drip. Find some light!",
-        "Drip. Drip. Drip. Water falls on your head.",
-        "Was that a bat? Nah, probably just your imagination. Probably."
+        "A pipe goes plink, plink.",
+        "Tess checks the path ahead.",
+        "A distant sneeze echoes through the pipe.",
+        "Your shoes make soft taps on the floor."
       ],
-      "hints": ["It is too dark! There is a torch on the wall but it is too high!", "Use your web shooter to reach the torch!", "Use WEB on TORCH, then GO BRIDGE!"]
+      "hints": [
+        "The lamp loop is a little too high.",
+        "Use your long TONGS to reach the LAMP.",
+        "TONGS LAMP, then GO BRIDGE."
+      ]
     },
 
     "bridge": {
 
-    	"mood": "cave",
+      "mood": "cave",
       "text": [
-        "An old stone bridge over an underground river!",
-        "Skull Rider's fire marks cover the walls."
+        "A sturdy footbridge crosses the water channel.",
+        "Cloud drawings decorate the wall.",
+        "You hear a faraway sneeze: AHHH-CHOO!"
       ],
       "tiles": ["go", "look", "climb", "wall", "bridge", "tower"],
       "commands": [
@@ -1248,35 +1350,35 @@
             "look",
             "wall"
           ],
-          "response": "Strange ghost symbols on the wall. And a drawing of a tall tower!"
+          "response": "A drawing shows a cloud going into the tower, then a gentle breeze coming out."
         },
         {
           "pattern": [
             "look",
             "bridge"
           ],
-          "response": "The bridge is old and cracked but it looks safe to cross."
+          "response": "The bridge has firm boards and a sturdy railing. Tess checks it before you cross."
         },
         {
           "pattern": [
             "look",
             "tower"
           ],
-          "response": "You can't see the tower from here. But it must be on the other side!"
+          "response": "The cloud tower is beyond the bridge, at the end of the service path."
         },
         {
           "pattern": [
             "climb",
             "wall"
           ],
-          "response": "You climb up a bit and peek through a crack. A dark tower in the distance!"
+          "response": "No need to climb. You can see the tower drawing from down here."
         },
         {
           "pattern": [
             "go",
             "bridge"
           ],
-          "response": "You walk across the bridge carefully. It holds! You climb out into the open air!",
+          "response": "You cross the sturdy bridge with Tess and step out beside the cloud tower.",
           "next": "tower"
         },
         {
@@ -1284,97 +1386,99 @@
             "climb",
             "bridge"
           ],
-          "response": "You try to climb the bridge. That's not how bridges work! You walk ON them, silly!"
+          "response": "Use the walkway and hold the railing. The bridge is for crossing, not climbing."
         },
         {
           "pattern": [
             "climb",
             "tower"
           ],
-          "response": "The tower is way too far away to climb from here! Cross the bridge first!"
+          "response": "The tower is farther along the path. GO BRIDGE first."
         },
         {
           "pattern": [
             "go",
             "wall"
           ],
-          "response": "BONK! You walk straight into the wall. Ouch! Walls are not doors!"
+          "response": "That is a wall. The bridge is the way across."
         },
         {
           "pattern": [
             "go",
             "tower"
           ],
-          "response": "You need to cross the bridge first to get to the tower!"
+          "response": "Cross the bridge first to reach the tower."
         },
         {
           "pattern": [
             "web",
             "bridge"
           ],
-          "response": "THWIP! You web the bridge for extra support. Smart thinking! It feels stronger now."
+          "response": "You use the tongs to pick a fallen leaf off the path. Clear walkway!"
         },
         {
           "pattern": [
             "hammer",
             "wall"
           ],
-          "response": "You smash the wall with the hammer! BOOM! Some rocks fall but nothing useful happens."
+          "response": "This wall does not need tapping. Save the mallet for the bent gear tooth."
         },
         {
           "pattern": [
             "look",
             "potion"
           ],
-          "response": "The ice potion. Save it for Skull Rider's fire!"
+          "response": "The cooling pad rests in its sleeve. It will be useful for a hot handle."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "The heavy hammer. You'll need it at the tower!"
+          "response": "The mallet is for a gentle tap after Tess stops the machine."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your trusty web shooter. Ready for action!"
+          "response": "The tongs fold neatly into your bag."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note reminds you to keep going!"
+          "response": "Tess points toward the tower. Your team is getting closer."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. The chain's secret is inside!"
+          "response": "The guide shows where to find the gear. First, cross the bridge."
         }
       ],
       "default": [
-        "Try crossing the bridge!",
-        "The bridge looks safe enough. Be brave!",
-        "The underground river below sounds loud! Just don't look down!",
-        "You're so close! Walk across the bridge!",
-        "Water rushes below. WHOOOOSH!",
-        "The bridge creaks. It's just saying hello!"
+        "Water gurgles beneath the bridge.",
+        "The cloud drawings have very silly faces.",
+        "Tess points toward the tower.",
+        "A distant sneeze makes a pipe hum."
       ],
-      "hints": ["The bridge looks old but safe enough to cross!", "Just walk across it! Be brave!", "GO across the BRIDGE!"]
+      "hints": [
+        "The walkway leads to the cloud tower.",
+        "Tess has checked the bridge. Walk across together.",
+        "GO BRIDGE."
+      ]
     },
 
     "tower": {
 
-    	"mood": "fire",
+      "mood": "day",
       "text": [
-        "A dark tower rises above you!",
-        "Skull Rider's bike is parked by the door.",
-        "Flames flicker at the very top."
+        "The cloud tower looks like a giant teapot.",
+        "A weather cart waits beside its door.",
+        "Tess warns that the busy machine has made the door handle hot."
       ],
       "tiles": ["look", "go", "bike", "door", "tower"],
       "commands": [
@@ -1383,21 +1487,21 @@
             "look",
             "bike"
           ],
-          "response": "Skull Rider's flaming motorcycle! The engine is off right now."
+          "response": "The weather cart holds umbrellas, empty buckets, and one enormous rain boot."
         },
         {
           "pattern": [
             "look",
             "door"
           ],
-          "response": "A heavy metal door. It is very hot! You can't touch it!"
+          "response": "Warm air from the machine has heated the handle. Tess says not to touch it yet."
         },
         {
           "pattern": [
             "look",
             "tower"
           ],
-          "response": "The tower is tall and dark. Fire glows at the top. Skull Rider is up there!"
+          "response": "The tower has a spout like a teapot. Puff sneezes a rainbow out of it."
         },
         {
           "pattern": [
@@ -1409,7 +1513,7 @@
               "potion"
             ]
           },
-          "response": "You pour the ice potion on the hot door! CRACK! It freezes solid and breaks apart! The way is open!",
+          "response": "With her mitt, Tess helps you press the ICE pad to the handle. It cools. You open the door and leave the pad there.",
           "effects": {
             "inventory_remove": [
               "potion"
@@ -1422,21 +1526,21 @@
             "go",
             "door"
           ],
-          "response": "The door is way too hot to touch! You need to cool it down somehow."
+          "response": "The handle is too hot. Tess says to cool it before opening the door."
         },
         {
           "pattern": [
             "go",
             "tower"
           ],
-          "response": "You need to get through the door first!"
+          "response": "The path into the tower goes through its door."
         },
         {
           "pattern": [
             "go",
             "bike"
           ],
-          "response": "You don't know how to drive a motorcycle! Plus that one is literally on fire!"
+          "response": "You check the cart. No clouds in there. Just a very surprised umbrella."
         },
         {
           "pattern": [
@@ -1448,69 +1552,71 @@
               "hammer"
             ]
           },
-          "response": "CLANG! The hammer bounces off the hot door! Owww your hands sting! You need something COLD!"
+          "response": "Tess says: The handle needs cooling, not tapping. What feels cold?"
         },
         {
           "pattern": [
             "web",
             "door"
           ],
-          "response": "THWIP! The web melts on the hot door instantly! SIZZLE! You need something cold."
+          "response": "The tongs cannot cool the hot handle. Look for something cold in your bag."
         },
         {
           "pattern": [
             "look",
             "potion"
           ],
-          "response": "The ice potion! The label says: FREEZES GHOST FIRE. This could work on the hot door!"
+          "response": "The ICE pad cools warm handles. Tess can help you use it safely."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "The heavy hammer. Save it for something important!"
+          "response": "The wooden mallet is for the gear, once the machine has stopped."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your web shooter. The door is too hot for webs though."
+          "response": "Your tongs are a reaching tool, not a cooling tool."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note reminds you that the city needs your help!"
+          "response": "You remember the note about hiccups. That was one enormous hiccup!"
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. The answer is waiting inside the tower!"
+          "response": "Cloud Care says to make the path safe before starting a repair."
         }
       ],
       "default": [
-        "That door is too hot! Maybe you have something to cool it down?",
-        "Think about what's in your bag!",
-        "OUCH! Everything here is hot! If only you had something cold...",
-        "Skull Rider really needs to learn about fire safety.",
-        "The motorcycle revs by itself. VROOM! Creepy!",
-        "You touch the door. OW! Hot hot hot!"
+        "A rainbow puffs from the tower spout.",
+        "The cart umbrella turns inside out.",
+        "Tess checks the hot handle from a safe distance.",
+        "Puff sneezes. The rain boot wobbles."
       ],
-      "hints": ["The door is too hot to touch! You need something cold!", "What do you have in your inventory that could help with fire?", "Use the POTION on the DOOR!"]
+      "hints": [
+        "The handle needs cooling before you touch it.",
+        "The ICE pad is made for hot handles. Tess will help.",
+        "ICE DOOR."
+      ]
     },
 
     "stairs": {
 
-    	"mood": "fire",
+      "mood": "day",
       "text": [
-        "Spiral stairs going up!",
-        "You hear chains rattling above!",
-        "Scorch marks cover every step."
+        "The tower steps fold away like a fan.",
+        "A high latch controls the steps.",
+        "Tess waits beside the stair locks."
       ],
       "tiles": ["look", "climb", "stairs", "web"],
       "commands": [
@@ -1524,14 +1630,14 @@
               "stairs_fixed"
             ]
           },
-          "response": "The stairs are covered in strong webs! Safe to climb!"
+          "response": "The steps are unfolded and locked in place. Tess has checked them."
         },
         {
           "pattern": [
             "look",
             "stairs"
           ],
-          "response": "The stairs are broken in places. Some steps are missing! It's too dangerous to climb."
+          "response": "The folded steps have a pull latch above your reach."
         },
         {
           "pattern": [
@@ -1543,7 +1649,7 @@
               "stairs_fixed"
             ]
           },
-          "response": "The stairs are already fixed with webs! Time to climb!"
+          "response": "The steps are already down. Tess says they are ready to climb."
         },
         {
           "pattern": [
@@ -1555,7 +1661,7 @@
               "web"
             ]
           },
-          "response": "THWIP! THWIP! You shoot webs across the broken stairs. Now they are strong and safe!",
+          "response": "You pull the high latch with the TONGS. The steps unfold. Tess locks them firmly and checks each one.",
           "effects": {
             "flags_set": {
               "stairs_fixed": true
@@ -1572,7 +1678,7 @@
               "stairs_fixed"
             ]
           },
-          "response": "You climb the webbed stairs all the way to the top! Here we go!",
+          "response": "You climb the safe steps with Tess. At the top, a cloud gives a very tired sigh.",
           "next": "battle"
         },
         {
@@ -1580,21 +1686,21 @@
             "climb",
             "stairs"
           ],
-          "response": "The stairs are too broken! Some steps are missing. You need to fix them first."
+          "response": "Wait until the steps are unfolded and Tess has checked their locks."
         },
         {
           "pattern": [
             "climb",
             "web"
           ],
-          "response": "You try to climb a web like Spiderdude. Nope! You're not a spider, silly! Your shoes get all sticky."
+          "response": "Tongs are not a ladder. Use them to reach the stair latch instead."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your trusty web shooter! THWIP! ...Don't waste it! Try it on something useful!"
+          "response": "The tongs can reach that high latch without any climbing."
         },
         {
           "pattern": [
@@ -1606,49 +1712,50 @@
               "hammer"
             ]
           },
-          "response": "You whack the broken stairs with the hammer! CRACK! Pieces crumble into the darkness. That made it WORSE! You need something stretchy!"
+          "response": "The stairs need their latch pulled, not a tap. Try the long tongs."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "The heavy hammer. The stairs need fixing, not smashing!"
+          "response": "Keep the mallet for the gear at the top."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note reminds you that he is counting on you!"
+          "response": "Tess says: One safe step at a time. You nod."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. You will need its secret at the top!"
+          "response": "The guide shows a stop lever beside the gear. You will need both clues."
         }
       ],
       "default": [
-        "Those stairs look broken! Can you fix them somehow?",
-        "You need to make the stairs safe before climbing.",
-        "Step, step, HOLE, step... yeah those stairs need work.",
-        "Skull Rider really messed up these stairs. Rude!",
-        "You hear chains rattling above. Hurry up!",
-        "The walls are warm. Skull Rider's fire was here!"
+        "Puff sighs somewhere above.",
+        "The stair hinges are shaped like little fans.",
+        "Tess looks at the latch.",
+        "A little breeze ruffles your hair."
       ],
-      "hints": ["The stairs are broken! Some steps are missing!", "What could fill the gaps? Something stretchy!", "Use WEB on STAIRS, then CLIMB STAIRS!"]
+      "hints": [
+        "The folded stairs have a latch up high.",
+        "Use the TONGS to pull the stair latch.",
+        "TONGS STAIRS, then CLIMB STAIRS."
+      ]
     },
 
     "battle": {
 
-    	"mood": "fire",
+      "mood": "day",
       "text": [
-        "You reach the top of the tower!",
-        "Skull Rider swings his fire chain! WHOOSH!",
-        "Spiderdude swings in behind you!",
-        "This is it!"
+        "Puff is wedged inside the cloud machine.",
+        "He eyes a bent GEAR with a very gloomy face.",
+        "Tess waits by the stop lever."
       ],
       "tiles": ["look", "talk", "give", "ghost", "chain", "spiderdude", "hammer"],
       "commands": [
@@ -1657,7 +1764,7 @@
             "look",
             "ghost"
           ],
-          "response": "Skull Rider is big and scary! Fire covers his whole body!"
+          "response": "Puff is a grumpy little cloud, squashed into a glass chamber. He wants room to stretch."
         },
         {
           "pattern": [
@@ -1669,14 +1776,14 @@
               "saw_weakness"
             ]
           },
-          "response": "You keep your eyes on the weak spot in the middle of the chain!"
+          "response": "The bent tooth is painted blue. Keep that spot in mind."
         },
         {
           "pattern": [
             "look",
             "chain"
           ],
-          "response": "The fire chain swings around fast. Wait... you see a weak spot in the middle! Just like the book said!",
+          "response": "You spot a bent blue tooth on the GEAR, just like the picture in Cloud Care.",
           "effects": {
             "flags_set": {
               "saw_weakness": true
@@ -1693,14 +1800,14 @@
               "spidey_ready"
             ]
           },
-          "response": "Spiderdude nods. He is ready to web Skull Rider when you strike!"
+          "response": "Tess has stopped and locked the machine. She is ready to help with the gentle tap."
         },
         {
           "pattern": [
             "talk",
             "spiderdude"
           ],
-          "response": "Spiderdude says: I'll distract him with my webs! You figure out the chain! I believe in you!",
+          "response": "Tess stops the machine and locks its crank. Nothing can turn now. She says: Find the blue tooth, then tap it gently.",
           "effects": {
             "flags_set": {
               "spidey_ready": true
@@ -1712,21 +1819,21 @@
             "talk",
             "ghost"
           ],
-          "response": "Skull Rider laughs: No one can break my chain! You will never stop me!"
+          "response": "Puff sighs: I only wanted to make one nice breeze. Now I am all scrunched up!"
         },
         {
           "pattern": [
             "look",
             "spiderdude"
           ],
-          "response": "Spiderdude is ready to help! He's waiting for your signal."
+          "response": "Tess watches the controls. She is here to help you work safely."
         },
         {
           "pattern": [
             "look",
             "hammer"
           ],
-          "response": "The hammer feels heavy in your hands. You can do this!"
+          "response": "The wooden mallet has a soft head. One careful tap should do."
         },
         {
           "pattern": [
@@ -1742,7 +1849,7 @@
               "spidey_ready"
             ]
           },
-          "response": "Spiderdude webs Skull Rider's arms! NOW! You run in and SMASH the weak link with the hammer! CRASH! The chain SHATTERS into a thousand pieces!",
+          "response": "Tess steadies the stopped gear. You tap its blue tooth with the MALLET. Click! The hatch opens. Tess takes the tool as Puff floats free.",
           "effects": {
             "inventory_remove": [
               "hammer"
@@ -1760,63 +1867,63 @@
               "hammer"
             ]
           },
-          "response": "Not yet! You need to find the chain's weak spot and make sure Spiderdude is ready!"
+          "response": "Not yet. LOOK GEAR for the bent tooth and TALK TESS so she can stop and lock the machine first."
         },
         {
           "pattern": [
             "give",
             "hammer"
           ],
-          "response": "Spiderdude says: No no no, YOU have to do this! I believe in you kid! I'll hold him!"
+          "response": "Tess says: We can do it together. LOOK GEAR, then TALK TESS before using the mallet."
         },
         {
           "pattern": [
             "give",
             "ghost"
           ],
-          "response": "Give something to Skull Rider? Are you CRAZY?! He's the bad guy! He'd just set it on fire!"
+          "response": "Puff needs room to float, not a present. Fixing the jam will help him most."
         },
         {
           "pattern": [
             "give",
             "chain"
           ],
-          "response": "Give the chain?! It's attached to Skull Rider! And it's on FIRE! No touching!"
+          "response": "The gear is part of the machine. It needs a repair, not a new owner."
         },
         {
           "pattern": [
             "give",
             "spiderdude"
           ],
-          "response": "Give Spiderdude to someone? He's a person, not a gift! Although he IS pretty amazing."
+          "response": "Tess laughs. She is already on your team; there is no need to give her away."
         },
         {
           "pattern": [
             "talk",
             "chain"
           ],
-          "response": "You yell at the chain: BREAK ALREADY! It just keeps swinging. Chains don't speak English."
+          "response": "You ask the gear to straighten up. It needs a little mechanical help."
         },
         {
           "pattern": [
             "talk",
             "hammer"
           ],
-          "response": "You whisper to the hammer: We can do this, hammer. I believe in us. The hammer says nothing. But you feel braver!"
+          "response": "You tell the mallet your plan. It looks ready for one gentle tap."
         },
         {
           "pattern": [
             "web",
             "ghost"
           ],
-          "response": "THWIP! Your web hits Skull Rider but burns up instantly! His fire is too strong for webs alone!"
+          "response": "You cannot pick up a cloud with tongs. Puff wiggles his misty nose."
         },
         {
           "pattern": [
             "web",
             "chain"
           ],
-          "response": "THWIP! The web wraps around the chain but melts right off! The fire is too hot! You need something stronger."
+          "response": "The tongs cannot straighten that gear tooth. Use the guide and ask Tess for help."
         },
         {
           "pattern": [
@@ -1828,7 +1935,7 @@
               "book"
             ]
           },
-          "response": "You check the book: Break the chain at its weak spot! Look carefully at the chain to find it!"
+          "response": "Cloud Care shows the blue gear tooth. LOOK GEAR, then ask Tess to stop the machine."
         },
         {
           "pattern": [
@@ -1840,14 +1947,14 @@
               "book"
             ]
           },
-          "response": "The book says: A Skull Rider's power lives in its chain. Destroy the chain to free the spirit!"
+          "response": "Cloud Care explains that a stuck machine can squash a cloud. Open its hatch by repairing the gear."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your web shooter. Skull Rider is too hot for webs! But Spiderdude can use his own."
+          "response": "The tongs helped with the lamp and stairs. The mallet is the tool for this job."
         },
         {
           "pattern": [
@@ -1859,34 +1966,36 @@
               "book"
             ]
           },
-          "response": "Spirits and Chains - A Guide. It says to break the chain at the weak spot!"
+          "response": "The guide says: Find the bent tooth, stop the machine with a grown-up, then tap gently."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note brought you here. Now it is time to finish the mission!"
+          "response": "Your pinwheel note started a very useful team. Tess gives you an encouraging nod."
         }
       ],
       "default": [
-        "Look carefully at the chain! Remember what the book said?",
-        "Talk to Spiderdude to make a plan!",
-        "Skull Rider is right there! Focus! Check the chain for a weak spot!",
-        "This is the big moment! Look at the chain, talk to Spiderdude, and SMASH!",
-        "Skull Rider spins his chain. WHOOSH! Duck!",
-        "Fire shoots past your head. Whoa, that was close!"
+        "Puff puffs out his cheeks.",
+        "Tess keeps an eye on the controls.",
+        "The blue paint on the gear is easy to spot.",
+        "A tiny rainbow curls inside the chamber."
       ],
-      "hints": ["LOOK carefully at the chain! Remember what the book said?", "Find the weak spot, then TALK to Spiderdude to get ready!", "LOOK CHAIN, TALK SPIDERDUDE, then HAMMER CHAIN!"]
+      "hints": [
+        "Find the bent blue tooth. Ask Tess to stop the machine.",
+        "LOOK GEAR and TALK TESS. Then use the MALLET for one gentle tap.",
+        "LOOK GEAR, TALK TESS, then MALLET GEAR."
+      ]
     },
 
     "victory": {
 
-    	"mood": "day",
+      "mood": "day",
       "text": [
-        "The fire goes out! Skull Rider's flames disappear!",
-        "A confused man stands where Skull Rider was.",
-        "Spiderdude lands next to you with a big thumbs up!"
+        "The gear clicks into place. The hatch opens.",
+        "Puff floats out, as soft as a pillow.",
+        "At last, the breeze is gentle enough for kites."
       ],
       "tiles": ["talk", "look", "go", "spiderdude", "ghost", "home"],
       "commands": [
@@ -1895,35 +2004,35 @@
             "talk",
             "spiderdude"
           ],
-          "response": "Spiderdude high-fives you! He says: You were AMAZING! I never could have figured out the chain puzzle. You are a real hero!"
+          "response": "Tess says: You noticed the clue and asked for help. That is how a good repair team works!"
         },
         {
           "pattern": [
             "talk",
             "ghost"
           ],
-          "response": "The man says: Thank you so much. That chain had me cursed for years. You freed me!"
+          "response": "Puff says: Thank you! I can stretch again. Would you like a breeze for your kite?"
         },
         {
           "pattern": [
             "look",
             "spiderdude"
           ],
-          "response": "Spiderdude is smiling under his mask. You can tell!"
+          "response": "Tess wipes her hands on her yellow apron. All three pencils are still behind her ear."
         },
         {
           "pattern": [
             "look",
             "ghost"
           ],
-          "response": "The man looks tired but happy. He is free from the curse!"
+          "response": "Puff stretches into a long cloud sausage, then curls into a happy ball."
         },
         {
           "pattern": [
             "go",
             "home"
           ],
-          "response": "Time to go home! What an incredible adventure!",
+          "response": "You and Tess walk toward home and the kite fair. Puff drifts along overhead.",
           "next": "win"
         },
         {
@@ -1931,81 +2040,84 @@
             "go",
             "spiderdude"
           ],
-          "response": "Spiderdude is right next to you! You walk over and he gives you another high five. SLAP! Ow, super strength!"
+          "response": "Tess offers a high five. Her glove makes a tiny puff of chalk dust."
         },
         {
           "pattern": [
             "go",
             "ghost"
           ],
-          "response": "You walk over to the freed man. He smiles and shakes your hand. His hand isn't hot anymore!"
+          "response": "You wave to Puff. He makes a little misty hand and waves back."
         },
         {
           "pattern": [
             "talk",
             "home"
           ],
-          "response": "You think about home. Your warm bed... your comics... your snacks... Okay maybe time to go home!"
+          "response": "You tell the others about the kite plans on your desk. Puff wants to see them."
         },
         {
           "pattern": [
             "look",
             "home"
           ],
-          "response": "You look toward home. Your warm cozy bed is waiting. And probably a snack!"
+          "response": "Home is just beyond the fair. Mom will be waiting there to hear the story."
         },
         {
           "pattern": [
             "web",
             "spiderdude"
           ],
-          "response": "THWIP! You web Spiderdude! He laughs and webs you back! Web fight!"
+          "response": "You use the tongs to rescue a pencil from Tess's apron pocket. She laughs: Found it!"
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your web shooter! Spiderdude says you can keep it. Best. Gift. EVER!"
+          "response": "Tess says you may keep borrowing the tongs for your next project, with a grown-up."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "The ghost chain book. You used its knowledge to save the city!"
+          "response": "Cloud Care helped you make a safe repair. Tess will return it to the library."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note started this whole amazing adventure!"
+          "response": "The note has a new crease. Quite a lot happened after that little TAP!"
         }
       ],
       "default": [
-        "What an amazing victory! Talk to everyone before heading home.",
-        "You did it! You really did it!",
-        "You saved the city! Take a moment to enjoy this!",
-        "Spiderdude keeps looking at you like you're the coolest kid ever. Because you ARE!",
-        "Spiderdude shoots confetti webs! Party time!",
-        "You flex your muscles. You ARE a hero!"
+        "Puff practices a very gentle breeze.",
+        "Tess puts a tool back on its hook.",
+        "A kite outside begins to lift.",
+        "Your team smiles at its careful work."
       ],
-      "hints": ["You won! Talk to everyone, then head home!", "Time to GO somewhere cozy!", "GO HOME!"]
+      "hints": [
+        "Puff is free! You can talk before heading back.",
+        "Mom is waiting to hear about your repair team.",
+        "GO HOME."
+      ]
     },
 
     "win": {
 
-    	"mood": "win",
+      "mood": "win",
 
-    	"ending": { "id": "win", "title": "True Hero" },
+      "ending": {
+        "id": "win",
+        "title": "Cloud Crew"
+      },
       "text": [
-        "You walk home as the sun rises over the city.",
-        "Spiderdude swings by and waves at you!",
-        "You smile and wave back.",
-        "You are a TRUE HERO!",
-        "",
-        "THE END"
+        "Mom meets you at the kite fair.",
+        "Puff makes a little cloud shaped like a sock.",
+        "Every kite lifts into the breeze.",
+        "You helped make room for a new friend."
       ],
       "tiles": [
         "look",
@@ -2021,66 +2133,71 @@
             "look",
             "spiderdude"
           ],
-          "response": "Spiderdude flips off a lamppost and sticks the landing. Show-off!"
+          "response": "Tess adjusts a kite tail. She is very good at untangling things."
         },
         {
           "pattern": [
             "talk",
             "spiderdude"
           ],
-          "response": "Spiderdude says, 'Thanks, partner. The city owes you one!'"
+          "response": "Tess says: Next time the town needs a careful helper, I know whom to ask."
         },
         {
           "pattern": [
             "look",
             "city"
           ],
-          "response": "No more fire. Just pink sky, chirping birds, and a bakery that smells amazing."
+          "response": "Kites drift over the houses. A cloud-shaped kite is following a kite-shaped cloud."
         },
         {
           "pattern": [
             "talk",
             "city"
           ],
-          "response": "You shout, 'GOOD MORNING, CITY!' Somewhere, a window slams. Oops."
+          "response": "You cheer for the kite fair. The baker waves a bun in celebration."
         },
         {
           "pattern": [
             "look",
             "home"
           ],
-          "response": "Your house is right there. Mom has NO idea what you did tonight."
+          "response": "Mom listens as you explain the gear repair. She is glad you worked with Tess."
         },
         {
           "pattern": [
             "go",
             "home"
           ],
-          "response": "Almost! Just enjoy the sunrise a little longer."
+          "response": "You are home beside Mom, with the kite fair just outside. A good place to finish."
         },
         {
           "pattern": [
             "look",
             "note"
           ],
-          "response": "Spiderdude's note is proof that a real hero asked for your help!"
+          "response": "You tuck the pinwheel note beside your kite plans. A keepsake from your repair team."
         },
         {
           "pattern": [
             "look",
             "web"
           ],
-          "response": "Your very own web shooter from Spiderdude. Best souvenir ever!"
+          "response": "The tongs rest on your craft table, ready for another project with a grown-up."
         },
         {
           "pattern": [
             "look",
             "book"
           ],
-          "response": "Spirits and Chains - A Guide. Its secret helped save the city!"
+          "response": "Tess has marked the page she will show other helpers. She will return the book next."
         }
       ],
-      "default": ["What an amazing adventure!", "The city is safe thanks to you!", "Spiderdude swings by and gives you a thumbs up!", "Best. Day. Ever!"]
+      "default": [
+        "Puff makes a cloud shaped like a sock.",
+        "Mom helps untangle your kite string.",
+        "Tess waves from the fair.",
+        "The breeze is just right."
+      ]
     }
   }
 }
