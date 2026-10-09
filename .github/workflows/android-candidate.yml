@@ -1,0 +1,72 @@
+name: Android test candidate
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/ike-android-candidate-2026-10-09]
+    paths:
+      - .github/workflows/android-candidate.yml
+      - scripts/android_candidate.py
+      - scripts/verify_android_candidate.py
+permissions:
+  contents: read
+concurrency:
+  group: android-candidate-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  candidate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      PYTHONDONTWRITEBYTECODE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Download pinned official Godot and export templates
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          cd "$RUNNER_TEMP/godot"
+          base=https://github.com/godotengine/godot-builds/releases/download/4.6.1-stable
+          curl -fL --retry 3 -o godot.zip "$base/Godot_v4.6.1-stable_linux.x86_64.zip"
+          echo 'cecd0cb6b55e931318a9d7237dc4197d69ea914966787a454808523626e2789f  godot.zip' | sha256sum --check --strict
+          unzip -q godot.zip
+          curl -fL --retry 3 -o templates.tpz "$base/Godot_v4.6.1-stable_export_templates.tpz"
+          echo 'e6d372afd4fdfaae9571eb5e3568afcd96ce6db9a569244034154faf0ac69875  templates.tpz' | sha256sum --check --strict
+          unzip -q templates.tpz 'templates/android_debug.apk' 'templates/android_release.apk' 'templates/android_source.zip' 'templates/version.txt'
+          chmod +x Godot_v4.6.1-stable_linux.x86_64
+          echo "GODOT_BIN=$RUNNER_TEMP/godot/Godot_v4.6.1-stable_linux.x86_64" >> "$GITHUB_ENV"
+      - name: Prepare SDK 36
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" 'platform-tools' 'platforms;android-36' 'build-tools;36.0.0' 'ndk;28.1.13356709'
+      - name: Verify source before packaging
+        run: |
+          python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tests/run_checks.py --godot "$GODOT_BIN" --suite regressions
+          python3 tests/run_checks.py --godot "$GODOT_BIN" --suite original_story
+          git diff --exit-code
+      - name: Build and inspect isolated ARM64 test APK
+        run: |
+          python3 scripts/android_candidate.py \
+            --godot "$GODOT_BIN" --sdk "$ANDROID_HOME" \
+            --templates "$RUNNER_TEMP/godot/templates" --java "$JAVA_HOME" \
+            --candidate-id "r${GITHUB_RUN_ID}a${GITHUB_RUN_ATTEMPT}" --output exports/candidate
+      - name: Save test APK and inspection evidence, never keys
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ike-android-candidate-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            exports/candidate/*.apk
+            exports/candidate/*.json
+            exports/candidate/*.txt
+            exports/candidate/*.log
+            exports/candidate/SHA256SUMS
+            exports/qa/*.log
+          retention-days: 14
+          if-no-files-found: warn

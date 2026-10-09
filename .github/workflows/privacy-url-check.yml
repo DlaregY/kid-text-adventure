@@ -1,0 +1,23 @@
+name: Public privacy verification
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/ike-android-candidate-2026-10-09]
+    paths: [.github/workflows/privacy-url-check.yml, scripts/check_public_privacy.py]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Anonymous public policy and app-copy check
+        run: python3 scripts/check_public_privacy.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-policy-verification-${{ github.run_id }}
+          path: exports/policy/
+          retention-days: 14
