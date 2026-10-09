@@ -1,0 +1,202 @@
+{
+  "bedroom": {
+    "scene": "bedroom",
+    "inventory": [],
+    "flags": {}
+  },
+  "street": {
+    "scene": "street",
+    "inventory": [
+      "note"
+    ],
+    "flags": {
+      "saw_flames": true,
+      "window_open": true
+    }
+  },
+  "rooftop": {
+    "scene": "rooftop",
+    "inventory": [
+      "note"
+    ],
+    "flags": {
+      "saw_flames": true,
+      "window_open": true
+    }
+  },
+  "park": {
+    "scene": "park",
+    "inventory": [
+      "note",
+      "web"
+    ],
+    "flags": {
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "library": {
+    "scene": "library",
+    "inventory": [
+      "key",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "lady_talked": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "basement": {
+    "scene": "basement",
+    "inventory": [
+      "book",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "tunnel": {
+    "scene": "tunnel",
+    "inventory": [
+      "book",
+      "hammer",
+      "note",
+      "potion",
+      "web"
+    ],
+    "flags": {
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "bridge": {
+    "scene": "bridge",
+    "inventory": [
+      "book",
+      "hammer",
+      "note",
+      "potion",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "tower": {
+    "scene": "tower",
+    "inventory": [
+      "book",
+      "hammer",
+      "note",
+      "potion",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "stairs": {
+    "scene": "stairs",
+    "inventory": [
+      "book",
+      "hammer",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "battle": {
+    "scene": "battle",
+    "inventory": [
+      "book",
+      "hammer",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "stairs_fixed": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "victory": {
+    "scene": "victory",
+    "inventory": [
+      "book",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "saw_weakness": true,
+      "spidey_ready": true,
+      "stairs_fixed": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  },
+  "win": {
+    "scene": "win",
+    "inventory": [
+      "book",
+      "note",
+      "web"
+    ],
+    "flags": {
+      "has_light": true,
+      "lady_talked": true,
+      "read_book": true,
+      "saw_book": true,
+      "saw_flames": true,
+      "saw_weakness": true,
+      "spidey_ready": true,
+      "stairs_fixed": true,
+      "talked_spidey": true,
+      "window_open": true
+    }
+  }
+}

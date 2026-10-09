@@ -20,6 +20,7 @@ SUITES = {
     "smoke": ("story_smoke.gd", "Rendered 59 scenes; failures=0"),
     "regressions": ("game_regressions.gd", "Game regression checks="),
     "screenshots": ("screenshots.gd", "Screenshot checks; failures=0"),
+    "original_story": ("original_story.gd", "Original story checks; failures=0"),
 }
 
 
