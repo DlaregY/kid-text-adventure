@@ -596,7 +596,7 @@
         "You, Dad, and Bigfoot stand together in the moonlight.",
         "He looks hungry and keeps glancing at your pocket.",
         "LOOK and TALK to Bigfoot let you stay.",
-        "A snack, photo, goodbye JOKE, or leaving will end this visit."
+        "A snack, goodbye JOKE, camera photo, or leaving will end this visit."
       ],
       "tiles": ["go", "look", "talk", "tell", "give", "bigfoot", "joke", "forest", "camp", "dad"],
       "commands": [
@@ -810,7 +810,7 @@
     },
     "ending_quiet": {
       "mood": "win",
-      "ending": { "id": "quiet", "title": "The Quiet Secret" },
+      "ending": { "id": "quiet", "title": "The Quiet Goodbye" },
       "text": [
         "You watch quietly as Bigfoot crosses the creek and melts into the trees.",
         "Back at camp, you and Dad promise to leave his home peaceful.",
@@ -856,16 +856,16 @@
       ],
       "default": [
         "Bigfoot's forest home is peaceful again.",
-        "The forest is peaceful again.",
+        "Somewhere in the trees, an owl hoots goodnight.",
         "What an amazing camping night!"
       ]
     },
     "ending_goofy": {
       "mood": "win",
-      "ending": { "id": "goofy", "title": "Mixed-Up Message" },
+      "ending": { "id": "goofy", "title": "Pinecone Socks" },
       "text": [
-        "You meant to say GOODBYE in Bigfoot language.",
-        "Instead you said: MY SOCKS TASTE LIKE PINECONES!",
+        "You wave goodbye with your silliest joke.",
+        "MY SOCKS TASTE LIKE PINECONES!",
         "Bigfoot laughs so hard that owls fly out of the trees.",
         "Before he heads home, you and Dad laugh with him."
       ],
@@ -873,7 +873,7 @@
       "commands": [
         {
           "pattern": ["talk", "bigfoot"],
-          "response": "Bigfoot repeats your mixed-up greeting. Now Dad is laughing too."
+          "response": "Bigfoot repeats your silly joke. Now Dad is laughing too."
         },
         {
           "pattern": ["look", "bigfoot"],
@@ -881,7 +881,7 @@
         },
         {
           "pattern": ["look", "camp"],
-          "response": "Back at camp, you and Dad practice the real Bigfoot word for hello. It is HOOT."
+          "response": "Back at camp, you and Dad make up even sillier jokes for next time."
         },
         {
           "pattern": ["talk", "dad"],

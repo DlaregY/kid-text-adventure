@@ -85,6 +85,13 @@ const TALK_FALLBACKS: Array[String] = [
 	"You whisper to the {thing}. Shhhh. Still nothing!",
 	"The {thing} has nothing to say. Maybe it is shy!",
 ]
+const TELL_FALLBACKS: Array[String] = [
+	"You tell the {thing} a joke. It does not laugh. Tough crowd!",
+	"You tell the {thing} a story. It is not listening!",
+	"The {thing} does not want to hear it right now!",
+	"You whisper a secret to the {thing}. It keeps quiet!",
+	"You tell the {thing} all about your day. No reply!",
+]
 const OPEN_FALLBACKS: Array[String] = [
 	"You try to open the {thing}. It does not open!",
 	"How do you open a {thing}? You can't! Nice try though!",
@@ -214,7 +221,7 @@ func _ready() -> void:
 	action_fallback_map = {
 		"look": LOOK_FALLBACKS, "talk": TALK_FALLBACKS, "open": OPEN_FALLBACKS,
 		"take": TAKE_FALLBACKS, "go": GO_FALLBACKS, "give": GIVE_FALLBACKS,
-		"climb": CLIMB_FALLBACKS, "tell": TALK_FALLBACKS,
+		"climb": CLIMB_FALLBACKS, "tell": TELL_FALLBACKS,
 	}
 
 	_apply_reader_font()
