@@ -2,11 +2,15 @@ name: Android test candidate
 on:
   workflow_dispatch:
   push:
-    branches: [codex/ike-android-candidate-2026-10-09]
+    branches: [codex/ike-touch-branding-2026-10-09]
     paths:
       - .github/workflows/android-candidate.yml
       - scripts/android_candidate.py
       - scripts/verify_android_candidate.py
+      - scripts/Game.gd
+      - scripts/Tile.gd
+      - scripts/CommandSlot.gd
+      - tests/touch_input.gd
 permissions:
   contents: read
 concurrency:
@@ -26,6 +30,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+      - name: Install desktop gesture-test dependencies
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgl1-mesa-dri fonts-noto-color-emoji
       - name: Download pinned official Godot and export templates
         shell: bash
         run: |
@@ -47,6 +53,7 @@ jobs:
       - name: Verify source before packaging
         run: |
           python3 -m unittest discover -s tests -p 'test_*.py' -v
+          python3 tests/run_checks.py --godot "$GODOT_BIN" --suite touch
           python3 tests/run_checks.py --godot "$GODOT_BIN" --suite regressions
           python3 tests/run_checks.py --godot "$GODOT_BIN" --suite original_story
           git diff --exit-code
@@ -56,6 +63,25 @@ jobs:
             --godot "$GODOT_BIN" --sdk "$ANDROID_HOME" \
             --templates "$RUNNER_TEMP/godot/templates" --java "$JAVA_HOME" \
             --candidate-id "r${GITHUB_RUN_ID}a${GITHUB_RUN_ATTEMPT}" --output exports/candidate
+      - name: Record packaged launcher resource wiring
+        shell: bash
+        run: |
+          set -euo pipefail
+          apk=$(find exports/candidate -maxdepth 1 -name '*.apk' -print -quit)
+          test -n "$apk"
+          python3 - "$apk" > "$RUNNER_TEMP/launcher-paths" <<'PY'
+          import sys, zipfile
+          with zipfile.ZipFile(sys.argv[1]) as archive:
+              for name in archive.namelist():
+                  if name.startswith('res/mipmap-anydpi') and name.endswith('.xml'):
+                      print(name)
+          PY
+          test -s "$RUNNER_TEMP/launcher-paths"
+          while IFS= read -r resource; do
+            echo "=== $resource ==="
+            "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump xmltree "$apk" --file "$resource"
+          done < "$RUNNER_TEMP/launcher-paths" > exports/candidate/launcher-xml.txt
+          "$ANDROID_HOME/build-tools/36.0.0/aapt2" dump resources "$apk" > exports/candidate/resource-table.txt
       - name: Save test APK and inspection evidence, never keys
         if: always()
         uses: actions/upload-artifact@v4

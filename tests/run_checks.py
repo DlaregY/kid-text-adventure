@@ -17,6 +17,7 @@ import uuid
 
 ROOT = Path(__file__).resolve().parents[1]
 SUITES = {
+    "touch": ("touch_input.gd", "Touch input suite completed; failures=0"),
     "smoke": ("story_smoke.gd", "Rendered 59 scenes; failures=0"),
     "regressions": ("game_regressions.gd", "Game regression checks="),
     "screenshots": ("screenshots.gd", "Screenshot checks; failures=0"),
@@ -136,7 +137,7 @@ def main(argv: list[str] | None = None) -> int:
             for suite in names:
                 script, expected = SUITES[suite]
                 command = base + ["--script", "res://tests/" + script]
-                if suite == "screenshots":
+                if suite in {"screenshots", "touch"}:
                     shots = output / "shots"
                     shots.mkdir(exist_ok=True)
                     env["IKE_SHOTS_DIR"] = str(shots)

@@ -17,8 +17,9 @@ or establish release signing, target-36 device success, or Play acceptance.
 ## Enrollment and release prerequisites
 
 - [x] Personal developer account created and paid for (Gerald reconfirmed October 3); all three verifications completed October 2. Owner geraldnorby@gmail.com; developer ID `8341017993051504358`. Do not enroll or pay again. Zo browser sign-in failure is separate from enrollment; inspect Console app status and production access before submission.
-- [ ] Resolve target-36 preview installation rejection; target-34 diagnostic works on Gerald's Android 13 phone but is not a store release candidate.
-- [x] Replace menu and splash portraits with the unchanged approved Norbonics Games master; preserve proportions. Project/Android icons use existing K artwork without portraits; old portrait sources are excluded from exports. Store imagery remains to prepare.
+- [x] Gerald installed the target-36 candidate `r37957662835a1` and reached picker/story pages (October 9). This is a user report, not an instrumented installer/renderer log.
+- [ ] Retest the blocking picker/story touch-scrolling findings and constrained drops on the fixed candidate; see `touch-feedback.md`.
+- [ ] Verify latest branding on the fixed candidate: original Ike portrait on menu/launcher, unchanged Norbonics Games in-engine loading splash (Gerald, October 9; supersedes earlier menu/K-icon direction). Store imagery remains to prepare.
 - [x] Include `games.norbonics.com` as visible plain menu text without analytics or automatic browser navigation.
 - [ ] Finalize release signing and secure key backup; the "Ike Quest" preset now exports an App Bundle at version 0.7.0 / code 700 with the production application ID preserved.
 - [ ] Run internal testing, then required closed testing and production-access application. Recruit at least 12 active testers for a new personal account and keep them opted in continuously for at least 14 days.

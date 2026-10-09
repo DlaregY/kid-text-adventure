@@ -259,6 +259,10 @@ func _ready() -> void:
 	slot2.tapped.connect(_on_slot_tapped.bind(slot2))
 	slot1.input_allowed = func() -> bool: return not _input_blocked()
 	slot2.input_allowed = func() -> bool: return not _input_blocked()
+	slot1.token_allowed = _slot_accepts_token.bind(1)
+	slot2.token_allowed = _slot_accepts_token.bind(2)
+	slot1.token_display = _tile_text
+	slot2.token_display = _tile_text
 	new_story_dialog = NEW_STORY_DIALOG_SCENE.instantiate()
 	add_child(new_story_dialog)
 	var keep_save: Button = new_story_dialog.get_node("Center/Panel/Box/KeepSave")
@@ -274,7 +278,29 @@ func _ready() -> void:
 	resume_button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	feedback_text.add_theme_color_override("font_color", FEEDBACK_NEUTRAL)
 	_discover_stories()
+	# A swipe must reach the ScrollContainer through cards, text and controls.
+	# Dialogs and fixed bars are outside this subtree and keep their input shields.
+	_pass_scroll_input(layout)
+	scroll_container.scroll_deadzone = 12
+	scroll_container.gui_input.connect(_on_scroll_input)
+	scroll_container.scroll_started.connect(func() -> void: command_timer.stop())
+	scroll_container.scroll_ended.connect(_check_slots_and_execute)
 	_show_menu()
+
+func _on_scroll_input(event: InputEvent) -> void:
+	# A held word is still being chosen. Do not run the old two-word command
+	# while the player holds/drags a replacement or begins a scroll gesture.
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			command_timer.stop()
+		else:
+			_check_slots_and_execute.call_deferred()
+
+func _pass_scroll_input(node: Node) -> void:
+	if node is Control and node.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+		node.mouse_filter = Control.MOUSE_FILTER_PASS
+	for child in node.get_children():
+		_pass_scroll_input(child)
 
 # --- Local settings and bundled sound effects. No speech service is used.
 
@@ -837,6 +863,10 @@ func _on_stop_confirmed() -> void:
 	_show_menu()
 
 func _notification(what: int) -> void:
+	if is_node_ready() and what == NOTIFICATION_DRAG_BEGIN:
+		command_timer.stop()
+	elif is_node_ready() and what == NOTIFICATION_DRAG_END:
+		_check_slots_and_execute.call_deferred()
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		if not is_node_ready():
 			return
@@ -893,6 +923,7 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	var card := PanelContainer.new()
 	card.custom_minimum_size = Vector2(0, 88)
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.mouse_filter = Control.MOUSE_FILTER_PASS
 	var row := HBoxContainer.new()
 	row.name = "Row"
 	row.add_theme_constant_override("separation", 12)
@@ -938,6 +969,7 @@ func _make_story_card(entry: Dictionary, index: int) -> PanelContainer:
 	var tap := Button.new()
 	tap.name = "Tap"
 	tap.flat = true
+	tap.mouse_filter = Control.MOUSE_FILTER_PASS
 	tap.focus_mode = Control.FOCUS_NONE
 	var clear := StyleBoxEmpty.new()
 	for state in ["normal", "hover", "pressed", "focus"]:
@@ -1168,13 +1200,27 @@ func _icon_for(token: String) -> String:
 			return str(entry["icon"])
 	return str(EMOJI.get(token, ""))
 
+func _tile_text(token: String) -> String:
+	var icon := _icon_for(token)
+	var label := _label_for(token)
+	return (icon + " " + label) if icon != "" else label
+
+func _slot_accepts_token(token: String, index: int) -> bool:
+	# Derive roles from the current world, never from the drag payload's category.
+	var scene: Dictionary = scenes.get(current_scene_id, {})
+	if token not in scene.get("tiles", []) and not inventory.has(token):
+		return false
+	var category := _classify_token(token)
+	if index == 1:
+		return category in ["action", "inventory"]
+	return index == 2 and category in ["thing", "inventory"]
+
 func _make_tile(token_str: String, color: Color = TILE_BLUE, cat: String = "thing") -> Button:
 	var tile = TILE_SCENE.instantiate()
 	tile.token = token_str
 	tile.category = cat
-	var icon: String = _icon_for(token_str)
-	var label: String = _label_for(token_str)
-	tile.text = (icon + " " + label) if icon != "" else label
+	tile.drag_allowed = func() -> bool: return not _input_blocked()
+	tile.text = _tile_text(token_str)
 	if color != TILE_BLUE:
 		tile.tile_color = color
 		var normal := StyleBoxFlat.new()
@@ -1222,21 +1268,21 @@ func _on_tile_pressed(tile: Button) -> void:
 func _check_slots_and_execute() -> void:
 	# A new selection replaces the previous delay, including incomplete input.
 	command_timer.stop()
-	if _input_blocked():
+	if _input_blocked() or get_viewport().gui_is_dragging():
 		return
 	# Check if all visible required slots are filled
-	if slot1.token == "" or slot2.token == "":
+	if not _slot_accepts_token(slot1.token, 1) or not _slot_accepts_token(slot2.token, 2):
 		return
 	command_timer.start()
 
 func _try_execute_command() -> void:
 	command_timer.stop()
-	if _input_blocked():
+	if _input_blocked() or get_viewport().gui_is_dragging():
 		return
 	var first: String = slot1.token
 	var second: String = slot2.token
 
-	if first == "" or second == "":
+	if not _slot_accepts_token(first, 1) or not _slot_accepts_token(second, 2):
 		return
 
 	var cmd: Array[String] = [first, second]

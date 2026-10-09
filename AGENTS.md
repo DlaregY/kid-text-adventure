@@ -1,3 +1,12 @@
+## Phone feedback and revised branding — October 9, 2026
+
+Gerald installed the API-36 candidate and reported picker/story scrolling blockers
+and confusing reversed drops. Prioritize `docs/touch-feedback.md` over release
+work. His latest branding direction supersedes October 3: original Ike portrait
+on the menu and launcher, Norbonics Games on the in-engine loading splash.
+Preserve all six stories, saves, and the production application ID. A new test
+APK is not Play/public-release authorization.
+
 # Ike Quest
 
 Shared Android publishing workflow: `../../Docs/Standard-Operating-Procedures/android-play-publishing.md`. Read before release preparation; it captures ChallengeBoard's Play internal-testing lessons and keeps Godot-specific checks separate. This does not establish Ike Quest's release readiness.

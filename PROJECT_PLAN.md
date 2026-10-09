@@ -1,5 +1,16 @@
 # Ike Quest Android release
 
+## Device-feedback follow-up — October 9, 2026
+
+Gerald installed candidate `r37957662835a1` and reached the picker and stories.
+User-reported installation/launch now succeeds, but unreliable scrolling can
+block progression. Repair touch propagation, constrain command slots, and restore
+the original menu/launcher portrait while keeping the Norbonics loading splash.
+See `docs/touch-feedback.md`; phone acceptance must be repeated on the fixed APK.
+Do not advance to Play distribution until the blocking interaction findings are
+resolved. No new device model/OS, renderer or full-path result was measured.
+
+
 Updated: 2026-10-03. Status: approved Norbonics Games menu and splash branding plus a visible Games URL implemented. Android 36 toolchain preview rebuilt for a new device check; the original target-36 installer rejection remains unproven. Gerald confirms the earlier target-34 preview and basic Bigfoot gameplay work on his phone. Story pacing, ending presentation and save/resume remain proposals.
 
 

@@ -61,3 +61,12 @@ retain its sound value, verify ordinary held taps and drag cancellation, and
 exercise offline policy scrolling/Back. The wrapper requires these completion
 markers; an aborted test is not accepted as a successful run. Final Android
 manifest and on-device behavior remain separate gates.
+
+## Phone-feedback input regression
+
+`--suite touch` sends pointer events through a real viewport, including raw
+ScreenTouch/ScreenDrag via Godot's input bridge. It needs a display or Xvfb and
+uses native touch scrolling with emulation. It verifies swipes over occupied
+content, intentional held tile drags, taps, slot roles and item-first commands.
+The full `--suite all` includes it; physical Android testing remains separate.
+The Python path audit also applies the first/second slot-role restrictions.
