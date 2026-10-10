@@ -75,7 +75,7 @@ func test_menu(game) -> void:
 	game.about_button.pressed.emit()
 	game.about_close.pressed.emit()
 	check(not game.about_dialog.visible, "CLOSE closes the Parent corner")
-	check(game.about_version.text == game.version_label.text and game.version_label.text.begins_with("v0."), "About shows the version")
+	check(game.version_label.text == "Norbonics Games · " + game.about_version.text and game.about_version.text.begins_with("v0."), "About and fixed studio footer show matching versions")
 	game._clear_save()
 	print("Checked story cards, bottom bar, and parent corner")
 
