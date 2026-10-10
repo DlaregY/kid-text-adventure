@@ -19,7 +19,7 @@ const SFX := {
 	"fanfare": preload("res://assets/sfx/fanfare.wav"),
 }
 const TOP_BAR_HEIGHT: float = 56.0
-const BOTTOM_BAR_HEIGHT: float = 184.0
+const BOTTOM_BAR_HEIGHT: float = 218.0
 const CONTINUE_BAR_HEIGHT: float = 104.0
 const TILE_BLUE := Color(0.357, 0.608, 0.835)
 const TILE_GOLD := Color(0.85, 0.65, 0.13)
