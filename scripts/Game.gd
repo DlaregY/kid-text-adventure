@@ -233,8 +233,8 @@ func _ready() -> void:
 
 	var vf := FileAccess.open("res://version.txt", FileAccess.READ)
 	if vf:
-		version_label.text = "v" + vf.get_as_text().strip_edges()
-		about_version.text = version_label.text
+		version_label.text = "Norbonics Games · v" + vf.get_as_text().strip_edges()
+		about_version.text = "v" + vf.get_as_text().strip_edges()
 
 	about_button.pressed.connect(_on_about_pressed)
 	_load_settings()
