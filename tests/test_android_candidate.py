@@ -21,7 +21,7 @@ class AndroidCandidateTests(unittest.TestCase):
         updated = candidate.configure_preset(source, 'r123a1', Path('/tmp/templates'))
         self.assertIn('package/unique_name="com.ike.textadventure.candidate.r123a1"',updated)
         self.assertIn('gradle_build/export_format=0',updated)
-        for setting in ['version/code=700', 'version/name="0.7.0"','target_sdk="36"','user_data_backup/allow=false']:
+        for setting in ['version/code=701', 'version/name="0.7.1"','target_sdk="36"','user_data_backup/allow=false']:
             self.assertIn(setting,updated)
         self.assertEqual((candidate.ROOT/'export_presets.cfg').read_text(),source)
         for bad in [source.replace('permissions/internet=false','permissions/internet=true'),
