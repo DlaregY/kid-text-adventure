@@ -15,3 +15,11 @@ The old K monochrome layer is no longer configured; there is no bespoke themed
 monochrome icon in this version. The project/legacy launcher uses the portrait
 directly. Android's system launch screen can initially show the launcher icon;
 the subsequent in-engine loading splash retains Norbonics Games.
+
+## October 10 menu polish
+
+- The menu uses Ike's head with no visible gray square; the Android launcher retains the existing portrait asset.
+- Remove the `games.norbonics.com` label from the menu. Display `Norbonics Games · v0.7.1` in the menu footer and keep the parent-corner version short.
+- Say `Pick a story! Scroll to see more.`
+- Minimize splash delay without removing the Norbonics Games image; on-device check remains required.
+- App version in `version.txt` and Android versionName/versionCode must advance together for each release (0.7.1/code 701 for this change).
