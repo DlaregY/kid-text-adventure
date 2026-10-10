@@ -36,7 +36,7 @@ class TouchRolesAndBrandingTests(unittest.TestCase):
         self.assertIn('boot_splash/image="res://assets/branding/norbonics-games.png"', (ROOT/'project.godot').read_text())
         self.assertIn('path="res://assets/branding/ike-head-cutout.png" id="icon_tex"', (ROOT/'Game.tscn').read_text())
         cutout = (ROOT/'assets/branding/ike-head-cutout.png').read_bytes()
-        self.assertEqual(cutout[:8], b"\\x89PNG\\r\\n\\x1a\\n")
+        self.assertEqual(cutout[:8], bytes.fromhex('89504e470d0a1a0a'))
         self.assertEqual(cutout[25], 6, "Menu cutout must be RGBA with an alpha channel")
 
     def test_launcher_uses_portrait_not_the_old_k(self):
