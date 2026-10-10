@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c8su1qp12tm63" path="res://scripts/CommandSlot.gd" id="1_wbfu4"]
 [ext_resource type="Script" uid="uid://b6jbs8g6nrgnj" path="res://scripts/Game.gd" id="1_xkndl"]
-[ext_resource type="Texture2D" path="res://assets/branding/ike-portrait.png" id="icon_tex"]
+[ext_resource type="Texture2D" path="res://assets/branding/ike-head-cutout.png" id="icon_tex"]
 
 [sub_resource type="StyleBoxFlat" id="slot_panel"]
 bg_color = Color(1.0, 0.953, 0.878, 1)
