@@ -19,7 +19,7 @@ const SFX := {
 	"fanfare": preload("res://assets/sfx/fanfare.wav"),
 }
 const TOP_BAR_HEIGHT: float = 56.0
-const BOTTOM_BAR_HEIGHT: float = 184.0
+const BOTTOM_BAR_HEIGHT: float = 218.0
 const CONTINUE_BAR_HEIGHT: float = 104.0
 const TILE_BLUE := Color(0.357, 0.608, 0.835)
 const TILE_GOLD := Color(0.85, 0.65, 0.13)
@@ -173,7 +173,7 @@ const SAME_TOKEN_FALLBACKS: Array[String] = [
 @onready var transition_overlay: ColorRect = $TransitionOverlay
 @onready var continue_bar: Control = $ContinueBar
 @onready var continue_button: Button = $ContinueBar/ContinueButton
-@onready var version_label: Label = $ScrollContainer/Layout/MenuScreen/VersionLabel
+@onready var version_label: Label = $BottomBar/VersionLabel
 @onready var hint_button: Button = $ScrollContainer/Layout/HintButton
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var layout: VBoxContainer = $ScrollContainer/Layout
@@ -233,8 +233,8 @@ func _ready() -> void:
 
 	var vf := FileAccess.open("res://version.txt", FileAccess.READ)
 	if vf:
-		version_label.text = "v" + vf.get_as_text().strip_edges()
-		about_version.text = version_label.text
+		version_label.text = "Norbonics Games · v" + vf.get_as_text().strip_edges()
+		about_version.text = "v" + vf.get_as_text().strip_edges()
 
 	about_button.pressed.connect(_on_about_pressed)
 	_load_settings()
