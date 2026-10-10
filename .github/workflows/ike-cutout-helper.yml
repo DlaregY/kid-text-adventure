@@ -1,0 +1,52 @@
+name: Prepare Ike cutout asset
+on:
+  push:
+    branches: [codex/ike-cutout-helper-2026-10-10]
+permissions:
+  contents: write
+jobs:
+  cutout:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: codex/ike-menu-polish-2026-10-10
+          fetch-depth: 1
+          persist-credentials: true
+      - name: Extract Ike head from original menu portrait
+        run: |
+          python3 -m pip install --user --disable-pip-version-check pillow opencv-python-headless
+          python3 - <<'PY'
+          from PIL import Image
+          import cv2
+          import numpy as np
+          from pathlib import Path
+          src = Path("assets/branding/ike-portrait.png")
+          a = cv2.imread(str(src))
+          assert a is not None and a.shape[:2] == (256,256)
+          m = np.zeros(a.shape[:2], np.uint8)
+          bg = np.zeros((1,65), np.float64)
+          fg = np.zeros((1,65), np.float64)
+          cv2.grabCut(a,m,(34,14,185,209),bg,fg,12,cv2.GC_INIT_WITH_RECT)
+          alpha=np.where((m==2)|(m==0),0,255).astype(np.uint8)
+          n,labels,stats,_=cv2.connectedComponentsWithStats(alpha,8)
+          idx=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
+          alpha=np.where(labels==idx,255,0).astype(np.uint8)
+          alpha=cv2.GaussianBlur(alpha,(3,3),0.55)
+          im=cv2.cvtColor(a,cv2.COLOR_BGR2RGBA); im[:,:,3]=alpha
+          target=Path("assets/branding/ike-head-cutout.png")
+          Image.fromarray(im).save(target)
+          assert Image.open(target).getpixel((0,0))[3] == 0
+          assert Image.open(target).getpixel((128,128))[3] == 255
+          print("CUTOUT GENERATED:", target)
+          PY
+      - name: Commit asset only to feature branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/branding/ike-head-cutout.png
+          git diff --cached --check
+          git diff --cached --quiet && exit 1
+          git commit -m "Add transparent Ike head cutout from existing art"
+          git push origin HEAD:refs/heads/codex/ike-menu-polish-2026-10-10
