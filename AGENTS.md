@@ -1,3 +1,7 @@
+## Audio candidate, October 14, 2026
+
+`audio/organic-sfx-v01` replaces tap, NEXT and success with wooden, paper and kalimba samples. Accepted drags share the tap cue; transition fades no longer interrupt NEXT. Provenance and reproducible export: `docs/ASSET_REGISTER.md`, `scripts/build_sfx.py`. No speech or save changes. Listening/device acceptance and a new APK remain pending; no Play release is authorized.
+
 ## Phone feedback and revised branding — October 9, 2026
 
 Gerald installed the API-36 candidate and reported picker/story scrolling blockers

@@ -1,5 +1,9 @@
 # Ike Quest Android release
 
+## Organic sound candidate, October 14, 2026
+
+Branch `audio/organic-sfx-v01` replaces three existing effects with wooden tile placement, paper NEXT and kalimba success. Accepted drops use the placement cue; rejected drops stay silent, and the scene fade does not interrupt NEXT. The asset register and hash-checked export script preserve provenance. Forty Python tests and 342 isolated Godot regression checks pass (`exports/qa-organic-sfx-verified/`). Test audio uses the Dummy driver, so physical listening remains pending. No new APK, Play upload or public release was produced. Next: listening/device preview, then review before release.
+
 ## Device-feedback follow-up — October 9, 2026
 
 Gerald installed candidate `r37957662835a1` and reached the picker and stories.

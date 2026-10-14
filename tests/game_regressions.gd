@@ -557,6 +557,16 @@ func test_sound_without_speech(game) -> void:
 	game.sound_toggle.button_pressed = true
 	tap(game, "box")
 	check(game.last_sfx == "tap", "Tap sound plays")
+	game.last_sfx = ""
+	game.slot1._drop_data(Vector2.ZERO, {"token": "look"})
+	check(game.last_sfx == "tap", "Accepted drag gets placement sound")
+	game.last_sfx = ""
+	game.slot1._drop_data(Vector2.ZERO, {"token": "box"})
+	check(game.last_sfx.is_empty(), "Rejected drag stays silent")
+	game.sound_toggle.button_pressed = false
+	game.slot1._drop_data(Vector2.ZERO, {"token": "look"})
+	check(game.last_sfx.is_empty(), "Muted drag stays silent")
+	game.sound_toggle.button_pressed = true
 	game.slot1.tapped.emit()
 	game.slot2.tapped.emit()
 	await apply(game, ["go", "key"])
@@ -571,6 +581,8 @@ func test_sound_without_speech(game) -> void:
 		await process_frame
 	game.continue_button.pressed.emit()
 	check(game.last_sfx == "next", "NEXT plays its sound")
+	await process_frame
+	check(game.last_sfx == "next", "Fade does not interrupt paper Continue cue")
 	while game.is_transitioning:
 		await process_frame
 	game.current_scene_id = "win"

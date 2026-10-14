@@ -253,8 +253,8 @@ func _ready() -> void:
 	new_game_button.pressed.connect(_on_menu_pressed)
 	hint_button.pressed.connect(_on_hint_pressed)
 	continue_button.pressed.connect(func() -> void: continue_pressed = true)
-	slot1.tile_dropped.connect(_check_slots_and_execute)
-	slot2.tile_dropped.connect(_check_slots_and_execute)
+	slot1.tile_dropped.connect(_on_tile_placed)
+	slot2.tile_dropped.connect(_on_tile_placed)
 	slot1.tapped.connect(_on_slot_tapped.bind(slot1))
 	slot2.tapped.connect(_on_slot_tapped.bind(slot2))
 	slot1.input_allowed = func() -> bool: return not _input_blocked()
@@ -1251,7 +1251,6 @@ func _on_tile_pressed(tile: Button) -> void:
 		return
 
 	_bounce_tile(tile)
-	_play_sfx("tap")
 	var cat: String = tile.category
 	if cat == "action":
 		slot1.set_tile(tile.token, tile.text)
@@ -1262,7 +1261,13 @@ func _on_tile_pressed(tile: Button) -> void:
 			slot1.set_tile(tile.token, tile.text)
 		else:
 			slot2.set_tile(tile.token, tile.text)
+	else:
+		return
 
+	_on_tile_placed()
+
+func _on_tile_placed() -> void:
+	_play_sfx("tap")
 	_check_slots_and_execute()
 
 func _check_slots_and_execute() -> void:
@@ -1417,7 +1422,6 @@ func _transition_to_scene(scene_id: String) -> void:
 		return
 
 	# Fade to black
-	_play_sfx("whoosh")
 	var tween := create_tween()
 	tween.tween_property(transition_overlay, "color:a", 1.0, 0.3)
 	await tween.finished
