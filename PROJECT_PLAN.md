@@ -2,7 +2,9 @@
 
 ## Organic sound candidate, October 14, 2026
 
-Branch `audio/organic-sfx-v01` replaces three existing effects with wooden tile placement, paper NEXT and kalimba success. Accepted drops use the placement cue; rejected drops stay silent, and the scene fade does not interrupt NEXT. The asset register and hash-checked export script preserve provenance. Forty Python tests and 342 isolated Godot regression checks pass (`exports/qa-organic-sfx-verified/`). Test audio uses the Dummy driver, so physical listening remains pending. No new APK, Play upload or public release was produced. Next: listening/device preview, then review before release.
+Branch `audio/organic-sfx-v01` replaces three existing effects with wooden tile placement, paper NEXT and kalimba success. Accepted drops use the placement cue; rejected drops stay silent, and the scene fade does not interrupt NEXT. The asset register and hash-checked export script preserve provenance. Forty Python tests and 342 isolated Godot regression checks pass (`exports/qa-organic-sfx-verified/`). Test audio uses the Dummy driver, so physical listening remains pending.
+
+Phone listening candidate built from `79064bf16452df39cbb1c1dafd59a922689b79cf` in CI run `38606401390`, attempt 2. Attempt 1 failed downloading the Android NDK; the clean retry passed source checks, build, signatures (including Android 13), ZIP/native 16 KB alignment, all six story hashes and permission checks. APK and evidence: `exports/candidate-audio-79064bf/candidate/`. Package `com.ike.textadventure.candidate.r38606401390a2`, version 0.7.1/701, ARM64, debug-signed. SHA-256 `fe7a95307552776801d30375517b5c716977f0def5a389c4b6ca2c3b2e12b1a1`. All three imported sound resources are packaged. https://norbonics.com/ike redirects to the versioned `/ike/ike-quest-0.7.1-audio-79064bf.apk` asset; downloaded bytes match the verified APK. This installs beside previous candidates with separate saves. Prior asset retained for rollback. No Play upload or production release; next is Gerald's physical listening and touch retest.
 
 ## Device-feedback follow-up — October 9, 2026
 

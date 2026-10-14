@@ -1,6 +1,6 @@
 ## Audio candidate, October 14, 2026
 
-`audio/organic-sfx-v01` replaces tap, NEXT and success with wooden, paper and kalimba samples. Accepted drags share the tap cue; transition fades no longer interrupt NEXT. Provenance and reproducible export: `docs/ASSET_REGISTER.md`, `scripts/build_sfx.py`. No speech or save changes. Listening/device acceptance and a new APK remain pending; no Play release is authorized.
+`audio/organic-sfx-v01` replaces tap, NEXT and success with wooden, paper and kalimba samples. Accepted drags share the tap cue; transition fades no longer interrupt NEXT. Provenance and reproducible export: `docs/ASSET_REGISTER.md`, `scripts/build_sfx.py`. No speech or save changes. CI run `38606401390` attempt 2 built and verified the debug candidate from `79064bf`: `exports/candidate-audio-79064bf/candidate/`, package `com.ike.textadventure.candidate.r38606401390a2`. https://norbonics.com/ike now serves `/ike/ike-quest-0.7.1-audio-79064bf.apk` (public unlinked download, SHA-256 `fe7a9530…b1a1` verified end-to-end). Separate install and saves; physical listening/device acceptance remains pending. No Play release is authorized.
 
 ## Phone feedback and revised branding — October 9, 2026
 
@@ -34,7 +34,7 @@ Merged release-preparation baseline: main `2d4e68d` includes PRs #15–18 (speec
 
 ## Phone download link (set up 2026-10-09)
 
-Gerald gets the newest test APK on his phone at https://norbonics.com/ike (a Vercel redirect, unchanged per release) or directly at https://gerald.zo.space/ike. That public, unlinked API route 302-redirects (no-store) to a versioned zo.space asset, currently `/ike/ike-quest-0.7.1-8b35ea0.apk` (main `8b35ea0` candidate, sha256 prefix `8b31025dcc5ded8c`, refreshed 2026-10-10). Assets are served with a 4-hour cache, so never overwrite one path; for each new phone-test APK: `update_space_asset` to `/ike/ike-quest-<version>-<shorthash>.apk`, `edit_space_route('/ike')` to point at it, verify with `curl -sIL https://gerald.zo.space/ike`, then `delete_space_asset` the previous file. Anyone with the URL can download the APK; Play testing tracks replace this once release-signed builds exist.
+Gerald gets the newest test APK on his phone at https://norbonics.com/ike (a Vercel redirect, unchanged per release) or directly at https://gerald.zo.space/ike. That public, unlinked API route 302-redirects (no-store) to a versioned zo.space asset, currently `/ike/ike-quest-0.7.1-audio-79064bf.apk` (audio candidate, refreshed 2026-10-14; see above). Assets are served with a 4-hour cache, so never overwrite one path; for each new phone-test APK: `update_space_asset` to a new versioned path, `edit_space_route('/ike')` to point at it, and verify the redirect plus downloaded hash. Retain the preceding candidate during device acceptance for rollback. Anyone with the URL can download the APK; Play testing tracks replace this once release-signed builds exist.
 
 ## Play Developer API access: 2026-10-08
 
